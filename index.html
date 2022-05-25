@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="kinoshita hidetosi (木下英俊)">
+  <meta name="description" content="Introducing programming for i-PRO cameras.">
+  <meta name="keywords" content="i-PRO">
+  
+  <!-- キャッシュ無効化 -->
+  <meta http-equiv="Cache-Control" content="no-cache">
+
+  <!-- タイトル -->
+  <title>i-PRO - Programming Items</title>
+  
+  <!-- ファビコン -->
+  <link rel="shortcut icon" href="favicon.ico">
+  
+  <!-- CSS -->
+  <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
+  <link href="./style.css" rel="stylesheet">
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5DFRG3H0KB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-5DFRG3H0KB');
+  </script>  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  
+  <script>
+    // モバイル表示時のメニューパネルを閉じる処理
+    function checkedOff(){
+      var elm = document.getElementById("nav-input");
+      elm.checked = "";
+    }
+  </script>
+  
+</head>
+
+<body>
+  <!-- 起動時にアニメーションが発生してしまうため、これを抑制することを目的にダミーのスクリプトを実行 -->
+  <!-- ref: "https://qiita.com/nagtkk/items/27ff4f2fe17746afabdd" -->
+  <script>console.log("dummy");</script>
+  
+  <div id="base">
+    <!-- ハンバーガーメニューからの連動操作用チェックボックス、常に非表示 -->
+    <input type="checkbox" id="nav-input" class="nav-unshown">
+    
+    <!-- タイトル画面 -->
+    <div id="title">
+      <!-- ハンバーガーメニュー -->
+      <label id="nav-open" for="nav-input"><span></span></label>
+      
+      <!-- タイトル画面 -->
+      <iframe id="title_html" src="title.html" title="title_frame"></iframe>
+    </div>
+    
+    <div id="content_wrapper">
+      <!-- 記事一覧 -->
+      <div id="items_list">
+        <iframe src="items_top.html" target="contents" title="menu_frame"></iframe>
+      </div>
+      
+      <!-- content全体を隠すパネル -->
+      <label id="nav-close" class="nav-unshown" for="nav-input"></label>
+      
+      <!-- 記事本文 -->
+      <div id="content">
+        <iframe name="contents" src="whats_new.html" title="contents_frame"></iframe>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

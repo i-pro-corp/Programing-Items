@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="kinoshita hidetosi (木下英俊)">
+  <meta name="description" content="Introducing programming for i-PRO cameras.">
+  <meta name="keywords" content="i-PRO">
+  
+  <!-- キャッシュ無効化 -->
+  <meta http-equiv="Cache-Control" content="no-cache">
+	
+  <title>［OpenCV リポジトリからXMLファイルを取得する方法］</title>
+	
+  <!-- CSS -->
+  <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="../../design.css" type="text/css">
+  
+	<!-- Start for 'google-code-prettify' -->
+	<link href="../../prettify/styles/desert.css" rel="stylesheet" type="text/css">
+	<script src="../../prettify/prettify.js" type="text/javascript"></script>
+	<!-- End for 'google-code-prettify' -->	
+	
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5DFRG3H0KB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-5DFRG3H0KB');
+  </script>  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+</head>
+
+<body onload="prettyPrint();">
+	
+<h1>OpenCV リポジトリから XML ファイルを取得する方法</h1>
+
+<p> &nbsp;</p>
+<table style="border: 1px solid #808080; width: 800px; max-width:100%; background-color: #F0F0F0;">
+ <tr>
+  <td>
+    <strong>NOTE</strong><br>
+    本ページは i-PRO株式会社 の有志メンバーにより記載されたものです。<br>
+    本ページの情報は <a href="#ライセンス">ライセンス</a> に記載の条件で提供されます。
+ </tr>
+</table>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<p>OpenCV 関連ファイルを保存する 
+<a href="https://github.com/opencv/opencv/tree/master/data/haarcascades" target="_blank">
+https://github.com/opencv/opencv/tree/master/data/haarcascades</a> から XML 
+ファイルを取得する手順について記載します。</p>
+<p>&nbsp;</p>
+<p>1. </p>
+<p>
+<a href="https://github.com/opencv/opencv/tree/master/data/haarcascades" target="_blank">
+https://github.com/opencv/opencv/tree/master/data/haarcascades</a> をブラウザで開きます。</p>
+<p>&nbsp;</p>
+<p>2.</p>
+<p>取得したいファイルをクリックします。ここでは "haarcascade_frontalface_alt2.xml" をクリックします。</p>
+<p>
+<img alt="" src="how_to_get_xml_file/img4.jpg" width="800" class="border_with_drow-shadow"></p>
+<p>&nbsp;</p>
+<p>3.</p>
+<p>[Raw] ボタンをクリックします。</p>
+<p>
+<img alt="" src="how_to_get_xml_file/img5.jpg" width="800" class="border_with_drow-shadow"></p>
+<p>&nbsp;</p>
+<p>4.</p>
+<p>画面上で右クリックを押し、コンテキストメニューから「名前と付けて保存」を選択します。</p>
+<p><img alt="" src="how_to_get_xml_file/img8.jpg" width="800" class="border_with_drow-shadow"></p>
+<p>&nbsp;</p>
+<p>5.</p>
+<p>「名前を付けて保存」ダイアログを表示するので、保存する場所を指定して［保存(S)］ボタンをクリックします。</p>
+<p>
+<img alt="" src="how_to_get_xml_file/img9.jpg" style="height: 312px" width="800" class="border_with_drow-shadow"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>以上です。</p>
+<p>&nbsp;</p>
+	
+<br>
+
+<br>
+
+<section>
+  <h2><a name="ライセンス">ライセンス</a></h2>
+<p>本ページの情報は、特記無い限り下記ライセンスで提供されます。</p>
+<table class="border-collapse" style="width: 600px; background-color: #F0F0F0; word-break: break-word;">
+  <tr>
+    <td>
+    <br>Copyright 2022 i-PRO Co., Ltd.<br><br>Licensed under the Apache License, Version 
+    2.0 (the "License");<br>you may not use this file except in compliance with 
+    the License.<br>You may obtain a copy of the License at <br><br>&nbsp;&nbsp;&nbsp;
+    <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">http://www.apache.org/licenses/LICENSE-2.0</a><br><br>
+		Unless required by 
+    applicable law or agreed to in writing, software <br>distributed under the 
+    License is distributed on an "AS IS" BASIS, <br>WITHOUT WARRANTIES OR 
+    CONDITIONS OF ANY KIND, either express or implied. <br>See the License for 
+    the specific language governing permissions and<br>limitations under the 
+    License. <br> <br>
+    </td>
+  </tr>
+</table>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+
+
+<br>
+
+<section>
+	<h2><a name="参考">参考</a></h2>
+	<ul>
+		<li>opencv/data/haarcascades at master · opencv/opencv (github.com)<br>
+        <a href="https://github.com/opencv/opencv/tree/master/data/haarcascades" target="_blank">
+        https://github.com/opencv/opencv/tree/master/data/haarcascades</a></li>
+	</ul>
+</section>
+
+<p>&nbsp;</p>
+
+<hr>
+
+<p>&nbsp;</p>
+
+<section>
+	<h2 style="margin-bottom:5px">変更履歴</h2>
+	<table>
+	  <tr>
+	    <td class="td_history_date" style="height: 18px">2022/5/26</td>
+	    <td class="td_history_separator" style="height: 18px">-</td>
+	    <td class="td_history" style="height: 18px">新規作成,</td>
+			<td class="td_history" style="height: 18px">木下英俊</td>
+		</tr>
+	</table>
+</section>
+
+<p>&nbsp;</p>
+<p><a href="../../index.html" target="_parent">i-PRO - Programming Items トップページ</a></p>
+<p><a href="../../privacy_policy.html">プライバシーポリシー</a></p>
+<p>&nbsp;</p>
+
+<footer>
+	<p><small>&copy; 2022  i-PRO Co., Ltd.</small></p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,228 @@
+﻿@charset "UTF-8";
+
+/* 共通部分 */
+html{
+  font-size: 100%;
+  width: 100%;
+  height: 100%;
+  /*box-sizing: border-box;*/
+}
+
+body{
+  font-size: 14px;
+  color: #000000;
+  font-family: sans-serif;
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+  /*box-sizing: inherit;*/
+}
+
+div{
+  box-sizing: border-box;
+}
+
+iframe{
+  width: 100%;
+  height:100%;
+  margin:0px;
+  padding:0px;
+  border:none;
+}
+
+#base {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+/* チェックボックスなどは非表示に */
+#nav-unshown{
+  display:none;
+  /*display:block;*/
+  z-index: 99;
+}
+
+#nav-input{
+	display: none;
+}
+
+#title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position:relative;
+  width: auto;
+  height: 55px;
+  border-bottom: 1px silver solid;
+  box-sizing: border-box;
+}
+
+#title_html{
+	position:relative;
+}
+
+#content_wrapper {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: auto;
+  flex: 1;
+}
+
+#items_list {
+  width:  300px;
+  height: 100%;
+  padding-bottom: 10px;
+	border-collapse:collapse;
+	border-right: thin silver solid;
+}
+
+#content {
+  height: 100%;
+  padding-bottom: 10px;
+  flex: 1;
+}
+
+/* 下画面全体を隠す薄黒い */
+#nav-close{
+  display: block;
+  position: absolute;
+  top: 55px; /* 全体に広がるように */
+  left: 0;
+  width: 100%;
+  height: calc(100% - 55px);
+  background: black;
+  opacity: 0;
+  transition: 0s ease-in-out;
+  cursor: pointer;
+
+  /* 左側に隠しておく */
+  -webkit-transform: translateX(-105%);
+  transform: translateX(-105%);
+}
+
+
+/* モバイル版 */
+@media (max-width: 768px){
+	/* チェックボックスなどは非表示に */
+	.nav-unshown{
+		display:none;
+		/*display:block;*/
+		z-index: 99;
+	}
+
+	#title {
+		width: auto;
+		height: 55px;
+		border-bottom: 1px silver solid;
+		box-sizing: border-box;
+	}
+
+	#title_html{
+		position:relative;
+	}
+
+	#content_wrapper{
+		height: 100%;
+		width: 100%;
+	}
+	
+	#items_list{
+		height: -webkit-calc(100% - 55px);
+		height: calc(100% - 55px);
+		width: 300px;
+		position: absolute;
+		left: 0px;
+		background-color:white;
+		z-index: 10;
+  
+		/* 左側に隠しておく */
+		-webkit-transform: translateX(-105%);
+		transform: translateX(-105%);
+		
+		/* 開閉のアニメーション時間 */
+		transition: .3s ease-in-out;
+	}
+	
+	#content{
+		height: -webkit-calc(100% - 55px);
+		height: calc(100% - 55px);
+		width: 100%;
+		position: absolute;
+		left: 0px;
+		background-color:white;
+	}
+	
+	#nav-open{
+		display: inline-block;
+		width: 48px;
+		height: 40px;
+		vertical-align: middle;
+		margin: 0px;
+		padding: 10px;
+	}
+
+	#nav-input:checked ~ #content_wrapper #items_list{
+		display: block;
+		-webkit-transform: translateX(0%);
+		transform: translateX(0%);
+	}
+
+	#nav-input:checked ~ #content_wrapper #nav-close{
+		display: block;
+		opacity: .5;
+		z-index: 9;
+
+		-webkit-transform: translateX(0%);
+		transform: translateX(0%);
+	}
+	
+	/* <--- ハンバーガーメニュー、ここから */
+	/* ハンバーガーメニューアイコンをCSSだけで表現 */
+	#nav-open span, #nav-open span:before, #nav-open span:after{
+	  transition: .3s ease-in-out;
+	  position: absolute;
+	  height: 3px;
+	  width: 26px;
+	  border-radius: 3px;
+	  background: #555;
+	  display: block;
+	  content: '';
+	  opacity: 1;
+	}
+	
+	#nav-open{
+	  cursor: pointer;
+	}
+	
+	#nav-open span:before{
+	  bottom: -8px;
+	}
+	
+	#nav-open span:after{
+	  bottom: -16px;
+	}
+	
+	/* チェックが入ったら✖マークに */
+	#nav-input:checked ~ #title #nav-open span {
+	  transition: .3s ease-in-out;
+	  transform: translateY(8px) rotate(45deg);
+	  -webkit-transorm: translateY(8px) rotate(45deg) ;
+	}
+	
+	#nav-input:checked ~ #title #nav-open span::before {
+	  transition: .3s ease-in-out;
+	  transform: translateY(-8px) rotate(-45deg) scaleX(0.0);
+	  -webkit-transorm: translateY(-8px) rotate(-45deg) scaleX(0.0);
+	  opacity: 0.0;
+	}
+	
+	#nav-input:checked ~ #title #nav-open span::after {
+	  transition: .3s ease-in-out;
+	  transform: translateY(-16px) rotate(-90deg);
+	  -webkit-transorm: translateY(-16px) rotate(-90deg);
+	}
+	/* ハンバーガーメニュー、ここまで ---> */
+}

@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="kinoshita hidetosi (木下英俊)">
+  <meta name="description" content="Introducing programming for i-PRO cameras.">
+  <meta name="keywords" content="i-PRO">
+  
+  <!-- キャッシュ無効化 -->
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <title></title>
+
+  <base target="contents">
+	
+  <!-- CSS -->
+  <link href="./design_items.css" rel="stylesheet">
+
+  <script type="text/javascript">
+  
+    function sublist( target ) {
+      var TargetList = target.parentNode.getElementsByTagName('ul');
+      if ( TargetList[0].style.display == 'none' ) {
+        TargetList[0].style.display = 'block';
+      }
+      else {
+        TargetList[0].style.display = 'none';
+      }
+    }
+    
+    // モバイル表示時のメニューパネルを閉じる処理
+    function checkedOff()
+    {
+      window.parent.checkedOff();
+    }
+    
+  </script>
+	
+  <script src="jquery.js"></script>  
+  <script>
+    $(function() {
+
+      $(".menu-list").find(".accordion-toggle").click(
+        function() {
+          // リスト開閉
+          $(this).next().toggleClass("open").slideToggle("fast");   // fast, middle, slow
+          // アイコン更新
+          $(this).toggleClass("active-tab").find(".menu-link").toggleClass("active");
+
+          /*
+          // クリックしたメニュー以外のコンテントを閉じる
+          $(".menu-list .accordion-content").not($(this).next()).slideUp("fast").removeClass("open");
+          // クリックしたメニュー以外のアイコンを '+' にする
+          $(".menu-list .accordion-toggle").not(jQuery(this)).removeClass("active-tab").find(".menu-link").removeClass("active");
+          */
+        }
+      );
+    }); // jQuery load
+  </script>
+	
+	</head>
+
+<body>
+
+  <div id="menu-container">
+    <ul class="menu-list">
+      <li class="accordion-toggle" style="list-style-type:none;">
+        <a class="menu-link">Python</a>
+      </li>
+      <ul>
+        <li><a href="Python/install_python.html" onclick="checkedOff();">Python をインストールする</a></li>
+        <li class="accordion-toggle">
+          <a class="menu-link">i-PRO カメラとPCをつないでみる</a>
+        </li>
+        <ul>
+          <li><a href="Python/connect_camera/connect_with_rtsp.html" onclick="checkedOff();">RTSP で画像を取得する</a></li>
+          <li><a href="Python/connect_camera/connect_with_jpeg.html" onclick="checkedOff();">JPEG で画像を取得する</a></li>
+          <li><a href="Python/connect_camera/connect_with_mjpeg.html" onclick="checkedOff();">MJPEG で画像を取得する</a></li>
+          <li>機能拡張ソフトウェア(WV-XAE200W)と接続する (近日公開予定)</li>
+          <li>画像分類 - VGG (近日公開予定)</li>
+          <li>物体検知 - MobileNet-SSD (近日公開予定)</li>
+        </ul>
+      </ul>
+    </ul>
+  </div>
+  
+  <hr>
+  
+  <div id="menu-container">
+    <ul class="menu-list">
+      <li><a href="privacy_policy.html" onclick="checkedOff();">プライバシーポリシー</a></li>
+    </ul>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,1443 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="kinoshita hidetosi (木下英俊)">
+  <meta name="description" content="Introducing programming for i-PRO cameras.">
+  <meta name="keywords" content="i-PRO">
+  
+  <!-- キャッシュ無効化 -->
+  <meta http-equiv="Cache-Control" content="no-cache">
+	
+  <title>JPEGで画像を取得する</title>
+	
+  <!-- CSS -->
+  <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="../../design.css" type="text/css">
+  
+	<!-- Start for 'google-code-prettify' -->
+	<link href="../../prettify/styles/desert.css" rel="stylesheet" type="text/css">
+	<script src="../../prettify/prettify.js" type="text/javascript"></script>
+	<!-- End for 'google-code-prettify' -->
+	
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5DFRG3H0KB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-5DFRG3H0KB');
+  </script>  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+  <style type="text/css">
+  .auto-style1 {
+    background-color: #484800;
+  }
+  .super {
+    vertical-align: super;
+  }
+  </style>
+
+</head>
+
+<body onload="prettyPrint();">
+	
+<h1>JPEG で画像を取得する</h1>
+<p>&nbsp;</p>
+<table style="border: 1px solid #808080; width: 800px; max-width:100%; background-color: #F0F0F0;">
+ <tr>
+  <td>
+    <strong>NOTE</strong><br>
+    本ページは i-PRO株式会社 の有志メンバーにより記載されたものです。<br>
+    本ページの情報は <a href="#ライセンス">ライセンス</a> に記載の条件で提供されます。
+ </tr>
+</table>
+<p> &nbsp;</p>
+<table style="border: 1px solid #808080; width: 800px; max-width:100%; background-color: #F0F0F0;">
+  <tr>
+    <td>
+      <nav>
+        <h2> 目次</h2>
+        <p>
+        <a href="#1._CGI_表記仕様">1. CGI 表記仕様</a><br>
+        <a href="#2. i-PRO カメラと JPEG 接続して映像を表示してみる">2. i-PRO カメラと JPEG 接続して映像を表示してみる</a><br>
+        <a href="#3.プログラムを改善する">3. プログラムを改善する</a><br>
+        <a href="#4. OpenCV で顔検知を加えてみる">4. OpenCV で顔検知を加えてみる</a><br>
+        <a href="#5._連番の_JPEG_ファイルで保存する">5. 連番の JPEG ファイルで保存する</a><br>
+        <a href="#6._映像切断時の再接続処理を追加">6. 映像切断時の再接続処理を追加</a><br>
+        <a href="#7._GUIで映像表示してみる（tkinter）">7. GUIで映像表示してみる（tkinter）</a><br>
+        <br>
+        <a href="#ソースコード所在">ソースコード所在</a><br>
+        <a href="#ライセンス">ライセンス</a><br>
+        <a href="#参考">参考</a><br>
+        </p>
+      </nav>
+    </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<p> i-PRO のカメラ i-PRO mini (WV-S7130)、モジュールカメラ（AIスターターキット）を入手したので、カメラとPCを接続して動作するプログラムを作成してみました。こちらで紹介します。</p>
+<p> ここで記載の内容は、ほとんどの i-PRO カメラでそのまま利用できると思いますが未確認です。</p>
+<p>&nbsp;</p>
+<section>
+<p> "i-PRO mini" 紹介： </p>
+<ul>
+  <li><a href="https://cwc.i-pro.com/pages/i-pro-mini-lp" target="_blank">i-PRO 
+  mini</a></li>
+  <li>
+  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130ux" target="_blank">
+  i-PRO mini 有線LANモデル WV-S7130UX</a></li>
+  <li>
+  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130wux" target="_blank">
+  i-PRO mini 無線LANモデル WV-S7130WUX</a></li>
+  <li>
+  <a href="https://japancs.i-pro.com/space/DLJP/724085590/WV-S7130UX　i-PRO+mini+有線LANモデル" target="_blank">
+  WV-S7130UX　i-PRO mini 有線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
+  <li>
+  <a href="https://japancs.i-pro.com/space/DLJP/724086255/WV-S7130WUX　i-PRO+mini+無線LANモデル" target="_blank">
+  WV-S7130WUX　i-PRO mini 無線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
+</ul>
+<p> 
+<a href="images/i-PRO_mini.jpg" target="_blank">
+<img alt="" src="images/i-PRO_mini.jpg" style="height: 250px" width="348" class="border_with_drow-shadow"></a></p>
+<p> 
+&nbsp;</p>
+<p> 
+"モジュールカメラ" 紹介：</p>
+<ul>
+  <li><a href="https://moduca.i-pro.com/space/MCP" target="_blank">Module Camera 
+  Product Information - モジュールカメラ｜ポータルサイト (i-pro.com)</a></li>
+  <li>
+  <a href="https://moduca.i-pro.com/space/MCT/768743132/各種マニュアル" target="_blank">
+  各種マニュアル - Module Camera Technical Information - モジュールカメラ｜ポータルサイト (i-pro.com)</a></li>
+</ul>
+<p> 
+<a href="images/ai_starter_kit_1.png" target="_blank">
+<img alt="" class="border_with_drow-shadow" src="images/ai_starter_kit_1.png" style="height: 250px" width="404"></a>
+<a href="images/ai_starter_kit_2.png" target="_blank">
+<img alt="" class="border_with_drow-shadow" src="images/ai_starter_kit_2.png" style="height: 250px" width="444"></a></p>
+<p> 
+&nbsp;</p>
+<p> 
+カメラ初期設定についてはカメラ毎の取扱説明書をご確認ください。</p>
+<p> 
+カメラのIPアドレスを確認・設定できる下記ツールを事前に入手しておくと便利です。</p>
+<ul>
+ <li>
+ <a href="https://connect.panasonic.com/jp-ja/products-services_security_support_specifications-manuals-firms-tool_2014040315191048" target="_blank">
+ IP簡単設定ソフトウェア</a>&nbsp;（日本国内）</li>
+ <li>
+ <a href="https://bizpartner.panasonic.net/public/file/ip-setting-software" target="_blank">
+ IP Setting Software</a>&nbsp;&nbsp;&nbsp;&nbsp; （グローバル）</li>
+</ul>
+</section>
+
+<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>
+
+<section>
+ <h2><a name="1._CGI_表記仕様">1. CGI 表記仕様</a></h2>
+ <h4>[概要]</h4>
+ <p>JPEG(1shot要求)で接続するための表記を以下に記載します。</p>
+ <p>「ネットワークカメラCGIコマンドインターフェース仕様書 統合版」<span class="super">[1]</span> 
+ で下記に記載されている情報です。</p>
+ <ul>
+  <li>i-pro カメラ外部インタフェース仕様書ver1.59.pdf ： 「3.1.8. カメラ映像 (JPEG) 1shot要求」</li>
+ </ul>
+ <p>&nbsp;</p>
+ <p><span class="cpp-source">
+ http://&lt;カメラのIPアドレス&gt;/cgi-bin/camera?resolution={resolution}</span></p>
+ <p>&nbsp;</p>
+ <p>補足説明</p>
+ <ul>
+  <li>resolution :<br>カメラ側で設定されている解像度から選択する必要があります。<br>
+  カメラ側設定と一致する値が無い場合はカメラ側設定のデフォルト値が採用されます。</li>
+ </ul>
+ <p>&nbsp;</p>
+</section>
+
+<p>&nbsp;</p>
+
+<section>
+  <h2> <a name="2. i-PRO カメラと JPEG 接続して映像を表示してみる">2. i-PRO カメラと JPEG 接続して映像を表示してみる</a></h2>
+	<h4>[概要]</h4>
+	<p> とりあえず映像を取得してPC画面に表示するまでをやってみます。</p>
+    <p> &nbsp;</p>
+	
+	<h4>[評価環境1]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>言語 :</td>
+	    <td>Python,</td>
+	    <td>3.10.4 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>Windows 11 home,</td>
+	    <td>21H2</td>
+	  </tr>
+	  <tr>
+	    <td></td>
+	    <td>Windows 10 Pro,</td>
+	    <td>21H1</td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+	<p>&nbsp;</p>
+	
+	<h4>[評価環境2]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>言語 :</td>
+	    <td>Python,</td>
+	    <td>3.8.10 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>Ubuntu(WSL),</td>
+	    <td>20.04</td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+	<p>&nbsp;</p>
+	
+	<p> &nbsp;</p>
+	<h4> [プログラム]</h4>
+  <p> プログラムを終了する方法を実装していません。コンソール上で [ctrl]+[c] して終了してください。</p>
+  <p> &nbsp;</p>
+	
+	<p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_jpeg/connect_with_jpeg_1.py" target="_blank">connect_with_jpeg_1.py</a>&quot;]</p>
+  <pre class="prettyprint linenums lang-py">
+'''
+[Abstract]
+    Try connecting to an i-PRO camera with JPEG(1 shot).
+    JPEG(1 shot) で i-PRO カメラと接続してみる
+
+[Details]
+    Let's try first.
+    まずはやってみる
+
+[Library install]
+    pip install opencv-python
+    pip install numpy
+    pip install requests
+'''
+
+import requests
+from requests.auth import HTTPDigestAuth
+import numpy as np
+import cv2
+
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+resolution  = 1920              # Resolution
+
+# URL
+url = f"http://{host}/cgi-bin/camera?resolution={resolution}"
+
+while True:
+    try:
+        # 画像の取得
+        rs = requests.get(url, auth=HTTPDigestAuth(user_id, user_pw))
+
+        # binary データを ndarray 型へ変換
+        img_buf= np.frombuffer(rs.content, dtype=np.uint8)
+
+        # バイナリデータをデコードして画像データにする
+        img1 = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
+
+        # 使っているPC画面に適当に収まる表示大きさへリサイズ
+        img2 = cv2.resize(img1, (1280, 720))
+
+        # 映像表示
+        cv2.imshow(winname, img2)
+        cv2.waitKey(1)      # imshow() を表示するためにはこの１行が必要！！
+
+    except KeyboardInterrupt:
+        # コンソール上で ctrl-c を押すとプログラムを終了する。
+        # GUI 上で ctrl-c してもプログラムを終了できない。
+        print("KeyboardInterrupt")
+        break
+    
+cv2.destroyAllWindows()</pre>
+  <p>&nbsp;</p>
+    <p>上記プログラムを動かしてみます。実行はこんな感じで行います。</p>
+    <p><span class="cpp-source"><strong>python</strong> connect_with_jpeg_1.py</span></p>
+    <p>&nbsp;</p>
+    <p>Windows環境で複数の Python バージョンをインストールしている場合、下図のような感じで実行バージョンを指定することもできます。<br>
+    こちらはバージョン 3.10 の Python で実行を指示する例です。</p>
+    <p><span class="cpp-source"><strong>py</strong> -3.10 connect_with_jpeg_1.py</span></p>
+    <p>&nbsp;</p>
+
+    <p>上記プログラムを動かした様子を動画で示します。</p>
+    <p>こんなに簡単なプログラムでちゃんと映像表示を実現することができました。</p>
+    <p>5fps（毎秒5コマ）ぐらいの表示でしょうか。JPEGなので妥当な結果だと思います。</p>
+    
+<video controls muted autoplay="y" loop="y" src="connect_with_jpeg/jpeg_first.mp4" width="800px">
+  <p>動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。</p>
+</video>
+
+<p>[動画] JPEG でカメラと接続して映像表示してみた様子</p>
+    
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+</section>
+
+
+
+<section>
+  <h2><a name="3.プログラムを改善する">3.プログラムを改善する</a></h2>
+	<h4>[概要]</h4>
+  <p>前章で作成したプログラムはとても簡単に作成できましたが、いろいろと課題がありました。<br>とりあえず下記３つの課題を解決してみます。</p>
+  <p>&nbsp;</p>
+  <p>課題１<br>プログラムを起動するたびにウィンドウ位置が変わる。場合によっては画面外へ表示する場合もあって不便。<br>
+  適当に画面内に収まる場所に表示してほしい。<br>⇨ 指定する場所にウィンドウを表示するようにします。</p>
+  <p>&nbsp;</p>
+  <p>課題２<br>プログラムを終了するのが大変。<br>ウィンドウ右上の[x]を押すとウィンドウがいったん消えるが、すぐに再表示されて終われない。<br>⇨ 
+  ウィンドウ右上の[x]ボタンでプログラムを終了できるようにします。</p>
+  <p>&nbsp;</p>
+  <p>課題３<br>同様に、任意のキー入力でプログラムを終了できるとうれしい。<br>⇨ "q" キー押下でプログラムを終了できるようにします。</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+	<p> &nbsp;</p>
+	
+	<h4>[評価環境1]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>言語 :</td>
+	    <td>Python,</td>
+	    <td>3.10.4 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>Windows 11 home,</td>
+	    <td>21H2</td>
+	  </tr>
+	  <tr>
+	    <td></td>
+	    <td>Windows 10 Pro,</td>
+	    <td>21H1</td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+	<p>&nbsp;</p>
+	
+	<h4>[評価環境2]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>言語 :</td>
+	    <td>Python,</td>
+	    <td>3.8.10 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>Ubuntu(WSL),</td>
+	    <td>20.04</td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+	<p>&nbsp;</p>
+	
+	<p> &nbsp;</p>
+	<h4> [プログラム]</h4>
+	
+  <p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_jpeg/connect_with_jpeg_2.py" target="_blank">connect_with_jpeg_2.py</a>&quot;]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    Try connecting to an i-PRO camera with JPEG(1 shot).
+    JPEG(1 shot) で i-PRO カメラと接続してみる
+
+[Details]
+    Let's improve the three issues of "connect_with_jpeg_1.py".
+    "connect_with_jpeg_1.py" で確認した３つの課題を改善してみます。
+
+    [Issues 1]
+    Specifies the position where the window is displayed.
+    ウィンドウを指定する場所に表示するようにします。
+    [Issues 2]
+    Modify the program so that you can exit the program by clicking the [x] button.
+    ウィンドウ右上の[x]ボタンでプログラムを終了できるようにします。
+    [Issues 3]
+    Modify the program so that you can exit the program by pressing the [q] key.
+    "q" キー押下でプログラムを終了できるようにします。
+    
+[Library install]
+    pip install opencv-python
+    pip install numpy
+    pip install requests
+'''
+
+import requests
+from requests.auth import HTTPDigestAuth
+import numpy as np
+import cv2
+
+user_id     = "user-id"         # ご使用のカメラ設定に合わせて変更
+user_pw     = "password"        # ご使用のカメラ設定に合わせて変更
+host        = "192.168.0.10"    # ご使用のカメラ設定に合わせて変更
+winname     = "VIDEO"           # ウィンドウタイトル
+resolution  = 1920              # 解像度
+
+# URL
+url = f"http://{host}/cgi-bin/camera?resolution={resolution}"
+
+<span class="auto-style1">#</span>
+<span class="auto-style1">initialized = False</span>
+
+<span class="auto-style1"># Exception 定義</span>
+<span class="auto-style1">BackendError = type('BackendError', (Exception,), {})</span>
+
+<span class="auto-style1">'''</span>
+<span class="auto-style1">[Abstract]</span>
+<span class="auto-style1">    対象ウィンドウが存在するかを確認する。</span>
+<span class="auto-style1">[Param]</span>
+<span class="auto-style1">    winname :       ウィンドウタイトル</span>
+<span class="auto-style1">[Return]</span>
+<span class="auto-style1">    True :          対象ウィンドウは存在する</span>
+<span class="auto-style1">    False :         対象ウィンドウは存在しない</span>
+<span class="auto-style1">[Exception]</span>
+<span class="auto-style1">    BackendError :  バックエンドで使用している Qt でエラー発生</span>
+<span class="auto-style1">'''</span>
+<span class="auto-style1">def IsWindowVisible(winname):</span>
+<span class="auto-style1">    try:</span>
+<span class="auto-style1">        ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)</span>
+<span class="auto-style1">        if ret == -1:</span>
+<span class="auto-style1">            raise BackendError('Use Qt as backend to check whether window is visible or not.')</span>
+
+<span class="auto-style1">        return bool(ret)</span>
+
+<span class="auto-style1">    except cv2.error:</span>
+<span class="auto-style1">        return False</span>
+
+
+while True:
+    try:
+        # 画像の取得
+        rs = requests.get(url, auth=HTTPDigestAuth(user_id, user_pw))
+
+        # binary データを ndarray 型へ変換
+        img_buf= np.frombuffer(rs.content, dtype=np.uint8)
+
+        # バイナリデータをデコードして画像データにする
+        img1 = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
+
+        # 使っているPC画面に適当に収まる表示大きさへリサイズ
+        img2 = cv2.resize(img1, (1280, 720))
+
+        # 映像表示
+        cv2.imshow(winname, img2)
+
+<span class="auto-style1">        if initialized==False:</span>
+<span class="auto-style1">            # 最初の起動時のみ表示位置を指定</span>
+<span class="auto-style1">            cv2.moveWindow(winname, 100, 100)</span>
+<span class="auto-style1">            initialized = True</span>
+<span class="auto-style1">        </span>
+<span class="auto-style1">        # Press the "q" key to finish.</span>
+<span class="auto-style1">        k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()</span>
+<span class="auto-style1">        if k == ord("q"):</span>
+<span class="auto-style1">            break</span>
+<span class="auto-style1">        </span>
+<span class="auto-style1">        # 指定ウィンドウが無かったら終了</span>
+<span class="auto-style1">        if not IsWindowVisible(winname):</span>
+<span class="auto-style1">            break</span>
+
+    except KeyboardInterrupt:
+        # コンソール上で ctrl-c を押すとプログラムを終了する。
+        print("KeyboardInterrupt")
+        break
+
+cv2.destroyAllWindows()</pre>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+
+
+<section>
+<h2><a name="4. OpenCV で顔検知を加えてみる">4. OpenCV で顔検知を加えてみる</a></h2>
+	<h4>[概要]</h4>
+	<p>OpenCV を使って顔検知を行って、見つけた顔部分に赤枠を描画してみます。&nbsp;</p>
+ <p>&nbsp;</p>
+ <p>下記 URL からファイル "haarcascade_frontalface_alt2.xml" 
+ を入手してプログラムと同じ場所に保存する必要があります。</p>
+ <p>
+ <a href="https://github.com/opencv/opencv/tree/master/data/haarcascades" target="_blank">
+ https://github.com/opencv/opencv/tree/master/data/haarcascades</a> </p>
+ <p>xml ファイル取得方法は <a href="how_to_get_xml_file.html">こちら</a> を参照ください</p>
+  <p>&nbsp;</p>
+	
+	<h4>[評価環境1]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>言語 :</td>
+	    <td>Python,</td>
+	    <td>3.10.4 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>Windows 11 home,</td>
+	    <td>21H2</td>
+	  </tr>
+	  <tr>
+	    <td></td>
+	    <td>Windows 10 Pro,</td>
+	    <td>21H1</td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+	<p>&nbsp;</p>
+	
+	<h4>[評価環境2]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>言語 :</td>
+	    <td>Python,</td>
+	    <td>3.8.10 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>Ubuntu(WSL),</td>
+	    <td>20.04</td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+	<p>&nbsp;</p>
+	
+	<p> &nbsp;</p>
+	<h4> [プログラム]</h4>
+	
+	<p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_jpeg/connect_with_jpeg_3.py" target="_blank">connect_with_jpeg_3.py</a>&quot;]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    JPEG(1shot) でカメラと接続します。
+
+[Details]
+    ここでは opencv を使って顔検知を追加してみます。
+
+[Library install]
+    pip install opencv-python
+    pip install numpy
+    pip install requests
+
+[OpenCV]
+    下記URLからファイル "haarcascade_frontalface_alt2.xml" を入手すること
+    https://github.com/opencv/opencv/tree/master/data/haarcascades
+'''
+
+import requests
+from requests.auth import HTTPDigestAuth
+import numpy as np
+import cv2
+
+
+user_id     = "admin"           # ご使用のカメラ設定に合わせて変更
+user_pw     = "Admin12345"      # ご使用のカメラ設定に合わせて変更
+host        = "192.168.2.126"   # ご使用のカメラ設定に合わせて変更
+winname     = "VIDEO"           # ウィンドウタイトル
+resolution  = 1920              # 解像度
+
+# URL
+url = f"http://{host}/cgi-bin/camera?resolution={resolution}"
+
+<span class="auto-style1"># 顔を識別するためのファイル</span>
+<span class="auto-style1">cascade_file = "haarcascade_frontalface_alt2.xml"       # 顔</span>
+<span class="auto-style1">#cascade_file = "haarcascade_eye.xml"                   # 目？</span>
+<span class="auto-style1">#cascade_file = "haarcascade_eye_tree_eyeglasses.xml"   # 目？</span>
+<span class="auto-style1">cascade = cv2.CascadeClassifier(cascade_file)</span>
+
+#
+initialized = False
+
+# Exception 定義
+BackendError = type('BackendError', (Exception,), {})
+
+'''
+[Abstract]
+    対象ウィンドウが存在するかを確認する。
+[Param]
+    winname :       ウィンドウタイトル
+[Return]
+    True :          対象ウィンドウは存在する
+    False :         対象ウィンドウは存在しない
+[Exception]
+    BackendError :  バックエンドで使用している Qt でエラー発生
+'''
+def IsWindowVisible(winname):
+    try:
+        ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
+        if ret == -1:
+            raise BackendError('Use Qt as backend to check whether window is visible or not.')
+
+        return bool(ret)
+
+    except cv2.error:
+        return False
+
+
+
+'''
+[Abstract]
+    main 関数
+'''
+if __name__ == '__main__':
+
+    while True:
+
+        # 画像を取得
+        rs = requests.get(url, auth=HTTPDigestAuth(user_id, user_pw))
+
+        # binary データを ndarray 型へ変換
+        img_buf= np.frombuffer(rs.content, dtype=np.uint8)
+
+        # バイナリデータをデコードして画像データ(OpenCV形式)にする
+        img1 = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
+
+<span class="auto-style1">        # 顔検出のためにグレイスケール画像に変換</span>
+<span class="auto-style1">        img_gray = cv2.imdecode(img_buf, cv2.IMREAD_GRAYSCALE)</span>
+<span class="auto-style1">        </span>
+<span class="auto-style1">        # 検出した顔の位置情報を取得</span>
+<span class="auto-style1">        face_list = cascade.detectMultiScale(img_gray, minSize=(100, 100))</span>
+<span class="auto-style1">        </span>
+<span class="auto-style1">        # 顔を検出したらループ処理を終了</span>
+<span class="auto-style1">        if len(face_list) != 0:</span>
+<span class="auto-style1">            #print("Find face.")</span>
+<span class="auto-style1">            </span>
+<span class="auto-style1">            for (pos_x, pos_y, w, h) in face_list:</span>
+<span class="auto-style1">                print(f"pos_x = {pos_x}, pos_y = {pos_y}, w = {w}, h = {h}")</span>
+<span class="auto-style1">                cv2.rectangle(img1, (pos_x, pos_y), (pos_x + w, pos_y + h), (0,0,255), thickness=5)</span>
+
+        # 使っているPC画面に適当に収まる表示大きさへリサイズ
+        img2 = cv2.resize(img1, (1280, 720))
+
+        # 映像表示
+        cv2.imshow(winname, img2)
+
+        if initialized==False:
+            # 最初の起動時のみ表示位置を指定
+            cv2.moveWindow(winname, 100, 100)
+            initialized = True
+            
+        # Press the "q" key to finish.
+        k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
+        if k == ord("q"):
+            break
+
+        # 指定ウィンドウが無かったら終了
+        if not IsWindowVisible(winname):
+            break
+
+    cv2.destroyAllWindows()
+</pre>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+<video controls muted autoplay="y" loop="y" src="connect_with_jpeg/jpeg_opencv.mp4" width="800px">
+  <p>動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。</p>
+</video>
+<p>
+<span style="color: rgb(0, 0, 0); font-family: sans-serif; font-size: small; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;">
+[動画] OpenCV で顔検知してみた様子</span></p>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+</section>
+
+<br>
+
+<section>
+  <h2><a name="5._連番の_JPEG_ファイルで保存する">5. 連番の JPEG ファイルで保存する</a></h2>
+  <p>受信した画像を 1 から始まる連番のファイル名 (image_NNNNNN.jpg) で JPEG ファイルとして保存してみます。</p>
+  <p>&nbsp;</p>
+  <ul>
+    <li>JPEG 情報はカメラから受信したデータをそのままに保存するようにします。</li>
+    <li>"image" という名称でフォルダを作成し、ここに "image_000001.jpg" というようなファイル名で画像を保存します。</li>
+  </ul>
+  <p>&nbsp;</p>
+
+	<h4>[評価環境]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>言語 :</td>
+	    <td>Python,</td>
+	    <td>3.10.4 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>Windows 11 home,</td>
+	    <td>21H2</td>
+	  </tr>
+	  <tr>
+	    <td></td>
+	    <td>Windows 10 Pro,</td>
+	    <td>21H1</td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+	<p>&nbsp;</p>
+
+  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_jpeg/connect_with_jpeg_4.py" target="_blank">connect_with_jpeg_4.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">
+'''
+[Abstract]
+    JPEG(1shot) でカメラと接続します。
+
+[Details]
+    受信した JPEG 画像をファイル保存します。
+    ファイル名の末尾に６ケタの番号を付けて連番で保存します。
+
+[Library install]
+    pip install opencv-python
+    pip install numpy
+    pip install requests
+'''
+
+import requests
+from requests.auth import HTTPDigestAuth
+import numpy as np
+import cv2
+<span class="auto-style1">import os</span>
+
+
+user_id     = "user-id"         # ご使用のカメラ設定に合わせて変更
+user_pw     = "password"        # ご使用のカメラ設定に合わせて変更
+host        = "192.168.0.10"    # ご使用のカメラ設定に合わせて変更
+winname     = "VIDEO"           # ウィンドウタイトル
+resolution  = 1920              # 解像度
+<span class="auto-style1">pathOut     = 'image'           # 画像ファイル保存フォルダ</span>
+
+# URL
+url = f"http://{host}/cgi-bin/camera?resolution={resolution}"
+
+# Exception 定義
+BackendError = type('BackendError', (Exception,), {})
+
+
+'''
+[Abstract]
+    対象ウィンドウが存在するかを確認する。
+[Param]
+    winname :       ウィンドウタイトル
+[Return]
+    True :          対象ウィンドウは存在する
+    False :         対象ウィンドウは存在しない
+[Exception]
+    BackendError :  バックエンドで使用している Qt でエラー発生
+'''
+def IsWindowVisible(winname):
+    try:
+        ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
+        if ret == -1:
+            raise BackendError('Use Qt as backend to check whether window is visible or not.')
+
+        return bool(ret)
+
+    except cv2.error:
+        return False
+
+
+<span class="auto-style1">'''</span>
+<span class="auto-style1">[Abstract]</span>
+<span class="auto-style1">    バイナリデータを指定ファイル名で保存する</span>
+<span class="auto-style1">[Param]</span>
+<span class="auto-style1">    data :      保存するバイナリデータ</span>
+<span class="auto-style1">    filename :  ファイル名</span>
+<span class="auto-style1">'''</span>
+<span class="auto-style1">def SaveBinaryData(data, filename):</span>
+<span class="auto-style1">    fout = open(filename, 'wb')</span>
+<span class="auto-style1">    fout.write(data)</span>
+<span class="auto-style1">    fout.close()</span>
+
+
+'''
+[Abstract]
+    main 関数
+'''
+if __name__ == '__main__':
+
+    initialized = False
+<span class="auto-style1">    count = 0</span>
+<span class="auto-style1">    if not os.path.exists(pathOut):</span>
+<span class="auto-style1">        os.mkdir(pathOut)</span>
+
+    while True:
+        # 画像の取得
+        rs = requests.get(url, auth=HTTPDigestAuth(user_id, user_pw))
+
+<span class="auto-style1">        # ファイル保存</span>
+<span class="auto-style1">        count += 1</span>
+<span class="auto-style1">        filename = os.path.join(pathOut, 'image_{:06d}.jpg'.format(count))</span>
+<span class="auto-style1">        SaveBinaryData(rs.content, filename)</span>
+
+        # binary データを ndarray 型へ変換
+        img_buf= np.frombuffer(rs.content, dtype=np.uint8)
+
+        # バイナリデータをデコードして画像データにする
+        img1 = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
+
+        # リサイズ
+        img2 = cv2.resize(img1, (1280, 720))
+
+        # 映像表示
+        cv2.imshow(winname, img2)
+
+        if initialized==False:
+            # 最初の起動時のみ表示位置を指定
+            cv2.moveWindow(winname, 100, 100)
+            initialized = True
+            
+        # Press the "q" key to finish.
+        k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
+        if k == ord("q"):
+            break
+
+        # 指定ウィンドウが無かったら終了
+        if not IsWindowVisible(winname):
+            break
+    
+    cv2.destroyAllWindows() </pre>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+
+<p>&nbsp;</p>
+
+<section>
+  <h2><a name="6._映像切断時の再接続処理を追加">6. 映像切断時の再接続処理を追加</a></h2>
+  <p>ここまでのプログラムは、カメラとの接続を切断すると接続が復活しませんでした。<br>
+  例えばカメラを再起動するなどしても自動的に再接続を行って映像表示できるようにプログラムを修正してみます。</p>
+  <p>"connect_with_jpeg_2.py" を元に再接続処理を追加してこの問題を解決してみたいと思います。</p>
+  <p>&nbsp;</p>
+  <p><strong>ポイント</strong></p>
+  <ul>
+    <li>requests.get 関数はカメラと都度接続する関数なので、いわゆる再接続の処理は不要でした。<br>
+    タイムアウト発生時などの異常処理を追加するだけで期待する動作を実現できました。</li>
+  </ul>
+  <p>&nbsp;</p>
+  <p class="auto-style3"><strong>NOTE</strong></p>
+  <ul>
+    <li>切断の試験はカメラの電源をOff/Onする、通信をOff/Onする、などで試験してください。</li>
+    <li>requests.get 関数は引数としてタイムアウト時間を設定することができました。下記例では 10秒 を設定しています。<br>
+    適当な値へ変更するなどして挙動の変化を試してみてはいかがでしょうか。</li>
+  </ul>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <h4>[評価環境]</h4>
+  <table>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>言語 :</td>
+      <td>Python,</td>
+      <td>3.10.4 </td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>OS :</td>
+      <td>Windows 11 home,</td>
+      <td>21H2</td>
+    </tr>
+    <tr>
+	    <td></td>
+	    <td>Windows 10 Pro,</td>
+	    <td>21H1</td>
+	  </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_jpeg/connect_with_jpeg_5.py" target="_blank">connect_with_jpeg_5.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    Try connecting to an i-PRO camera with JPEG(1 shot).
+    JPEG(1 shot) で i-PRO カメラと接続してみる
+
+[Details]
+    Add reconnection when video is disconnected to "connect_with_jpeg_2.py".
+    "connect_with_jpeg_2.py" へ映像切断時の再接続処理を追加する。
+
+[Library install]
+    pip install opencv-python
+    pip install numpy
+    pip install requests
+'''
+
+import requests
+from requests.auth import HTTPDigestAuth
+import numpy as np
+import cv2
+from urllib3 import HTTPConnectionPool
+
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+resolution  = 1920              # Resolution
+
+# URL
+url = f"http://{host}/cgi-bin/camera?resolution={resolution}"
+
+#
+initialized = False
+
+# Exception Definition
+BackendError = type('BackendError', (Exception,), {})
+
+def IsWindowVisible(winname):
+    '''
+    [Abstract]
+        Check if the target window exists.
+        対象ウィンドウが存在するかを確認する。
+    [Param]
+        winname :       Window title
+    [Return]
+        True :          exist
+                        存在する
+        False :         not exist
+                        存在しない
+    [Exception]
+        BackendError :
+    '''
+    try:
+        ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
+        if ret == -1:
+            raise BackendError('Use Qt as backend to check whether window is visible or not.')
+
+        return bool(ret)
+
+    except cv2.error:
+        return False
+
+
+while True:
+    try:
+        # Request and receive image from camera.
+        rs = requests.get(url, auth=HTTPDigestAuth(user_id, user_pw), <span class="auto-style1">timeout=10</span>)
+
+        # Convert from binary to ndarray.
+        img_buf= np.frombuffer(rs.content, dtype=np.uint8)
+
+        # Convert from ndarray to OpenCV image.
+        img1 = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
+
+        # Please modify the value to fit your PC screen size.
+        img2 = cv2.resize(img1, (1280, 720))
+
+        # Display image.
+        cv2.imshow(winname, img2)
+
+        if initialized==False:
+            # Specify window position only once at startup.
+            cv2.moveWindow(winname, 100, 100)
+            initialized = True
+            
+        # Press the "q" key to finish.
+        k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
+        if k == ord("q"):
+            break
+
+        # Exit the program if there is no specified window.
+        if not IsWindowVisible(winname):
+            break
+
+    except KeyboardInterrupt:
+        # Press '[ctrl] + [c]' on the console to exit the program.
+        print("KeyboardInterrupt")
+        break
+
+<span class="auto-style1">    except requests.ConnectTimeout as e:</span>
+<span class="auto-style1">        # Connection timeout.</span>
+<span class="auto-style1">        print(e)</span>
+
+<span class="auto-style1">    except requests.exceptions.Timeout as e:</span>
+<span class="auto-style1">        # Read timeout.</span>
+<span class="auto-style1">        print(e)</span>
+
+<span class="auto-style1">    except Exception as e:</span>
+<span class="auto-style1">        # Other unexpected exceptions.</span>
+<span class="auto-style1">        print(e)</span>
+
+cv2.destroyAllWindows()</pre>
+  <p>&nbsp;</p>
+  <p><strong>補足：</strong></p>
+  <p>上記ソースコードでは例外処理を３つ加えています。</p>
+  <p>(1) requests.ConnectTimeout</p>
+  <p style="margin-left:2em">
+  接続時タイムアウトです。カメラの電源をOffにしているときなどカメラと接続できない状態にあるときに接続しに行くと発生します。</p>
+  <p>(2) requests.exceptions.Timeout</p>
+  <p style="margin-left:2em">
+  読み取り時タイムアウトです。カメラと接続できている状態でカメラの電源をOffにするなどすると１回だけこの例外が発生するようです。この例外を１回発生させた後は 
+  requests.ConnectTimeout を発生するようになります。</p>
+  <p>(3) Exception</p>
+  <p style="margin-left:2em">
+  その他の例外です。意図しない例外を発生したときにその内容を確認する意図で記載しました。このプログラムを作成時にデバッグを目的に記載したもので不要な内容ですが、参考に残しています。システム終了以外の全ての組み込み例外はこの 
+  Exception クラスから派生しているので、この記載でほとんどの例外を補足することができます。</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+
+<p>&nbsp;</p>
+
+<section>
+  <h2><a name="7._GUIで映像表示してみる（tkinter）">7. GUIで映像表示してみる（tkinter）</a></h2>
+  <p>ここまでのプログラムは全てOpenCVが作成するウィンドウ表示でした。<br>ここでは独自の GUI を作成してここに映像表示する例を示します。</p>
+  <p>GUI 表示の実現方法もいろいろありますが、ここでは Python 標準の tkinter を使用してみます。</p>
+  <p>&nbsp;</p>
+  <p>tkinter のインストール方法は環境により異なるようです。各人の環境にあった方法をインターネットで調べて実施してください。</p>
+  <p>&nbsp;</p>
+  <p><strong>ポイント</strong></p>
+  <ul>
+    <li>tkinter で動画を表示するときは、after() 関数で繰り返し処理を行います。</li>
+    <li>tkinter で表示するために ImageTk.PhotoImage という型に変換する必要があります。</li>
+  </ul>
+  <p>&nbsp;</p>
+  <p>「<a href="connect_with_rtsp.html#7-3. メニュー・ボタンを追加して GUI アプリらしくしてみる">RTSP で画像を取得する ： 7-3. メニュー・ボタンを追加して GUI 
+  アプリらしくしてみる</a>」で既に 
+  GUI 版を作成済みなので、プログラム "connect_with_rtsp_6_3.py" 
+  をベースに変更箇所のみをわかるように以下で記載します。ほとんど同じ内容で実現できます。</p>
+  <p>&nbsp;</p>
+  <h4>[評価環境]</h4>
+  <table>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>言語 :</td>
+      <td>Python,</td>
+      <td>3.10.4 </td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>Tcl/Tk,</td>
+      <td>8.6 </td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>OS :</td>
+      <td>Windows 11 home,</td>
+      <td>21H2</td>
+    </tr>
+    <tr>
+	    <td></td>
+	    <td>Windows 10 Pro,</td>
+	    <td>21H1</td>
+	  </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_jpeg/connect_with_jpeg_6.py" target="_blank">connect_with_jpeg_6.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    Try connecting to an i-PRO camera with JPEG.
+    JPEG で i-PRO カメラと接続してみる。
+
+[Details]
+    Display the video with GUI using tkinter.
+    Add menus and buttons to make it look like a GUI app.
+    
+    tkinter を使ったGUIで映像を表示します。
+    メニューとボタンを追加してGUIアプリらしくします。
+    
+[Library install]
+    I think it will probably only work with built-in modules in Python.
+'''
+
+<span class="auto-style1">import tkinter as tk</span>
+<span class="auto-style1">from tkinter import messagebox</span>
+<span class="auto-style1">from PIL import Image, ImageTk, ImageOps</span>
+
+<span class="auto-style1">import multiprocessing as mp</span>
+<span class="auto-style1">import time</span>
+<span class="auto-style1">import io</span>
+<span class="auto-style1">import requests</span>
+<span class="auto-style1">from requests.auth import HTTPDigestAuth</span>
+
+
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+<span class="auto-style1">resolution  = 1920              # Resolution</span>
+<span class="auto-style1">url         = f"http://{host}/cgi-bin/camera?resolution={resolution}"</span>
+
+
+class Application(tk.Frame):
+    def __init__(self, master = None):
+        super().__init__(master)
+        self.pack()
+
+        # Window settings.
+        self.master.title("Display i-PRO camera with tkinter")      # Window title
+        self.master.geometry("800x600+100+100")                     # Window size, position
+
+        # Event registration for window termination.
+        self.master.protocol("WM_DELETE_WINDOW", self.on_closing_window)
+
+        # Create menu.
+        menubar = tk.Menu(self.master)
+        self.master.configure(menu=menubar)
+        filemenu = tk.Menu(menubar)
+        menubar.add_cascade(label='File', menu=filemenu)
+        filemenu.add_command(label='Quit', command = self.on_closing_window)
+
+        # Create button_frame
+        self.button_frame = tk.Frame(self.master, padx=10, pady=10, relief=tk.RAISED, bd=2)
+        self.button_frame.pack(side = tk.BOTTOM, fill=tk.X)
+
+        # Create quit_button
+        self.quit_button = tk.Button(self.button_frame, text='Quit', width=10, command = self.on_closing_window)
+        self.quit_button.pack(side=tk.RIGHT)
+        
+        # Create canvas.
+        self.canvas = tk.Canvas(self.master)
+
+        # Add mouse click event to canvas.
+        self.canvas.bind('&lt;Button-1&gt;', self.canvas_click)
+
+        # Place canvas.
+        self.canvas.pack(expand = True, fill = tk.BOTH)
+
+        # Create image receiving process and queue
+        self.imageQueue = mp.Queue()
+        self.request = mp.Value('i', 0)     # -1 : Exit ReceiveImageProcess.
+                                            #  0 : Normal.
+                                            #  1 : Connect camera.
+                                            #  2 : Release camera.
+        self.p = mp.Process(target=ReceiveImageProcess, args=(self.imageQueue, self.request))
+        self.p.start()
+
+        # Raise a video display event (disp_image) after 500m
+        self.disp_id = self.after(500, self.disp_image)
+
+    def on_closing_window(self):
+        ''' Window closing event. '''
+
+        if messagebox.askokcancel("QUIT", "Do you want to quit?"):
+            # Request terminate process self.p.
+            self.request.value = -1
+
+            # Waiting for process p to finish
+            time.sleep(1)
+
+            # Flash buffer.
+            # The program cannot complete p.join() unless the imageQueue is emptied.
+            for i in range(self.imageQueue.qsize()):
+                pil_image = self.imageQueue.get()
+
+            # Wait for process p to be terminated.
+            self.p.join()
+            self.master.destroy()
+            print("Finish Application.")
+
+    def canvas_click(self, event):
+        ''' Event handling with mouse clicks on canvas '''
+
+        if self.disp_id is None:
+            # Connect camera.
+            self.request.value = 1
+            # Display image.
+            self.disp_image()
+
+        else:
+            # Release camera.
+            self.request.value = 2
+            # Cancel scheduling
+            self.after_cancel(self.disp_id)
+            self.disp_id = None
+
+    def disp_image(self):
+        ''' Display image on Canvas '''
+
+        # If there is data in the imageQueue, the program receives the data and displays the video.
+        num = self.imageQueue.qsize()
+        if num &gt; 0:
+            if (num &gt; 5):
+                num -= 1
+            for i in range(num):
+<span class="auto-style1">                pil_image = self.imageQueue.get()</span>
+
+            # Get canvas size.
+            canvas_width = self.canvas.winfo_width()
+            canvas_height = self.canvas.winfo_height()
+
+            # Resize the image to the size of the canvas without changing the aspect ratio.
+            # アスペクトを維持したまま画像を Canvas と同じサイズにリサイズ
+            pil_image = ImageOps.pad(pil_image, (canvas_width, canvas_height))
+
+            # Convert image from PIL.Image to PhotoImage
+            # PIL.Image から PhotoImage へ変換する
+            self.photo_image = ImageTk.PhotoImage(image=pil_image)
+
+            # Display image on the canvas.
+            self.canvas.create_image(
+                canvas_width / 2,       # Image display position (center of the canvas)
+                canvas_height / 2,                   
+                image=self.photo_image  # image data
+                )
+            
+        else:
+            pass
+
+        # Raise a video display event (disp_image) after 1ms.
+        self.disp_id = self.after(1, self.disp_image)
+
+
+def ReceiveImageProcess(imageQueue, request):
+    '''
+    Receive Image Process.
+
+    Args:
+        imageQueue      [o] This process stores the received image data in the imageQueue.
+        request         [i] Shared memory for receiving requests from the main process.
+                            -1: Terminate process.
+                             2: Do not get camera image.
+                             *: At other values, the program gets the camera image.
+    Returns:
+        None
+    Raises
+        None
+    '''
+
+<span class="auto-style1">    while request.value != -1:</span>
+<span class="auto-style1">        if request.value != 2:</span>
+<span class="auto-style1">            try:</span>
+<span class="auto-style1">                # Request and receive image from camera.</span>
+<span class="auto-style1">                rs = requests.get(url, auth=HTTPDigestAuth(user_id, user_pw), timeout=10)</span>
+<span class="auto-style1">                if imageQueue.qsize() &lt; 10:</span>
+<span class="auto-style1">                    image_bin = io.BytesIO(rs.content)</span>
+<span class="auto-style1">                    pil_image = Image.open(image_bin)</span>
+<span class="auto-style1">                    imageQueue.put(pil_image)</span>
+
+<span class="auto-style1">            except requests.ConnectTimeout as e:</span>
+<span class="auto-style1">                print(e)</span>
+
+<span class="auto-style1">            except requests.exceptions.Timeout as e:</span>
+<span class="auto-style1">                print(e)</span>
+
+<span class="auto-style1">            except Exception as e:</span>
+<span class="auto-style1">                print(e)</span>
+
+<span class="auto-style1">        else:</span>
+<span class="auto-style1">            time.sleep(1)</span>
+
+
+if __name__ == "__main__":
+    '''
+    __main__ function.
+    '''
+    root = tk.Tk()
+    app = Application(master = root)
+    app.mainloop()</pre>
+  <p>&nbsp;</p>
+  <p>
+    <video controls muted autoplay="y" loop="y" width="800px">
+      <source src="connect_with_jpeg/jpeg_6.mp4" type="video/mp4">
+      動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+    </video>
+  </p>
+  <p>[動画] tkinter で作成した GUI アプリ</p>
+  <p>&nbsp;</p>
+</section>
+
+<p>&nbsp;</p>
+
+<section>
+  <h2><a name="ソースコード所在">ソースコード所在</a></h2>
+  <p>本ページで紹介のソースコードは、下記 github より取得できます。</p>
+  <p>下記 github のソースコードと本ページの内容は差異がある場合があります。</p>
+  <p><a href="https://github.com/i-pro-corp/python-examples" target="_blank">i-pro-corp/python-examples: Examples for i-PRO cameras. (github.com)</a></p>
+</section>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<section>
+  <h2><a name="ライセンス">ライセンス</a></h2>
+<p>本ページの情報は、特記無い限り下記ライセンスで提供されます。</p>
+<table class="border-collapse" style="width: 600px; background-color: #F0F0F0; word-break: break-word;">
+  <tr>
+    <td>
+    <br>Copyright 2022 i-PRO Co., Ltd.<br><br>Licensed under the Apache License, Version 
+    2.0 (the "License");<br>you may not use this file except in compliance with 
+    the License.<br>You may obtain a copy of the License at <br><br>&nbsp;&nbsp;&nbsp;
+    <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">http://www.apache.org/licenses/LICENSE-2.0</a><br><br>
+    Unless required by 
+    applicable law or agreed to in writing, software <br>distributed under the 
+    License is distributed on an "AS IS" BASIS, <br>WITHOUT WARRANTIES OR 
+    CONDITIONS OF ANY KIND, either express or implied. <br>See the License for 
+    the specific language governing permissions and<br>limitations under the 
+    License. <br> <br>
+    </td>
+  </tr>
+</table>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+
+
+<section>
+  <h2><a name="参考">参考</a></h2>
+	<ul>
+		<li>[1] ネットワークカメラCGIコマンドインターフェース仕様書　統合版<br>
+        <a href="https://sol.panasonic.biz/security/cgi-bin/ipro/download/tbookmarka_m.cgi?m=%20&amp;mm=2012100910461872" target="_blank">
+        https://sol.panasonic.biz/security/cgi-bin/ipro/download/tbookmarka_m.cgi?m=%20&amp;mm=2012100910461872</a></li>
+    <li>[2] Panasonic製ネットワークカメラの画像を取得して顔検出をしてみる - Qiita<br>
+        <a href="https://qiita.com/mix_dvd/items/a0bdbe0ba628d5282639" target="_blank">
+        https://qiita.com/mix_dvd/items/a0bdbe0ba628d5282639</a></li>
+	</ul>
+    <p>&nbsp;</p>
+</section>
+
+<p>&nbsp;</p>
+
+<hr>
+
+<p>&nbsp;</p>
+
+<section>
+	<h2 style="margin-bottom:5px">変更履歴</h2>
+	<table>
+	  <tr>
+	    <td class="td_history_date">2022/5/26</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">新規作成,</td>
+	    <td class="td_history">木下英俊 </td>
+	  </tr>
+	</table>
+</section>
+
+<p>&nbsp;</p>
+<p><a href="../../index.html" target="_parent">i-PRO - Programming Items トップページ</a></p>
+<p><a href="../../privacy_policy.html">プライバシーポリシー</a></p>
+<p>&nbsp;</p>
+
+<footer>
+	<p><small>&copy; 2022  i-PRO Co., Ltd.</small></p>
+</footer>
+
+</body>
+</html>

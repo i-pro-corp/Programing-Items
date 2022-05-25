@@ -1,0 +1,2176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="kinoshita hidetosi (木下英俊)">
+  <meta name="description" content="Introducing programming for i-PRO cameras.">
+  <meta name="keywords" content="i-PRO">
+  
+  <!-- キャッシュ無効化 -->
+  <meta http-equiv="Cache-Control" content="no-cache">
+	
+  <title>RTSPで画像を取得する</title>
+	
+  <!-- CSS -->
+  <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="../../design.css" type="text/css">
+  
+	<!-- Start for 'google-code-prettify' -->
+	<link href="../../prettify/styles/desert.css" rel="stylesheet" type="text/css">
+	<script src="../../prettify/prettify.js" type="text/javascript"></script>
+	<!-- End for 'google-code-prettify' -->
+	
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5DFRG3H0KB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-5DFRG3H0KB');
+  </script>  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+  <style type="text/css">
+  .auto-style2 {
+    background-color: #484800;
+  }
+  .super {
+    vertical-align: super;
+  }
+  </style>
+
+</head>
+
+<body onload="prettyPrint();">
+
+<h1>RTSP で画像を取得する</h1>
+
+<p> &nbsp;</p>
+<table style="border: 1px solid #808080; width: 800px; max-width:100%; background-color: #F0F0F0;">
+ <tr>
+  <td>
+    <strong>NOTE</strong><br>
+    本ページは i-PRO株式会社 の有志メンバーにより記載されたものです。<br>
+    本ページの情報は <a href="#ライセンス">ライセンス</a> に記載の条件で提供されます。
+ </tr>
+</table>
+<p> &nbsp;</p>
+<table style="border: 1px solid #808080; width: 800px; max-width:100%; background-color: #F0F0F0;">
+  <tr>
+    <td>
+      <nav>
+        <h2> 目次</h2>
+        <p>
+        <a href="#1._RTSP 表記仕様">1. RTSP 表記仕様</a><br>
+        <a href="#2. i-PRO カメラと RTSP 接続して映像を表示してみる">2. i-PRO カメラと RTSP 接続して映像を表示してみる</a><br>
+        <a href="#3.プログラムを改善する">3. プログラムを改善する</a><br>
+        <a href="#4. OpenCV で顔検知を加えてみる">4. OpenCV で顔検知を加えてみる</a><br>
+        &nbsp;
+        <a href="#4-1._まずは単純にやってみる">4-1. まずは単純にやってみる</a><br>
+        &nbsp;
+        <a href="#4-2._顔検知部分を別プロセスの処理にしてみる">4-2. 顔検知部分を別プロセスの処理にしてみる</a><br>
+        <a href="#5._連番の_JPEG_ファイルで保存する">5. 連番の JPEG ファイルで保存する</a><br>
+        <a href="#6._映像切断時の再接続処理を追加">6. 映像切断時の再接続処理を追加</a><br>
+        <a href="#7._GUIで映像表示してみる（tkinter）">7. GUIで映像表示してみる（tkinter）</a><br>&nbsp;
+        <a href="#7-1._まずは単純にやってみる">7-1. まずは単純にやってみる</a><br>&nbsp;
+        <a href="#7-2._映像受信を別プロセスにしてパフォーマンス改善">7-2. 映像受信を別プロセスにしてパフォーマンス改善</a><br>&nbsp;
+        <a href="#7-3. メニュー・ボタンを追加して GUI アプリらしくしてみる">7-3. メニュー・ボタンを追加して GUI アプリらしくしてみる</a><br>
+        <br>
+        <a href="#ソースコード所在">ソースコード所在</a><br>
+        <a href="#ライセンス">ライセンス</a><br>
+        <a href="#参考">参考</a><br>
+        </p>
+      </nav>
+    </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<p> i-PRO のカメラ i-PRO mini (WV-S7130)、モジュールカメラ（AIスターターキット）を入手したので、カメラとPCを接続して動作するプログラムを作成してみました。こちらで紹介します。</p>
+<p> ここで記載の内容は、ほとんどの i-PRO カメラでそのまま利用できると思いますが未確認です。</p>
+<p>&nbsp;</p>
+<section>
+<p> "i-PRO mini" 紹介： </p>
+<ul>
+  <li><a href="https://cwc.i-pro.com/pages/i-pro-mini-lp" target="_blank">i-PRO 
+  mini</a></li>
+  <li>
+  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130ux" target="_blank">
+  i-PRO mini 有線LANモデル WV-S7130UX</a></li>
+  <li>
+  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130wux" target="_blank">
+  i-PRO mini 無線LANモデル WV-S7130WUX</a></li>
+  <li>
+  <a href="https://japancs.i-pro.com/space/DLJP/724085590/WV-S7130UX　i-PRO+mini+有線LANモデル" target="_blank">
+  WV-S7130UX　i-PRO mini 有線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
+  <li>
+  <a href="https://japancs.i-pro.com/space/DLJP/724086255/WV-S7130WUX　i-PRO+mini+無線LANモデル" target="_blank">
+  WV-S7130WUX　i-PRO mini 無線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
+</ul>
+<p> 
+<a href="images/i-PRO_mini.jpg" target="_blank">
+<img alt="" src="images/i-PRO_mini.jpg" style="height: 250px" width="348" class="border_with_drow-shadow"></a></p>
+<p> 
+&nbsp;</p>
+<p> 
+"モジュールカメラ" 紹介：</p>
+<ul>
+  <li><a href="https://moduca.i-pro.com/space/MCP" target="_blank">Module Camera 
+  Product Information - モジュールカメラ｜ポータルサイト (i-pro.com)</a></li>
+  <li>
+  <a href="https://moduca.i-pro.com/space/MCT/768743132/各種マニュアル" target="_blank">
+  各種マニュアル - Module Camera Technical Information - モジュールカメラ｜ポータルサイト (i-pro.com)</a></li>
+</ul>
+<p> 
+<a href="images/ai_starter_kit_1.png" target="_blank">
+<img alt="" class="border_with_drow-shadow" src="images/ai_starter_kit_1.png" style="height: 250px" width="404"></a>
+<a href="images/ai_starter_kit_2.png" target="_blank">
+<img alt="" class="border_with_drow-shadow" src="images/ai_starter_kit_2.png" style="height: 250px" width="444"></a></p>
+<p> 
+&nbsp;</p>
+<p> 
+カメラ初期設定についてはカメラ毎の取扱説明書をご確認ください。</p>
+<p> 
+カメラのIPアドレスを確認・設定できる下記ツールを事前に入手しておくと便利です。</p>
+<ul>
+ <li>
+ <a href="https://connect.panasonic.com/jp-ja/products-services_security_support_specifications-manuals-firms-tool_2014040315191048" target="_blank">
+ IP簡単設定ソフトウェア</a>&nbsp;（日本国内）</li>
+ <li>
+ <a href="https://bizpartner.panasonic.net/public/file/ip-setting-software" target="_blank">
+ IP Setting Software</a>&nbsp;&nbsp;&nbsp;&nbsp; （グローバル）</li>
+</ul>
+</section>
+
+<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>
+
+<section>
+ <h2><a name="1._RTSP 表記仕様">1. RTSP 表記仕様</a></h2>
+ <h4>[概要]</h4>
+ <p>RTSP で接続するための表記を以下に記載します。</p>
+ <p>「ネットワークカメラCGIコマンドインターフェース仕様書 統合版」<span class="super">[1]</span> 
+ で下記に記載されている情報を元に加筆しています。</p>
+ <ul>
+  <li>i-pro カメラ外部インタフェース仕様書ver1.59.pdf ： 「10.5. 汎用ビューアで H.264 を見る」</li>
+  <li>i-pro カメラ外部インタフェース仕様書ver1.59.pdf ： 「10.6. 汎用ビューアで H.265 を見る」</li>
+ </ul>
+ <p>&nbsp;</p>
+ <p>&nbsp;</p>
+ <h3>i-PRO カメラ</h3>
+ <table class="border-collapse">
+  <tr>
+   <td class="standard_table"><strong>ストリーム(1)</strong></td>
+   <td class="standard_table"><span class="cpp-source">
+   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1</span></td>
+  </tr>
+  <tr>
+   <td class="standard_table"><strong>ストリーム(2)</strong></td>
+   <td class="standard_table"><span class="cpp-source">
+   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2</span></td>
+  </tr>
+  <tr>
+   <td class="standard_table"><strong>ストリーム(3)</strong></td>
+   <td class="standard_table"><span class="cpp-source">
+   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_3</span></td>
+  </tr>
+  <tr>
+   <td class="standard_table"><strong>ストリーム(4)</strong></td>
+   <td class="standard_table"><span class="cpp-source">
+   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_4</span></td>
+  </tr>
+ </table>
+ <p>&nbsp;</p>
+ <p>(例) <span class="cpp-source">
+ rtsp://admin:password@192.168.0.10/MediaInput/stream_1</span></p>
+ <p>&nbsp;</p>
+ <p>補足： </p>
+ <ul>
+  <li>
+  <p>カメラ側の映像圧縮方式設定が H.264/H.265 のいずれの場合も上記で接続できました。</p>
+  </li>
+  <li>
+  <p>ストリーム(1)(2)のみのカメラもあります。詳細はご使用のカメラ仕様書をご確認ください。</p>
+  </li>
+  <li>
+  <p>i-PRO マルチセンサーカメラは仕様が異なります。下記表を参照ください。</p>
+  </li>
+ </ul>
+ <p>&nbsp;</p>
+ <p>&nbsp;</p>
+ <h3>i-PRO マルチセンサーカメラ（WV-X8570/WV-S8530 等）</h3>
+ <table class="border-collapse">
+  <tr>
+   <td class="standard_table"><strong>ストリーム(1) Ch1 (Camera1)/</strong></td>
+   <td class="standard_table"><span class="cpp-source">
+   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1</span><br>
+   <span class="cpp-source">
+   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1/ch_1</span></td>
+  </tr>
+  <tr>
+   <td class="standard_table"><strong>ストリーム(2) Ch1 (Camera1)/</strong></td>
+   <td class="standard_table"><span class="cpp-source">
+   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2</span><br>
+   <span class="cpp-source">
+   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2/ch_1</span></td>
+  </tr>
+  <tr>
+   <td class="standard_table"><strong>ストリーム(1) Ch2 (Camera2)/</strong></td>
+   <td class="standard_table"><span class="cpp-source">
+   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1/ch_2</span></td>
+  </tr>
+  <tr>
+   <td class="standard_table"><strong>ストリーム(2) Ch2 (Camera2)/</strong></td>
+   <td class="standard_table"><span class="cpp-source">
+   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2/ch_2</span></td>
+  </tr>
+  <tr>
+   <td class="standard_table"><strong>ストリーム(1) Ch3 (Camera3)/</strong></td>
+   <td class="standard_table"><span class="cpp-source">
+   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1/ch_3</span></td>
+  </tr>
+  <tr>
+   <td class="standard_table"><strong>ストリーム(2) Ch3 (Camera3)/</strong></td>
+   <td class="standard_table"><span class="cpp-source">
+   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2/ch_3</span></td>
+  </tr>
+  <tr>
+   <td class="standard_table"><strong>ストリーム(1) Ch4 (Camera4)/</strong></td>
+   <td class="standard_table"><span class="cpp-source">
+   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1/ch_4</span></td>
+  </tr>
+  <tr>
+   <td class="standard_table"><strong>ストリーム(2) Ch4 (Camera4)/</strong></td>
+   <td class="standard_table"><span class="cpp-source">
+   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2/ch_4</span></td>
+  </tr>
+ </table>
+ <p>&nbsp;</p>
+</section>
+<p>&nbsp;</p>
+
+<section>
+	<h2> <a name="2. i-PRO カメラと RTSP 接続して映像を表示してみる">2. i-PRO カメラと RTSP 接続して映像を表示してみる</a></h2>
+	<h4>[概要]</h4>
+    <p>Python で i-PRO カメラ（i-PRO mini (WV-S7130W)）と RTSP 接続して映像を表示してみます。<br>とりあえず映像を取得してPC画面に表示するまでをやってみます。</p>
+    <ul>
+      <li>Stream1 はデフォルトで 1920x1024、H.265 となっています。<br>
+        必要に応じて H.264 へ変更してみてください。H.264 の方が処理は軽くなりそうです。</li>
+      <li>それでもまだ処理が重たい場合は、接続先を stream1 から stream2 または stream3 などへ変更してみてください。</li>
+    </ul>
+	<p> &nbsp;</p>
+	
+	<h4>[評価環境1]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>言語 :</td>
+	    <td>Python,</td>
+	    <td>3.10.4 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>Windows 11 home,</td>
+	    <td>21H2</td>
+	  </tr>
+	  <tr>
+	    <td></td>
+	    <td>Windows 10 Pro,</td>
+	    <td>21H1</td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+	<p>&nbsp;</p>
+	
+	<h4>[評価環境2]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>言語 :</td>
+	    <td>Python,</td>
+	    <td>3.8.10 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>Ubuntu(WSL),</td>
+	    <td>20.04</td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+	<p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <h4>[プログラム]</h4>
+    <p> プログラムを終了する方法を実装していません。コンソール上で [ctrl]+[c] して終了してください。</p>
+    <p>&nbsp;</p>
+  <p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_rtsp/connect_with_rtsp_1.py" target="_blank">connect_with_rtsp_1.py</a>&quot;]</p>
+  
+	<pre class="prettyprint linenums lang-py">
+'''
+[Abstract]
+    RTSP で i-PRO カメラと接続してみる 
+[Library install]
+ &nbsp; &nbsp;pip install opencv-python 
+'''
+
+import cv2
+user_id     = "user-id"         # ご使用のカメラ設定に合わせて変更
+user_pw     = "password"        # ご使用のカメラ設定に合わせて変更
+host        = "192.168.0.10"    # ご使用のカメラ設定に合わせて変更
+winname     = "VIDEO"           # ウィンドウタイトル
+
+cap = cv2.VideoCapture(f"rtsp://{user_id}:{user_pw}@{host}/MediaInput/stream_1")
+
+while True:
+    try:
+        ret, frame = cap.read()
+        if ret == True:
+            # 使っているPC画面に適当に収まる表示大きさへリサイズ
+            frame2 = cv2.resize(frame, (1280, 720))
+            cv2.imshow(winname, frame2)
+
+        cv2.waitKey(1)    # 注意： imshow() 関数は、この cv2.waitkey() が無いと画面表示してくれない！
+
+    except KeyboardInterrupt:
+        # コンソール上で ctrl-c を押すとプログラムを終了する。
+        # GUI 上で ctrl-c してもプログラムを終了できない。
+        print("KeyboardInterrupt")
+        break
+
+cap.release()
+cv2.destroyAllWindows()</pre>
+
+    <p>&nbsp;</p>
+    <p>上記プログラムを動かしてみます。実行はこんな感じで行います。</p>
+    <p><span class="cpp-source"><strong>python</strong> connect_with_rtsp_1.py</span></p>
+    <p>&nbsp;</p>
+    <p>Windows環境で複数の Python バージョンをインストールしている場合、下図のような感じで実行バージョンを指定することもできます。<br>
+    こちらはバージョン 3.10 の Python で実行を指示する例です。</p>
+    <p><span class="cpp-source"><strong>py</strong> -3.10 connect_with_rtsp_1.py</span></p>
+    <p>&nbsp;</p>
+    <p>上記プログラムを動かした様子を動画で示します。</p>
+    <p>こんなに簡単なプログラムでとても快適な映像表示を実現することができました。</p>
+    
+<video controls muted autoplay="y" loop="y" src="connect_with_rtsp/rtsp_first.mp4" width="800px">
+  <p>動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。</p>
+</video>
+
+<p>[動画] RTSP でカメラと接続して映像表示してみた様子</p>
+    
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    
+</section>
+
+<section>
+  <h2><a name="3.プログラムを改善する">3.プログラムを改善する</a></h2>
+	<h4>[概要]</h4>
+  <p>前章で作成したプログラムはとても簡単に作成できましたが、いろいろと課題がありました。<br>とりあえず下記３つの課題を解決してみます。</p>
+  <p>&nbsp;</p>
+  <p>課題１<br>プログラムを起動するたびにウィンドウ位置が変わる。場合によっては画面外へ表示する場合もあって不便。<br>
+  適当に画面内に収まる場所に表示してほしい。<br>⇨ 指定する場所にウィンドウを表示するようにします。</p>
+  <p>&nbsp;</p>
+  <p>課題２<br>プログラムを終了するのが大変。<br>ウィンドウ右上の[x]を押すとウィンドウがいったん消えるが、すぐに再表示されて終われない。<br>⇨ 
+  ウィンドウ右上の[x]ボタンでプログラムを終了できるようにします。</p>
+  <p>&nbsp;</p>
+  <p>課題３<br>同様に、任意のキー入力でプログラムを終了できるとうれしい。<br>⇨ "q" キー押下でプログラムを終了できるようにします。</p>
+  <p>&nbsp;</p>
+    <p>&nbsp;</p>
+	<p> &nbsp;</p>
+	
+	<h4>[評価環境1]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>言語 :</td>
+	    <td>Python,</td>
+	    <td>3.10.4 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>Windows 11 home,</td>
+	    <td>21H2</td>
+	  </tr>
+	  <tr>
+	    <td></td>
+	    <td>Windows 10 Pro,</td>
+	    <td>21H1</td>
+	  </tr>		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+	<p>&nbsp;</p>
+	
+	<h4>[評価環境2]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>言語 :</td>
+	    <td>Python,</td>
+	    <td>3.8.10 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>Ubuntu(WSL),</td>
+	    <td>20.04</td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+	<p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <h4>[プログラム]</h4>
+  <p>&nbsp;</p>
+  
+  <p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_rtsp/connect_with_rtsp_2.py" target="_blank">connect_with_rtsp_2.py</a>&quot;]</p>
+	<pre class="prettyprint linenums lang-py">
+'''
+[Abstract]
+    Try connecting to an i-PRO camera with RTSP.
+    RTSP で i-PRO カメラと接続してみる
+
+[Details]
+    Let's improve the three issues of "connect_with_rtsp_1.py".
+    "connect_with_rtsp_1.py" で確認した下記３つの課題を改善してみます。
+
+    [Issues 1]
+    Specifies the position where the window is displayed.
+    ウィンドウを指定する場所に表示するようにします。
+    [Issues 2]
+    Modify the program so that you can exit the program by clicking the [x] button.
+    ウィンドウ右上の[x]ボタンでプログラムを終了できるようにします。
+    [Issues 3]
+    Modify the program so that you can exit the program by pressing the [q] key.
+    "q" キー押下でプログラムを終了できるようにします。
+    
+[Library install]
+    pip install opencv-python
+'''
+
+import cv2
+
+user_id     = "user-id"         # ご使用のカメラ設定に合わせて変更
+user_pw     = "password"        # ご使用のカメラ設定に合わせて変更
+host        = "192.168.0.10"    # ご使用のカメラ設定に合わせて変更
+winname     = "VIDEO"           # ウィンドウタイトル
+
+cap = cv2.VideoCapture(f"rtsp://{user_id}:{user_pw}@{host}/MediaInput/stream_1")
+
+<span class="auto-style2">#</span>
+<span class="auto-style2">windowInitialized = False</span>
+
+<span class="auto-style2"># Exception 定義</span>
+<span class="auto-style2">BackendError = type('BackendError', (Exception,), {})</span>
+
+<span class="auto-style2">'''</span>
+<span class="auto-style2">[Abstract]</span>
+<span class="auto-style2">    対象ウィンドウが存在するかを確認する。</span>
+<span class="auto-style2">[Param]</span>
+<span class="auto-style2">    winname :       ウィンドウタイトル</span>
+<span class="auto-style2">[Return]</span>
+<span class="auto-style2">    True :          対象ウィンドウは存在する</span>
+<span class="auto-style2">    False :         対象ウィンドウは存在しない</span>
+<span class="auto-style2">[Exception]</span>
+<span class="auto-style2">    BackendError :  バックエンドで使用している Qt でエラー発生</span>
+<span class="auto-style2">'''</span>
+<span class="auto-style2">def IsWindowVisible(winname):</span>
+<span class="auto-style2">    try:</span>
+<span class="auto-style2">        ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)</span>
+<span class="auto-style2">        if ret == -1:</span>
+<span class="auto-style2">            raise BackendError('Use Qt as backend to check whether window is visible or not.')</span>
+
+<span class="auto-style2">        return bool(ret)</span>
+
+<span class="auto-style2">    except cv2.error:</span>
+<span class="auto-style2">        return False</span>
+
+
+while True:
+    try:
+        ret, frame = cap.read()
+        if ret == True:
+            frame2 = cv2.resize(frame, (1280, 720))
+            cv2.imshow(winname, frame2)
+
+<span class="auto-style2">            if windowInitialized==False:</span>
+<span class="auto-style2">                # 最初の起動時のみ表示位置を指定</span>
+<span class="auto-style2">                cv2.moveWindow(winname, 100, 100)</span>
+<span class="auto-style2">                windowInitialized = True</span>
+
+<span class="auto-style2">        # Press the "q" key to finish.</span>
+<span class="auto-style2">        k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()</span>
+<span class="auto-style2">        if k == ord("q"):</span>
+<span class="auto-style2">            break</span>
+<span class="auto-style2">        </span>
+<span class="auto-style2">        # 指定ウィンドウが無かったら終了</span>
+<span class="auto-style2">        if not IsWindowVisible(winname):</span>
+<span class="auto-style2">            break</span>
+
+    except KeyboardInterrupt:
+        print("KeyboardInterrupt")
+        break
+
+cap.release()
+cv2.destroyAllWindows()</pre>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+
+
+<section>
+  <h2><a name="4. OpenCV で顔検知を加えてみる">4. OpenCV で顔検知を加えてみる</a></h2>
+  <p>JPEG による実装と同様に、RTSP の実装でも OpenCV による顔検知を実装してみます。</p>
+  <p>RTSP 接続では映像情報は受け身です。このため高解像度、高フレームレートの映像を処理したとき、OpenCV の処理が追いつくかが心配な部分です。</p>
+	<p> &nbsp;</p>
+  <p>下記 URL からファイル "haarcascade_frontalface_alt2.xml" 
+  を入手してプログラムと同じ場所に保存する必要があります。</p>
+  <p>
+  <a href="https://github.com/opencv/opencv/tree/master/data/haarcascades" target="_blank">
+  https://github.com/opencv/opencv/tree/master/data/haarcascades</a> </p>
+  <p>xml ファイル取得方法は <a href="how_to_get_xml_file.html">こちら</a> を参照ください</p>
+  <p>&nbsp;</p>
+	
+	<h4>[評価環境1]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>言語 :</td>
+	    <td>Python,</td>
+	    <td>3.10.4 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>Windows 11 home,</td>
+	    <td>21H2</td>
+	  </tr>
+	  <tr>
+	    <td></td>
+	    <td>Windows 10 Pro,</td>
+	    <td>21H1</td>
+	  </tr>		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+	<p>&nbsp;</p>
+	
+	<h4>[評価環境2]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>言語 :</td>
+	    <td>Python,</td>
+	    <td>3.8.10 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>Ubuntu(WSL),</td>
+	    <td>20.04</td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+  <p>&nbsp;</p>
+  <h3><a name="4-1._まずは単純にやってみる">4-1. まずは単純にやってみる</a></h3>
+  <p>とにかくまずはやってみます。</p>
+  <p>JPEG による実装と同様に、映像を受信するたびの OpenCV で毎回認識処理を行ってみます。</p>
+  <p>&nbsp;</p>
+  <p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_rtsp/connect_with_rtsp_3_1.py" target="_blank">connect_with_rtsp_3_1.py</a>&quot;]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    RTSP で i-PRO カメラと接続してみる 
+
+[Details]
+    opencv を使って顔検知を追加してみます。 
+
+[Library install]
+    pip install opencv-python
+
+[OpenCV]
+    下記URLからファイル "haarcascade_frontalface_alt2.xml" を入手すること
+    https://github.com/opencv/opencv/tree/master/data/haarcascades 
+'''
+
+import cv2
+
+user_id     = "user-id"         # ご使用のカメラ設定に合わせて変更
+user_pw     = "password"        # ご使用のカメラ設定に合わせて変更
+host        = "192.168.0.10"    # ご使用のカメラ設定に合わせて変更
+winname     = "VIDEO"           # ウィンドウタイトル
+
+# Exception 定義
+BackendError = type('BackendError', (Exception,), {})
+
+'''
+[Abstract]
+    対象ウィンドウが存在するかを確認する。
+[Param]
+    winname :       ウィンドウタイトル
+[Return]
+    True :          対象ウィンドウは存在する
+    False :         対象ウィンドウは存在しない
+[Exception]
+    BackendError :  バックエンドで使用している Qt でエラー発生
+'''
+def IsWindowVisible(winname):
+    try:
+        ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
+        if ret == -1:
+            raise BackendError('Use Qt as backend to check whether window is visible or not.')
+
+        return bool(ret)
+
+    except cv2.error:
+        return False
+
+<span class="auto-style2">'''</span>
+<span class="auto-style2">[Abstract]</span>
+<span class="auto-style2">    顔検知して認識結果を返す</span>
+<span class="auto-style2">[Param]</span>
+<span class="auto-style2">    cascade :       OpenCV の CascadeClassifierオブジェクト</span>
+<span class="auto-style2">    image :         OpenCV 形式の画像</span>
+<span class="auto-style2">[Return]</span>
+<span class="auto-style2">    認識結果</span>
+<span class="auto-style2">'''</span>
+<span class="auto-style2">def DetectFaces(cascade, image):</span>
+<span class="auto-style2">    # 顔検出のためにグレイスケール画像に変換</span>
+<span class="auto-style2">    img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)</span>
+
+<span class="auto-style2">    # 顔を画像から検出 </span>
+<span class="auto-style2">    face_list = cascade.detectMultiScale(img_gray, minSize=(100, 100))</span>
+
+<span class="auto-style2">    # 検出結果を返す</span>
+<span class="auto-style2">    return face_list</span>
+
+
+<span class="auto-style2">'''</span>
+<span class="auto-style2">[Abstract]</span>
+<span class="auto-style2">    検出された顔枠情報リストを使って、image 上に赤枠を描画する。</span>
+<span class="auto-style2">[Param]</span>
+<span class="auto-style2">    image :         OpenCV 形式の画像</span>
+<span class="auto-style2">    face_list :     検出された顔枠情報リスト</span>
+<span class="auto-style2">[Return]</span>
+<span class="auto-style2">    無し</span>
+<span class="auto-style2">'''</span>
+<span class="auto-style2">def DrawFaceRectangles(image, face_list):</span>
+<span class="auto-style2">    # 検出した顔の数だけ赤枠を描画</span>
+<span class="auto-style2">    if len(face_list) != 0:</span>
+<span class="auto-style2">        for (pos_x, pos_y, w, h) in face_list:</span>
+<span class="auto-style2">            print(f"pos_x = {pos_x}, pos_y = {pos_y}, w = {w}, h = {h}")</span>
+<span class="auto-style2">            cv2.rectangle(image, (pos_x, pos_y), (pos_x + w, pos_y + h), (0,0,255), thickness=5)</span>
+
+
+'''
+[Abstract]
+    main 関数
+'''
+if __name__ == '__main__':
+
+    cap = cv2.VideoCapture(f"rtsp://{user_id}:{user_pw}@{host}/MediaInput/stream_1")
+
+    #
+    windowInitialized = False
+
+<span class="auto-style2">    # 顔を識別するためのファイル</span>
+<span class="auto-style2">    cascade_file = "haarcascade_frontalface_alt2.xml"       # 顔</span>
+<span class="auto-style2">    #cascade_file = "haarcascade_eye.xml"                   # 目？</span>
+<span class="auto-style2">    #cascade_file = "haarcascade_eye_tree_eyeglasses.xml"   # 目？</span>
+<span class="auto-style2">    cascade = cv2.CascadeClassifier(cascade_file)</span>
+
+    while True:
+        try:
+            ret, frame = cap.read()
+            if ret == True:
+<span class="auto-style2">                # 顔検知</span>
+<span class="auto-style2">                face_list = DetectFaces(cascade, frame)</span>
+
+<span class="auto-style2">                # 検出した顔枠を描画</span>
+<span class="auto-style2">                DrawFaceRectangles(frame, face_list)</span>
+
+                # PC画面サイズに合わせて適当にリサイズ後、表示
+                frame2 = cv2.resize(frame, (1280, 720))
+                cv2.imshow(winname, frame2)
+
+                if windowInitialized==False:
+                    # 最初の起動時のみ表示位置を指定
+                    cv2.moveWindow(winname, 100, 100)
+                    windowInitialized = True
+
+            # Press the "q" key to finish.
+            k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
+            if k == ord("q"):
+                break
+            
+            # 指定ウィンドウが無かったら終了
+            if not IsWindowVisible(winname):
+                break
+
+
+        except KeyboardInterrupt:
+            print("KeyboardInterrupt")
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()</pre>
+  <p>&nbsp;</p>
+  <p>結果：</p>
+  <p>私のゲーミングPCではこれでもそこそこ動作しました。思ったより動く、という感想です。</p>
+  <p>が、それでもだんだん映像が遅れていきます。<br>顔検知処理と描画の部分をコメントアウトすると、映像表示の遅れはなくなります。<br>
+  やはり顔検知処理は PC にとって結構重たい処理のようです。</p>
+  <p>ちょっと残念。何か改善策を考えてみたいところです。</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <h3><a name="4-2._顔検知部分を別プロセスの処理にしてみる">4-2. 顔検知部分を別プロセスの処理にしてみる</a></h3>
+  <p>
+  そこで、顔検知部分を別タスクに分離することで、映像受信と映像デコード処理を止めずにできるだけ顔検知をやってみる、という感じにプログラムを修正してみます。</p>
+  <p>&nbsp;</p>
+  <p><strong>NOTE</strong></p>
+  <ul>
+    <li>別タスクというと一般的なプログラムでは "スレッド" というテクニックを使いますが、どうやら CPython 
+    と呼ばれるプラットフォームの場合はスレッドは複数の処理を同時に実行してくれないらしいです。そこで、ここではプロセスを使用します。</li>
+    <li>Queue というIOでプロセス間で情報をやり取りします。</li>
+    <li>顔検知を行った映像と赤枠表示する映像は異なるものになりますが、ここではこれを許容することとします。</li>
+  </ul>
+  <p>
+  &nbsp;</p>
+  <p>&nbsp;</p>
+  <p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_rtsp/connect_with_rtsp_3_2.py" target="_blank">connect_with_rtsp_3_2.py</a>&quot;]</p>
+  <pre class="prettyprint linenums lang-py">
+'''
+[Abstract]
+    RTSP で i-PRO カメラと接続してみる
+
+[Details]
+    opencv を使って顔検知を追加してみます。
+    "connect_with_rtsp_3_1.py" で確認した問題を、顔検知処理を別プロセスにすることで解決してみます。 
+
+[Library install]
+    pip install opencv-python
+
+[OpenCV]
+    下記URLからファイル "haarcascade_frontalface_alt2.xml" を入手すること
+    https://github.com/opencv/opencv/tree/master/data/haarcascades 
+'''
+
+import cv2
+<span class="auto-style2">import multiprocessing as mp</span>
+<span class="auto-style2">from queue import Empty</span>
+
+
+user_id     = "user-id"         # ご使用のカメラ設定に合わせて変更
+user_pw     = "password"        # ご使用のカメラ設定に合わせて変更
+host        = "192.168.0.10"    # ご使用のカメラ設定に合わせて変更
+winname     = "VIDEO"           # ウィンドウタイトル
+
+<span class="auto-style2"># 顔を識別するためのファイル</span>
+<span class="auto-style2">cascade_file = "haarcascade_frontalface_alt2.xml"       # 顔</span>
+<span class="auto-style2">#cascade_file = "haarcascade_eye.xml"                   # 目？</span>
+<span class="auto-style2">#cascade_file = "haarcascade_eye_tree_eyeglasses.xml"   # 目？</span>
+<span class="auto-style2">cascade = cv2.CascadeClassifier(cascade_file)</span>
+
+
+# Exception 定義
+BackendError = type('BackendError', (Exception,), {})
+
+'''
+[Abstract]
+    対象ウィンドウが存在するかを確認する。
+[Param]
+    winname :       ウィンドウタイトル
+[Return]
+    True :          対象ウィンドウは存在する
+    False :         対象ウィンドウは存在しない
+[Exception]
+    BackendError :  バックエンドで使用している Qt でエラー発生
+'''
+def IsWindowVisible(winname):
+    try:
+        ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
+        if ret == -1:
+            raise BackendError('Use Qt as backend to check whether window is visible or not.')
+
+        return bool(ret)
+
+    except cv2.error:
+        return False
+
+
+'''
+[Abstract]
+    顔検知して認識結果を返す
+[Param]
+    cascade :       OpenCV の CascadeClassifierオブジェクト
+    image :         OpenCV 形式の画像
+[Return]
+    検出結果
+'''
+def DetectFaces(cascade, image):
+    # 顔検出のためにグレイスケール画像に変換
+    img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # 検出した顔の位置情報を取得
+    face_list = cascade.detectMultiScale(img_gray, minSize=(100, 100))
+
+    return face_list
+
+
+<span class="auto-style2">'''</span>
+<span class="auto-style2">[Abstract]</span>
+<span class="auto-style2">    顔検知タスク</span>
+<span class="auto-style2">[Param]</span>
+<span class="auto-style2">    q1 :        [i] 顔検知する画像を保存する Queue</span>
+<span class="auto-style2">    q2 :        [o] 顔検知した結果を保存する Queue</span>
+<span class="auto-style2">[Return]</span>
+<span class="auto-style2">    無し</span>
+<span class="auto-style2">'''</span>
+<span class="auto-style2"># def DetectFacesProcess(cascade, q1, q2):</span>
+<span class="auto-style2">def DetectFacesProcess(q1, q2):</span>
+<span class="auto-style2">    while True:</span>
+<span class="auto-style2">        try:</span>
+<span class="auto-style2">            image = q1.get(True, 10)</span>
+
+<span class="auto-style2">            # 終了処理： q1.get から取得したものが int で -1 なら終了</span>
+<span class="auto-style2">            if type(image) == int:</span>
+<span class="auto-style2">                if image == -1:</span>
+<span class="auto-style2">                    break</span>
+
+<span class="auto-style2">            # 顔検知</span>
+<span class="auto-style2">            face_list = DetectFaces(cascade, image)</span>
+
+<span class="auto-style2">            q2.put(face_list)</span>
+<span class="auto-style2">        except Empty: # timeout of q1.get()</span>
+<span class="auto-style2">            print("Timeout happen.")</span>
+
+<span class="auto-style2">    print("Finish DetectFacesProcess()")    </span>
+
+
+'''
+[Abstract]
+    検出された顔枠情報リストを使って、image 上に赤枠を描画する。
+[Param]
+    image :         OpenCV 形式の画像
+    face_list :     検出された顔枠情報リスト
+[Return]
+    無し
+'''
+def DrawFaceRectangles(image, face_list):
+    # 検出した顔の数だけ赤枠を描画
+    if len(face_list) != 0:
+        for (pos_x, pos_y, w, h) in face_list:
+            print(f"pos_x = {pos_x}, pos_y = {pos_y}, w = {w}, h = {h}")
+            cv2.rectangle(frame, (pos_x, pos_y), (pos_x + w, pos_y + h), (0,0,255), thickness=5)
+
+
+'''
+[Abstract]
+    main 関数 
+'''
+if __name__ == '__main__':
+
+    cap = cv2.VideoCapture(f"rtsp://{user_id}:{user_pw}@{host}/MediaInput/stream_1")
+
+    #
+    windowInitialized = False
+
+<span class="auto-style2">    q1 = mp.Queue()</span>
+<span class="auto-style2">    q2 = mp.Queue()</span>
+
+<span class="auto-style2">    # "cannot pickle object" というエラーが出て解決できなかったので、args に cascade を加えるのを断念</span>
+<span class="auto-style2">    # 合わせて cascade をグローバル変数に。悔しい。</span>
+<span class="auto-style2">    p = mp.Process(target=DetectFacesProcess, args=(q1, q2))</span>
+<span class="auto-style2">    # p = mp.Process(target=DetectFacesProcess, args=(cascade, q1, q2))</span>
+<span class="auto-style2">    p.daemon = True</span>
+<span class="auto-style2">    p.start()</span>
+
+    init = False
+
+    while True:
+        try:
+            ret, frame = cap.read()
+            if ret == True:
+<span class="auto-style2">                # 顔検知</span>
+<span class="auto-style2">                if (q1.qsize() &lt;= 1) and (q2.qsize() &lt;= 1):</span>
+<span class="auto-style2">                    q1.put(frame)</span>
+
+<span class="auto-style2">                if q2.qsize() != 0:</span>
+<span class="auto-style2">                    face_list = q2.get()</span>
+<span class="auto-style2">                    init = True</span>
+
+<span class="auto-style2">                if init == True:</span>
+<span class="auto-style2">                    # 検出した顔枠を描画</span>
+<span class="auto-style2">                    DrawFaceRectangles(frame, face_list)</span>
+
+                # PC画面サイズに合わせて適当にリサイズ後、表示
+                frame2 = cv2.resize(frame, (1280, 720))
+                cv2.imshow(winname, frame2)
+
+                if windowInitialized==False:
+                    # 最初の起動時のみ表示位置を指定
+                    cv2.moveWindow(winname, 100, 100)
+                    windowInitialized = True
+
+            # Press the "q" key to finish.
+            k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
+            if k == ord("q"):
+                break
+            
+            # 指定ウィンドウが無かったら終了
+            if not IsWindowVisible(winname):
+                break
+
+
+        except KeyboardInterrupt:
+            print("KeyboardInterrupt")
+            break
+
+<span class="auto-style2">    # Terminate process p</span>
+<span class="auto-style2">    q1.put(-1)</span>
+<span class="auto-style2">    # Waiting for process p to finish</span>
+<span class="auto-style2">    p.join()</span>
+
+    print("Finish main()")
+    cap.release()
+    cv2.destroyAllWindows()</pre>
+  <p>&nbsp;</p>
+  <p>結果：</p>
+  <p>期待する動作をしてくれるようになりました。</p>
+  <p>プロセス起動の引数として cascade を一緒に渡したかったのですが、"cannot pickle object" 
+  というエラーを発生して実現できませんでした。残念ながら cascade をグローバル変数へ変更することで問題を回避しています。<br>対応策がわかったら記事をアップデートしたいと思います。</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  
+	<video controls muted autoplay="y" loop="y" src="connect_with_rtsp/rtsp_opencv.mp4" width="800px">
+	  <p>動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。</p>
+  </video>
+
+  <p>[動画] OpenCV で顔検知してみた様子</p>
+  
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  
+</section>
+
+<section>
+  <h2><a name="5._連番の_JPEG_ファイルで保存する">5. 連番の JPEG ファイルで保存する</a></h2>
+  <p>RTSP で受信した映像を連番の JPEG ファイルで保存してみます。</p>
+  <ul>
+    <li>"image" という名称でフォルダを作成し、ここに "image_000001.jpg" というようなファイル名で画像を保存します。</li>
+    <li>OpenCV の関数 imwrite を使って保存します。imwrite 
+    はファイル名の拡張子から保存形式を自動的に判断してくれるのでとても便利です。'.jpg' の部分を '.png' へ変えるなど実験してみてください。</li>
+    <li>映像受信と表示を優先して処理するために、JPEGファイル保存の処理は別プロセスを作成してここで行うようにします。<br>
+    別プロセスの起動には数秒を要するようなので、プログラム起動から 10秒 経過してから JPEGファイル保存を開始するようにしています。</li>
+    <li>ファイル保存プロセスとのIFには再び multiprocessing.queue を使用し、画像データとファイル名を渡します。<br>queue 
+    へ多くの情報が蓄積されるとメモリ不足になる恐れがあるので、ここでは 30 という登録上限を設けています。queue 
+    が上限に達している場合は受信画像のファイル保存を行いません。<br>→ 私の環境では 15fps 
+    までは全く問題なし。30fpsにするとファイル保存処理が追い付かず queue の残が少しずつ増えていきました。この場合でも保存枚数 100枚 
+    であれば全て保存できました。</li>
+    <li>無制限にファイル保存すると面倒なので上限枚数を設けます。下記プログラムでは 100枚 を保存するとプログラム終了するようにします。</li>
+  </ul>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <h4>[評価環境1]</h4>
+  <table>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>言語 :</td>
+      <td>Python,</td>
+      <td>3.10.4 </td>
+    </tr>
+
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+
+    <tr>
+      <td>OS :</td>
+      <td>Windows 11 home,</td>
+      <td>21H2</td>
+    </tr>
+	  <tr>
+	    <td></td>
+	    <td>Windows 10 Pro,</td>
+	    <td>21H1</td>
+	  </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <h4>[評価環境2]</h4>
+  <table>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>言語 :</td>
+      <td>Python,</td>
+      <td>3.8.10 </td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>OS :</td>
+      <td>Ubuntu(WSL),</td>
+      <td>20.04</td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_rtsp/connect_with_rtsp_4.py" target="_blank">connect_with_rtsp_4.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    Try connecting to an i-PRO camera with RTSP.
+    RTSP で i-PRO カメラと接続してみる
+
+[Details]
+    Save the received image as a JPEG file.
+    Add a 6-digit number to the end of the file name and save it as a serial number.
+    Exit the program after saving 100 files.
+
+    プログラム起動から10秒経過後から、受信した映像を JPEG ファイル保存します。
+    ファイル名の末尾に６ケタの番号を付けて連番で保存します。
+    100枚 保存したらプログラムを終了します。
+
+[Note]
+    If you set a high number of frame rates or high resolution for the camera,
+    the program may not save the file because the program's file saving process may not be in time.
+
+    カメラ側の設定でフレームレート数を高くする、解像度を高くする、などした場合は
+    ファイル保存の処理が追い付かなくなってバッファが満杯になり、
+    ファイル保存が間引かれる場合があります。
+
+[Library install]
+    pip install opencv-python
+'''
+import cv2
+import multiprocessing as mp
+from queue import Empty
+import os
+<span class="auto-style2">import datetime</span>
+
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+<span class="auto-style2">pathOut     = 'image'           # Image file save folder name</span>
+<span class="auto-style2">queue_max   = 30                # Maximum number of queues</span>
+<span class="auto-style2">save_max    = 100               # Number of files to save</span>
+
+
+# Exception 定義
+BackendError = type('BackendError', (Exception,), {})
+
+'''
+[Abstract]
+    対象ウィンドウが存在するかを確認する。
+[Param]
+    winname :       ウィンドウタイトル
+[Return]
+    True :          対象ウィンドウは存在する
+    False :         対象ウィンドウは存在しない
+[Exception]
+    BackendError :
+'''
+def IsWindowVisible(winname):
+    try:
+        ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
+        if ret == -1:
+            raise BackendError('Use Qt as backend to check whether window is visible or not.')
+
+        return bool(ret)
+
+    except cv2.error:
+        return False
+
+
+<span class="auto-style2">'''</span>
+<span class="auto-style2">[Abstract]</span>
+<span class="auto-style2">    画像ファイル保存タスク</span>
+<span class="auto-style2">[Param]</span>
+<span class="auto-style2">    imageQueue :    [i] 保存する画像を蓄える Queue</span>
+<span class="auto-style2">[Return]</span>
+<span class="auto-style2">    無し</span>
+<span class="auto-style2">'''</span>
+<span class="auto-style2">def SaveImageProcess(imageQueue):</span>
+<span class="auto-style2">    while True:</span>
+<span class="auto-style2">        try:</span>
+<span class="auto-style2">            image, filename = imageQueue.get(True, 10)  # timeout 10 sec.</span>
+
+<span class="auto-style2">            # 終了処理： imageQueue.get から取得したものが int で -1 なら終了</span>
+<span class="auto-style2">            if type(image) == int:</span>
+<span class="auto-style2">                if image == -1:</span>
+<span class="auto-style2">                    break</span>
+
+<span class="auto-style2">            # ファイル保存</span>
+<span class="auto-style2">            cv2.imwrite(filename, image)</span>
+
+<span class="auto-style2">        except Empty: # timeout of q1.get()</span>
+<span class="auto-style2">            print("Timeout happen.")</span>
+
+<span class="auto-style2">    print("Finish SaveImageProcess()")</span>
+
+
+'''
+[Abstract]
+    main 関数
+'''
+if __name__ == '__main__':
+
+    cap = cv2.VideoCapture(f"rtsp://{user_id}:{user_pw}@{host}/MediaInput/stream_1")
+
+    windowInitialized = False
+<span class="auto-style2">    count = 0</span>
+<span class="auto-style2">    imageQueue = mp.Queue()</span>
+<span class="auto-style2">    starttime = datetime.datetime.now()</span>
+
+    p = mp.Process(target=SaveImageProcess, args=(imageQueue,))
+    p.start()
+
+    while True:
+        try:
+            ret, frame = cap.read()
+            if ret == True:
+
+<span class="auto-style2">                # プログラム起動から 10秒 以上経過したらファイル保存</span>
+<span class="auto-style2">                if (datetime.datetime.now() - starttime).seconds &gt; 10:</span>
+<span class="auto-style2">                    # queue サイズが上限以内であればファイル保存</span>
+<span class="auto-style2">                    # print(imageQueue.qsize())</span>
+<span class="auto-style2">                    if imageQueue.qsize() &lt; queue_max:</span>
+<span class="auto-style2">                        # Save jpeg file.</span>
+<span class="auto-style2">                        count += 1</span>
+<span class="auto-style2">                        filename = os.path.join(pathOut, 'image_{:06d}.jpg'.format(count))</span>
+<span class="auto-style2">                        print(filename)</span>
+<span class="auto-style2">                        imageQueue.put([frame, filename])</span>
+<span class="auto-style2">                        if count &gt;= save_max:</span>
+<span class="auto-style2">                            break</span>
+
+                # 使っているPC画面に適当に収まる表示大きさへリサイズ
+                frame2 = cv2.resize(frame, (1280, 720))
+                
+                # 映像表示
+                cv2.imshow(winname, frame2)
+
+                if windowInitialized==False:
+                    # 最初の起動時のみ表示位置を指定
+                    cv2.moveWindow(winname, 100, 100)
+                    windowInitialized = True
+
+            # Press the "q" key to finish.
+            k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
+            if k == ord("q"):
+                break
+            
+            # 指定ウィンドウが無かったら終了
+            if not IsWindowVisible(winname):
+                break
+
+        except KeyboardInterrupt:
+            # コンソール上で ctrl-c を押すとプログラムを終了する。
+            print("KeyboardInterrupt")
+            break
+
+<span class="auto-style2">    # Terminate process p</span>
+<span class="auto-style2">    imageQueue.put([-1,-1])</span>
+<span class="auto-style2">    print("Wait for process p to finish")</span>
+<span class="auto-style2">    p.join()</span>
+    print("Finish main()")
+
+    cap.release()
+    cv2.destroyAllWindows()
+</pre>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+
+<section>
+  <h2><a name="6._映像切断時の再接続処理を追加">6. 映像切断時の再接続処理を追加</a></h2>
+  <p>ここまでのプログラムは、カメラとの接続が30秒以上切断すると接続が復活しませんでした。</p>
+  <p>OpenCV の read() 
+  関数のタイムアウトは30秒となっているようです。30秒以内に接続が復活していれば自動的に再接続してくれるのですが、30秒を超えると自動的には復活しません。</p>
+  <p>"connect_with_rtsp_2.py" を元に再接続処理を追加してこの問題を解決してみたいと思います。</p>
+  <p>&nbsp;</p>
+  <p>切断の試験はカメラの電源をOff/Onする、通信をOff/Onする、などで試験してください。</p>
+  <p>カメラとの接続が正常状態に戻ってから再接続までは最長30秒かかります。気長にお待ちください。</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <h4>[評価環境]</h4>
+  <table>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>言語 :</td>
+      <td>Python,</td>
+      <td>3.10.4 </td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>OS :</td>
+      <td>Windows 11 home,</td>
+      <td>21H2</td>
+    </tr>
+	  <tr>
+	    <td></td>
+	    <td>Windows 10 Pro,</td>
+	    <td>21H1</td>
+	  </tr>    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_rtsp/connect_with_rtsp_5.py" target="_blank">connect_with_rtsp_5.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    Try connecting to an i-PRO camera with RTSP.
+    RTSP で i-PRO カメラと接続してみる。
+
+[Details]
+    Add reconnection when video is disconnected.
+    映像切断時の再接続処理を追加する。
+
+[Library install]
+    pip install opencv-python
+'''
+
+from nturl2path import url2pathname
+import cv2
+
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+url         = f"rtsp://{user_id}:{user_pw}@{host}/MediaInput/stream_1"
+
+#
+windowInitialized = False
+
+# Exception definition.
+BackendError = type('BackendError', (Exception,), {})
+
+'''
+[Abstract]
+    Check if the target window exists.
+    対象ウィンドウが存在するかを確認する。
+[Param]
+    winname :       Window title
+[Return]
+    True :          exist
+                    存在する
+    False :         not exist
+                    存在しない
+[Exception]
+    BackendError :
+'''
+def IsWindowVisible(winname):
+    try:
+        ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
+        if ret == -1:
+            raise BackendError('Use Qt as backend to check whether window is visible or not.')
+
+        return bool(ret)
+
+    except cv2.error:
+        return False
+
+
+'''
+[Abstract]
+    main function.
+'''
+if __name__ == '__main__':
+
+    cap = cv2.VideoCapture(url)
+
+    while True:
+        try:
+            ret, frame = cap.read()
+            if ret == True:
+                # Please modify the value to fit your PC screen size.
+                frame2 = cv2.resize(frame, (1280, 720))
+                # Display video.
+                cv2.imshow(winname, frame2)
+
+                if windowInitialized==False:
+                    # Specify window position only once at startup.
+                    cv2.moveWindow(winname, 100, 100)
+                    windowInitialized = True
+<span class="auto-style2">            else:</span>
+<span class="auto-style2">                print("cap.read() return False.")</span>
+<span class="auto-style2">                # The timeout period seems to be 30 seconds.</span>
+<span class="auto-style2">                # And there seems to be no API to change the timeout value.</span>
+<span class="auto-style2">                time.sleep(1)</span>
+<span class="auto-style2">                </span>
+<span class="auto-style2">                # Reconnect</span>
+<span class="auto-style2">                cap.release()</span>
+<span class="auto-style2">                cap = cv2.VideoCapture(url)</span>
+
+            # Press the "q" key to finish.
+            k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
+            if k == ord("q"):
+                break
+            
+            # Exit the program if there is no specified window.
+            if not IsWindowVisible(winname):
+                break
+        
+        except KeyboardInterrupt:
+            # Press'[ctrl] + [c]' on the console to exit the program.
+            print("KeyboardInterrupt")
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()</pre>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+
+<br>
+
+<section>
+  <h2><a name="7._GUIで映像表示してみる（tkinter）">7. GUIで映像表示してみる（tkinter）</a></h2>
+  <p>ここまでのプログラムは全てOpenCVが作成するウィンドウ表示でした。<br>ここでは独自の GUI を作成してここに映像表示する例を示します。</p>
+  <p>GUI 表示の実現方法もいろいろありますが、ここでは Python 標準の tkinter を使用してみます。</p>
+  <p>&nbsp;</p>
+  <p>tkinter のインストール方法は環境により異なるようです。各人の環境にあった方法をインターネットで調べて実施してください。</p>
+  <p>&nbsp;</p>
+  <p><strong>ポイント</strong></p>
+  <ul>
+    <li>tkinter で動画を表示するときは、after() 関数で繰り返し処理を行います。</li>
+    <li>tkinter で表示するために ImageTk.PhotoImage という型に変換する必要があります。<br>numpy.ndarray → 
+    PIL.Image → ImageTk.PhotoImage という順に変換して tkinter で表示します。</li>
+    <li>OpenCVの画像は BGR の並び順になっています。tkinker で表示するために BGR データを RGB へ並び替える必要があります。</li>
+  </ul>
+  <p>&nbsp;</p>
+  
+  <h4>[評価環境]</h4>
+  <table>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+
+    <tr>
+      <td>言語 :</td>
+      <td>Python,</td>
+      <td>3.10.4 </td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>Tcl/Tk,</td>
+      <td>8.6 </td>
+    </tr>
+
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+
+    <tr>
+      <td>OS :</td>
+      <td>Windows 11 home,</td>
+      <td>21H2</td>
+    </tr>
+	  <tr>
+	    <td></td>
+	    <td>Windows 10 Pro,</td>
+	    <td>21H1</td>
+	  </tr>
+
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+
+  </table>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <h3><a name="7-1._まずは単純にやってみる">7-1. まずは単純にやってみる</a></h3>
+  <p>とにかくまずはやってみます。</p>
+  <p>&nbsp;</p>
+  <ul>
+    <li>プログラム起動により自動的にカメラと接続して映像表示を開始します。</li>
+    <li>画面（Canvvas）をマウス左ボタンクリックする度に、映像表示を停止、映像表示を開始、を反復します。</li>
+    <li>画像フォーマットの変換はそれぞれ下記場所で行っています。ソースコード中のコメントを探してみてください。<ul>
+      <li>(1) BGR データを RGB へ並び替える</li>
+      <li>(2) numpy.ndarray → PIL.Image</li>
+      <li>(3) PIL.Image → ImageTk.PhotoImage</li>
+    </ul>
+    </li>
+  </ul>
+  <p>&nbsp;</p>
+  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_rtsp/connect_with_rtsp_6_1.py" target="_blank">connect_with_rtsp_6_1.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    Try connecting to an i-PRO camera with RTSP.
+    RTSP で i-PRO カメラと接続してみる。
+
+[Details]
+    Display the video with GUI using tkinter.
+    tkinter を使ったGUIで映像を表示します。
+
+[Library install]
+    pip install opencv-python
+'''
+
+import cv2
+import time
+import tkinter as tk
+from PIL import Image, ImageTk, ImageOps
+
+
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+url         = f"rtsp://{user_id}:{user_pw}@{host}/MediaInput/stream_1"
+
+
+class Application(tk.Frame):
+    def __init__(self, master = None):
+        super().__init__(master)
+        self.pack()
+
+        # Window settings.
+        self.master.title("Display i-PRO camera with tkinter")      # Window title
+        self.master.geometry("800x600+100+100")                     # Window size, position
+        
+        # Create canvas.
+        self.canvas = tk.Canvas(self.master)
+
+        # Add mouse click event to canvas.
+        self.canvas.bind('&lt;Button-1&gt;', self.canvas_click)
+
+        # Place canvas.
+        self.canvas.pack(expand = True, fill = tk.BOTH)
+
+        # Raise a video display event (disp_image) after 500m
+        self.cap = None
+        <span class="auto-style2">self.disp_id = self.after(500, self.disp_image)</span>
+
+    def canvas_click(self, event):
+        ''' Event handling with mouse clicks on canvas '''
+        if self.disp_id is None:
+            # Connect camera.
+            self.cap = cv2.VideoCapture(url)
+            # Display image.
+            self.disp_image()
+        else:
+            # Release camera.
+            self.after_cancel(self.disp_id)
+            self.disp_id = None
+            self.cap.release()
+
+    <span class="auto-style2">def disp_image(self):</span>
+        ''' Display image on Canvas '''
+
+        if self.cap == None:
+            # Connect camera.
+            self.cap = cv2.VideoCapture(url)
+
+        # Get frame.
+        ret, frame = self.cap.read()
+
+        if ret == True:
+            # (1) Convert image from BGR to RGB.
+            cv_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+            # (2) Convert image from ndarray to PIL.Image.
+            pil_image = Image.fromarray(cv_image)
+
+            # Get canvas size.
+            canvas_width = self.canvas.winfo_width()
+            canvas_height = self.canvas.winfo_height()
+
+            # Resize the image to the size of the canvas without changing the aspect ratio.
+            # アスペクトを維持したまま画像を Canvas と同じサイズにリサイズ
+            pil_image = ImageOps.pad(pil_image, (canvas_width, canvas_height))
+
+            # (3) Convert image from Pillow Image to PhotoImage
+            # PIL.Image から PhotoImage へ変換する
+            self.photo_image = ImageTk.PhotoImage(image=pil_image)
+
+            # Display image on the canvas.
+            self.canvas.create_image(
+                canvas_width / 2,       # Image display position (center of the canvas)
+                canvas_height / 2,                   
+                image=self.photo_image  # image data
+                )
+            
+        else:
+            print("cap.read() return False.")
+            # The timeout period seems to be 30 seconds.
+            # And there seems to be no API to change the timeout value.
+            time.sleep(1)
+
+            # Reconnect
+            self.cap.release()
+            self.cap = cv2.VideoCapture(url)
+
+        # Raise a video display event (disp_image) after 1ms.
+        <span class="auto-style2">self.disp_id = self.after(1, self.disp_image)</span>
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = Application(master = root)
+    app.mainloop()</pre>
+  <p>&nbsp;</p>
+  <p>概ね期待に近い動作をしてくれました。<br>しかし残念ながら、私のPC環境では 30fps の映像を表示すると少しずつ映像が遅延してしまいました。<br>
+  OpenCV のみで表示したときは問題なかったので、映像受信後の画像フォーマット変換および表示の処理が追い付いていないと予想されます。</p>
+  <p>何かしら改善を行う必要がありそうです。</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <h3><a name="7-2._映像受信を別プロセスにしてパフォーマンス改善">7-2. 映像受信を別プロセスにしてパフォーマンス改善</a></h3>
+  <p>プログラム "connect_with_rtsp_6_1.py" は概ね良好に動作しましたが、私のPC環境では 30fps 
+  の映像を表示すると少しずつ映像が遅延してしまいました。<br>OpenCV 
+  のみで表示したときは問題なかったので、映像受信後の画像フォーマット変換および表示の処理が追い付いていないと予想されます。</p>
+  <p>ここでは、映像受信を別プロセスにしてパフォーマンス改善を試みてみます。<br>受信した映像を Queue に蓄積すれば、Queue 
+  の蓄積数を確認して以降の処理を間引くこともできそうです。これも合わせてやってみましょう。</p>
+  <p>&nbsp;</p>
+  <p><strong>ポイント</strong></p>
+  <ul>
+    <li>映像受信処理を別プロセスにする</li>
+    <li>Queue に蓄積された映像枚数が一定数より多い場合、取得した映像の画像変換と表示を行わない。</li>
+  </ul>
+  <p>&nbsp;</p>
+  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_rtsp/connect_with_rtsp_6_2.py" target="_blank">connect_with_rtsp_6_2.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    Try connecting to an i-PRO camera with RTSP.
+    RTSP で i-PRO カメラと接続してみる。
+
+[Details]
+    Display the video with GUI using tkinter.
+    Try to improve performance by creating a video receiving process.
+    
+    tkinter を使ったGUIで映像を表示します。
+    映像受信プロセスを作成することでパフォーマンス改善を試みます。
+
+    BGR → RGB
+    numpy.ndarray → PIL.Image → ImageTk.PhotoImage
+    (1) BGR → RGB
+    (2) numpy.ndarray → PIL.Image
+    (3) PIL.Image → ImageTk.PhotoImage
+
+[Library install]
+    pip install opencv-python
+'''
+
+import cv2
+import time
+import tkinter as tk
+from tkinter import messagebox
+from PIL import Image, ImageTk, ImageOps
+import multiprocessing as mp
+
+
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+url         = f"rtsp://{user_id}:{user_pw}@{host}/MediaInput/stream_1"
+
+
+class Application(tk.Frame):
+    def __init__(self, master = None):
+        super().__init__(master)
+        self.pack()
+
+        # Window settings.
+        self.master.title("Display i-PRO camera with tkinter")      # Window title
+        self.master.geometry("800x600+100+100")                     # Window size, position
+
+        # Event registration for window termination.
+        self.master.protocol("WM_DELETE_WINDOW", self.on_closing_window)
+        
+        # Create canvas.
+        self.canvas = tk.Canvas(self.master)
+
+        # Add mouse click event to canvas.
+        self.canvas.bind('&lt;Button-1&gt;', self.canvas_click)
+
+        # Place canvas.
+        self.canvas.pack(expand = True, fill = tk.BOTH)
+
+<span class="auto-style2">        # Create image receiving process and queue</span>
+<span class="auto-style2">        self.imageQueue = mp.Queue()</span>
+<span class="auto-style2">        self.request = mp.Value('i', 0)     # -1 : Exit ReceiveImageProcess.</span>
+<span class="auto-style2">                                            #  0 : Normal.</span>
+<span class="auto-style2">                                            #  1 : Connect camera.</span>
+<span class="auto-style2">                                            #  2 : Release camera.</span>
+<span class="auto-style2">        self.p = mp.Process(target=ReceiveImageProcess, args=(self.imageQueue, self.request))</span>
+<span class="auto-style2">        self.p.start()</span>
+
+        # Raise a video display event (disp_image) after 500m
+        self.disp_id = self.after(500, self.disp_image)
+
+    def on_closing_window(self):
+        ''' Window closing event. '''
+
+        if messagebox.askokcancel("QUIT", "Do you want to quit?"):
+            # Request terminate process self.p.
+            self.request.value = -1
+
+            # Waiting for process p to finish
+            time.sleep(1)
+
+            # Flash buffer.
+            # The program cannot complete p.join() unless the imageQueue is emptied.
+            for i in range(self.imageQueue.qsize()):
+                pil_image = self.imageQueue.get()
+
+            # Wait for process p to be terminated.
+            self.p.join()
+            self.master.destroy()
+            print("Finish Application.")
+
+    def canvas_click(self, event):
+        ''' Event handling with mouse clicks on canvas '''
+
+        if self.disp_id is None:
+            # Connect camera.
+<span class="auto-style2">            self.request.value = 1</span>
+            # Display image.
+            self.disp_image()
+
+        else:
+            # Release camera.
+<span class="auto-style2">            self.request.value = 2</span>
+            # Cancel scheduling
+            self.after_cancel(self.disp_id)
+            self.disp_id = None
+
+    def disp_image(self):
+        ''' Display image on Canvas '''
+
+        # If there is data in the imageQueue, the program receives the data and displays the video.
+        num = self.imageQueue.qsize()
+        if num &gt; 0:
+            if (num &gt; 5):
+                num -= 1
+            for i in range(num):
+                cv_image = self.imageQueue.get()
+
+            # (2) Convert image from ndarray to PIL.Image.
+            pil_image = Image.fromarray(cv_image)
+
+            # Get canvas size.
+            canvas_width = self.canvas.winfo_width()
+            canvas_height = self.canvas.winfo_height()
+
+            # Resize the image to the size of the canvas without changing the aspect ratio.
+            # アスペクトを維持したまま画像を Canvas と同じサイズにリサイズ
+            pil_image = ImageOps.pad(pil_image, (canvas_width, canvas_height))
+
+            # (3) Convert image from PIL.Image to PhotoImage
+            # PIL.Image から PhotoImage へ変換する
+            self.photo_image = ImageTk.PhotoImage(image=pil_image)
+
+            # Display image on the canvas.
+            self.canvas.create_image(
+                canvas_width / 2,       # Image display position (center of the canvas)
+                canvas_height / 2,                   
+                image=self.photo_image  # image data
+                )
+            
+        else:
+            pass
+
+        # Raise a video display event (disp_image) after 1ms.
+        self.disp_id = self.after(1, self.disp_image)
+
+
+<span class="auto-style2">def ReceiveImageProcess(imageQueue, request):</span>
+<span class="auto-style2">    """</span>
+<span class="auto-style2">    Receive Image Process.</span>
+<span class="auto-style2">    </span>
+<span class="auto-style2">    Args:</span>
+<span class="auto-style2">        imageQueue      [o] This process stores the received image data in the imageQueue.</span>
+<span class="auto-style2">        request         [i] Shared memory for receiving requests from the main process.</span>
+<span class="auto-style2">                            -1: Terminate process.</span>
+<span class="auto-style2">                             0: Nothing.</span>
+<span class="auto-style2">                             1: Connect camera.</span>
+<span class="auto-style2">                             2: Release camera connection.</span>
+<span class="auto-style2">    Returns:</span>
+<span class="auto-style2">        None</span>
+<span class="auto-style2">    Raises</span>
+<span class="auto-style2">        None</span>
+<span class="auto-style2">    """</span>
+<span class="auto-style2">    # Connect camera.</span>
+<span class="auto-style2">    cap = cv2.VideoCapture(url)</span>
+<span class="auto-style2">    </span>
+<span class="auto-style2">    while True:</span>
+<span class="auto-style2">        if cap != None:</span>
+<span class="auto-style2">            # Get frame.</span>
+<span class="auto-style2">            ret, frame = cap.read()</span>
+<span class="auto-style2">            </span>
+<span class="auto-style2">            if ret == True:</span>
+<span class="auto-style2">                # (1) Convert image from BGR to RGB.</span>
+<span class="auto-style2">                cv_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)</span>
+<span class="auto-style2">                </span>
+<span class="auto-style2">                if imageQueue.qsize() &lt; 10:</span>
+<span class="auto-style2">                    imageQueue.put(cv_image)</span>
+<span class="auto-style2">            </span>
+<span class="auto-style2">            else:</span>
+<span class="auto-style2">                print("cap.read() return False.")</span>
+<span class="auto-style2">                # The timeout period seems to be 30 seconds.</span>
+<span class="auto-style2">                # And there seems to be no API to change the timeout value.</span>
+<span class="auto-style2">                time.sleep(1)</span>
+<span class="auto-style2">                </span>
+<span class="auto-style2">                # Reconnect</span>
+<span class="auto-style2">                cap.release()</span>
+<span class="auto-style2">                cap = cv2.VideoCapture(url)</span>
+<span class="auto-style2">        else:</span>
+<span class="auto-style2">            time.sleep(0.1)</span>
+<span class="auto-style2">        </span>
+<span class="auto-style2">        # Check process termination request.</span>
+<span class="auto-style2">        if request.value == -1:</span>
+<span class="auto-style2">            # Terminate process.</span>
+<span class="auto-style2">            cap.release()</span>
+<span class="auto-style2">            request.value = 0</span>
+<span class="auto-style2">            break</span>
+<span class="auto-style2">        </span>
+<span class="auto-style2">        # Check connect request.</span>
+<span class="auto-style2">        if request.value == 1:</span>
+<span class="auto-style2">            cap = cv2.VideoCapture(url)</span>
+<span class="auto-style2">            request.value = 0</span>
+<span class="auto-style2">        </span>
+<span class="auto-style2">        # Check release request.</span>
+<span class="auto-style2">        if request.value == 2:</span>
+<span class="auto-style2">            cap.release()</span>
+<span class="auto-style2">            cap = None</span>
+<span class="auto-style2">            request.value = 0</span>
+<span class="auto-style2">    </span>
+<span class="auto-style2">    print("Terminate SaveImageProcess().")</span>
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = Application(master = root)
+    app.mainloop()</pre>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <h3><a name="7-3. メニュー・ボタンを追加して GUI アプリらしくしてみる">7-3. メニュー・ボタンを追加して GUI 
+  アプリらしくしてみる</a></h3>
+  <p>プログラム "connect_with_rtsp_6_2.py" により GUI で映像表示をそれなりにできるようになりました。</p>
+  <p>ここではメニュー、ボタンをそれぞれ追加することで GUI アプリっぽくしてみます。</p>
+  <p>&nbsp;</p>
+  <p><strong>ポイント</strong></p>
+  <ul>
+    <li>[File] &gt; [Quit] メニューを追加する</li>
+    <li>[Quit] ボタンを追加する</li>
+  </ul>
+  <p>&nbsp;</p>
+  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_rtsp/connect_with_rtsp_6_3.py" target="_blank">connect_with_rtsp_6_3.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    Try connecting to an i-PRO camera with RTSP.
+    RTSP で i-PRO カメラと接続してみる。
+
+[Details]
+    Display the video with GUI using tkinter.
+    Add menus and buttons to make it look like a GUI app.
+    
+    tkinter を使ったGUIで映像を表示します。
+    メニューとボタンを追加してGUIアプリらしくします。
+
+    BGR → RGB
+    numpy.ndarray → PIL.Image → ImageTk.PhotoImage
+    (1) BGR → RGB
+    (2) numpy.ndarray → PIL.Image
+    (3) PIL.Image → ImageTk.PhotoImage
+    
+[Library install]
+    pip install opencv-python
+'''
+
+from re import X
+from turtle import window_height
+import cv2
+import time
+import tkinter as tk
+from tkinter import messagebox
+from PIL import Image, ImageTk, ImageOps
+import multiprocessing as mp
+
+
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+url         = f"rtsp://{user_id}:{user_pw}@{host}/MediaInput/stream_1"
+
+
+class Application(tk.Frame):
+    def __init__(self, master = None):
+        super().__init__(master)
+        self.pack()
+
+        # Window settings.
+        self.master.title("Display i-PRO camera with tkinter")      # Window title
+        self.master.geometry("800x600+100+100")                     # Window size, position
+
+        # Event registration for window termination.
+        self.master.protocol("WM_DELETE_WINDOW", self.on_closing_window)
+
+<span class="auto-style2">        # Create menu.</span>
+<span class="auto-style2">        menubar = tk.Menu(self.master)</span>
+<span class="auto-style2">        self.master.configure(menu=menubar)</span>
+<span class="auto-style2">        filemenu = tk.Menu(menubar)</span>
+<span class="auto-style2">        menubar.add_cascade(label='File', menu=filemenu)</span>
+<span class="auto-style2">        filemenu.add_command(label='Quit', command = self.on_closing_window)</span>
+
+<span class="auto-style2">        # Create button_frame</span>
+<span class="auto-style2">        self.button_frame = tk.Frame(self.master, padx=10, pady=10, relief=tk.RAISED, bd=2)</span>
+<span class="auto-style2">        self.button_frame.pack(side = tk.BOTTOM, fill=tk.X)</span>
+
+<span class="auto-style2">        # Create quit_button</span>
+<span class="auto-style2">        self.quit_button = tk.Button(self.button_frame, text='Quit', width=10, command = self.on_closing_window)</span>
+<span class="auto-style2">        self.quit_button.pack(side=tk.RIGHT)</span>
+        
+        # Create canvas.
+        self.canvas = tk.Canvas(self.master)
+
+        # Add mouse click event to canvas.
+        self.canvas.bind('&lt;Button-1&gt;', self.canvas_click)
+
+        # Place canvas.
+        self.canvas.pack(expand = True, fill = tk.BOTH)
+
+        # Create image receiving process and queue
+        self.imageQueue = mp.Queue()
+        self.request = mp.Value('i', 0)     # -1 : Exit ReceiveImageProcess.
+                                            #  0 : Normal.
+                                            #  1 : Connect camera.
+                                            #  2 : Release camera.
+        self.p = mp.Process(target=ReceiveImageProcess, args=(self.imageQueue, self.request))
+        self.p.start()
+
+        # Raise a video display event (disp_image) after 500m
+        self.disp_id = self.after(500, self.disp_image)
+
+    def on_closing_window(self):
+        ''' Window closing event. '''
+
+        if messagebox.askokcancel("QUIT", "Do you want to quit?"):
+            # Request terminate process self.p.
+            self.request.value = -1
+
+            # Waiting for process p to finish
+            time.sleep(1)
+
+            # Flash buffer.
+            # The program cannot complete p.join() unless the imageQueue is emptied.
+            for i in range(self.imageQueue.qsize()):
+                pil_image = self.imageQueue.get()
+
+            # Wait for process p to be terminated.
+            self.p.join()
+            self.master.destroy()
+            print("Finish Application.")
+
+    def canvas_click(self, event):
+        ''' Event handling with mouse clicks on canvas '''
+
+        if self.disp_id is None:
+            # Connect camera.
+            self.request.value = 1
+            # Display image.
+            self.disp_image()
+
+        else:
+            # Release camera.
+            self.request.value = 2
+            # Cancel scheduling
+            self.after_cancel(self.disp_id)
+            self.disp_id = None
+
+    def disp_image(self):
+        ''' Display image on Canvas '''
+
+        # If there is data in the imageQueue, the program receives the data and displays the video.
+        num = self.imageQueue.qsize()
+        if num &gt; 0:
+            if (num &gt; 5):
+                num -= 1
+            for i in range(num):
+                cv_image = self.imageQueue.get()
+
+            # (2) Convert image from ndarray to PIL.Image.
+            pil_image = Image.fromarray(cv_image)
+
+            # Get canvas size.
+            canvas_width = self.canvas.winfo_width()
+            canvas_height = self.canvas.winfo_height()
+
+            # Resize the image to the size of the canvas without changing the aspect ratio.
+            # アスペクトを維持したまま画像を Canvas と同じサイズにリサイズ
+            pil_image = ImageOps.pad(pil_image, (canvas_width, canvas_height))
+
+            # (3) Convert image from PIL.Image to PhotoImage
+            # PIL.Image から PhotoImage へ変換する
+            self.photo_image = ImageTk.PhotoImage(image=pil_image)
+
+            # Display image on the canvas.
+            self.canvas.create_image(
+                canvas_width / 2,       # Image display position (center of the canvas)
+                canvas_height / 2,                   
+                image=self.photo_image  # image data
+                )
+            
+        else:
+            pass
+
+        # Raise a video display event (disp_image) after 1ms.
+        self.disp_id = self.after(1, self.disp_image)
+
+
+def ReceiveImageProcess(imageQueue, request):
+    """
+    Receive Image Process.
+
+    Args:
+        imageQueue      [o] This process stores the received image data in the imageQueue.
+        request         [i] Shared memory for receiving requests from the main process.
+                            -1: Terminate process.
+                             0: Nothing.
+                             1: Connect camera.
+                             2: Release camera connection.
+    Returns:
+        None
+    Raises
+        None
+    """
+
+    # Connect camera.
+    cap = cv2.VideoCapture(url)
+
+    while True:
+        if cap != None:
+            # Get frame.
+            ret, frame = cap.read()
+
+            if ret == True:
+                # (1) Convert image from BGR to RGB.
+                cv_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+                if imageQueue.qsize() &lt; 10:
+                    imageQueue.put(cv_image)
+
+            else:
+                print("cap.read() return False.")
+                # The timeout period seems to be 30 seconds.
+                # And there seems to be no API to change the timeout value.
+                time.sleep(1)
+
+                # Reconnect
+                cap.release()
+                cap = cv2.VideoCapture(url)
+        else:
+            time.sleep(0.1)
+                
+        # Check process termination request.
+        if request.value == -1:
+            # Terminate process.
+            cap.release()
+            request.value = 0
+            break
+
+        # Check connect request.
+        if request.value == 1:
+            cap = cv2.VideoCapture(url)
+            request.value = 0
+
+        # Check release request.
+        if request.value == 2:
+            cap.release()
+            cap = None
+            request.value = 0
+
+    print("Terminate SaveImageProcess().")
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = Application(master = root)
+    app.mainloop()</pre>
+  <p>&nbsp;</p>
+  <p>
+    <video controls muted autoplay="y" loop="y" width="800px">
+      <source src="connect_with_rtsp/rtsp_6.mp4" type="video/mp4">
+      動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+    </video>
+  </p>
+  <p>[動画] tkinter で作成した GUI アプリ</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+
+<br>
+
+<section>
+  <h2><a name="ソースコード所在">ソースコード所在</a></h2>
+  <p>本ページで紹介のソースコードは、下記 github より取得できます。</p>
+  <p>下記 github のソースコードと本ページの内容は差異がある場合があります。</p>
+  <p><a href="https://github.com/i-pro-corp/python-examples" target="_blank">i-pro-corp/python-examples: Examples for i-PRO cameras. (github.com)</a></p>
+</section>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<section>
+  <h2><a name="ライセンス">ライセンス</a></h2>
+<p>本ページの情報は、特記無い限り下記ライセンスで提供されます。</p>
+<table class="border-collapse" style="width: 600px; background-color: #F0F0F0; word-break: break-word;">
+  <tr>
+    <td>
+    <br>Copyright 2022 i-PRO Co., Ltd.<br><br>Licensed under the Apache License, Version 
+    2.0 (the "License");<br>you may not use this file except in compliance with 
+    the License.<br>You may obtain a copy of the License at <br><br>&nbsp;&nbsp;&nbsp;
+    <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">http://www.apache.org/licenses/LICENSE-2.0</a><br><br>
+    Unless required by 
+    applicable law or agreed to in writing, software <br>distributed under the 
+    License is distributed on an "AS IS" BASIS, <br>WITHOUT WARRANTIES OR 
+    CONDITIONS OF ANY KIND, either express or implied. <br>See the License for 
+    the specific language governing permissions and<br>limitations under the 
+    License. <br> <br>
+    </td>
+  </tr>
+</table>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+
+
+<section>
+	<h2><a name="参考">参考</a></h2>
+	<ul>
+		<li>[1] ネットワークカメラCGIコマンドインターフェース仕様書　統合版<br>
+        <a href="https://sol.panasonic.biz/security/cgi-bin/ipro/download/tbookmarka_m.cgi?m=%20&amp;mm=2012100910461872" target="_blank">
+        https://sol.panasonic.biz/security/cgi-bin/ipro/download/tbookmarka_m.cgi?m=%20&amp;mm=2012100910461872</a></li>
+    <li>[2] [python] ネットワークカメラの画像を RTSP で取得して表示・保存 - へっぽこプログラマーの備忘録 
+        (kuttsun.blogspot.com)<br>
+        <a href="https://kuttsun.blogspot.com/2021/08/python-rtsp.html" target="_blank">
+        https://kuttsun.blogspot.com/2021/08/python-rtsp.html</a></li>
+	</ul>
+</section>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<hr>
+
+<p>&nbsp;</p>
+
+<section>
+	<h2 style="margin-bottom:5px">変更履歴</h2>
+	<table>
+	  <tr>
+	    <td class="td_history_date">2022/5/26</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">新規作成,</td>
+	    <td class="td_history">木下英俊 </td>
+	  </tr>
+	</table>
+</section>
+
+<p>&nbsp;</p>
+<p><a href="../../index.html" target="_parent">i-PRO - Programming Items トップページ</a></p>
+<p><a href="../../privacy_policy.html">プライバシーポリシー</a></p>
+<p>&nbsp;</p>
+
+<footer>
+	<p><small>&copy; 2022  i-PRO Co., Ltd.</small></p>
+</footer>
+
+</body>
+</html>
