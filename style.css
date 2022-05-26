@@ -61,6 +61,7 @@ iframe{
 
 #title_html{
 	position:relative;
+	margin-left: 1em;
 }
 
 #content_wrapper {
@@ -122,6 +123,7 @@ iframe{
 
 	#title_html{
 		position:relative;
+		margin-left: 0em;
 	}
 
 	#content_wrapper{
