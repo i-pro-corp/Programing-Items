@@ -10,8 +10,12 @@
   <!-- キャッシュ無効化 -->
   <meta http-equiv="Cache-Control" content="no-cache">
 	
+  <!-- タイトル -->
   <title>RTSPで画像を取得する</title>
 	
+  <!-- ファビコン -->
+  <link rel="shortcut icon" href="../../favicon.ico">
+
   <!-- CSS -->
   <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="../../design.css" type="text/css">
@@ -135,14 +139,14 @@
 カメラ初期設定についてはカメラ毎の取扱説明書をご確認ください。</p>
 <p> 
 カメラのIPアドレスを確認・設定できる下記ツールを事前に入手しておくと便利です。</p>
-<ul>
- <li>
- <a href="https://connect.panasonic.com/jp-ja/products-services_security_support_specifications-manuals-firms-tool_2014040315191048" target="_blank">
- IP簡単設定ソフトウェア</a>&nbsp;（日本国内）</li>
- <li>
- <a href="https://bizpartner.panasonic.net/public/file/ip-setting-software" target="_blank">
- IP Setting Software</a>&nbsp;&nbsp;&nbsp;&nbsp; （グローバル）</li>
-</ul>
+ <ul>
+  <li>
+  <a href="https://connect.panasonic.com/jp-ja/products-services_security_support_specifications-manuals-firms-tool_2014040315191048" target="_blank">
+  IP簡単設定ソフトウェア</a>&nbsp;（日本国内）</li>
+  <li>
+  <a href="https://bizpartner.panasonic.net/public/file/ip-setting-software" target="_blank">
+  IP Setting Software</a>&nbsp;&nbsp;&nbsp;&nbsp; （グローバル）</li>
+ </ul>
 </section>
 
 <p>&nbsp;</p>
@@ -150,106 +154,96 @@
 <p>&nbsp;</p>
 
 <section>
- <h2><a name="1._RTSP 表記仕様">1. RTSP 表記仕様</a></h2>
- <h4>[概要]</h4>
- <p>RTSP で接続するための表記を以下に記載します。</p>
- <p>「ネットワークカメラCGIコマンドインターフェース仕様書 統合版」<span class="super">[1]</span> 
- で下記に記載されている情報を元に加筆しています。</p>
- <ul>
-  <li>i-pro カメラ外部インタフェース仕様書ver1.59.pdf ： 「10.5. 汎用ビューアで H.264 を見る」</li>
-  <li>i-pro カメラ外部インタフェース仕様書ver1.59.pdf ： 「10.6. 汎用ビューアで H.265 を見る」</li>
- </ul>
- <p>&nbsp;</p>
- <p>&nbsp;</p>
- <h3>i-PRO カメラ</h3>
- <table class="border-collapse">
-  <tr>
-   <td class="standard_table"><strong>ストリーム(1)</strong></td>
-   <td class="standard_table"><span class="cpp-source">
-   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1</span></td>
-  </tr>
-  <tr>
-   <td class="standard_table"><strong>ストリーム(2)</strong></td>
-   <td class="standard_table"><span class="cpp-source">
-   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2</span></td>
-  </tr>
-  <tr>
-   <td class="standard_table"><strong>ストリーム(3)</strong></td>
-   <td class="standard_table"><span class="cpp-source">
-   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_3</span></td>
-  </tr>
-  <tr>
-   <td class="standard_table"><strong>ストリーム(4)</strong></td>
-   <td class="standard_table"><span class="cpp-source">
-   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_4</span></td>
-  </tr>
- </table>
- <p>&nbsp;</p>
- <p>(例) <span class="cpp-source">
- rtsp://admin:password@192.168.0.10/MediaInput/stream_1</span></p>
- <p>&nbsp;</p>
- <p>補足： </p>
- <ul>
-  <li>
-  <p>カメラ側の映像圧縮方式設定が H.264/H.265 のいずれの場合も上記で接続できました。</p>
-  </li>
-  <li>
-  <p>ストリーム(1)(2)のみのカメラもあります。詳細はご使用のカメラ仕様書をご確認ください。</p>
-  </li>
-  <li>
-  <p>i-PRO マルチセンサーカメラは仕様が異なります。下記表を参照ください。</p>
-  </li>
- </ul>
- <p>&nbsp;</p>
- <p>&nbsp;</p>
- <h3>i-PRO マルチセンサーカメラ（WV-X8570/WV-S8530 等）</h3>
- <table class="border-collapse">
-  <tr>
-   <td class="standard_table"><strong>ストリーム(1) Ch1 (Camera1)/</strong></td>
-   <td class="standard_table"><span class="cpp-source">
-   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1</span><br>
-   <span class="cpp-source">
-   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1/ch_1</span></td>
-  </tr>
-  <tr>
-   <td class="standard_table"><strong>ストリーム(2) Ch1 (Camera1)/</strong></td>
-   <td class="standard_table"><span class="cpp-source">
-   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2</span><br>
-   <span class="cpp-source">
-   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2/ch_1</span></td>
-  </tr>
-  <tr>
-   <td class="standard_table"><strong>ストリーム(1) Ch2 (Camera2)/</strong></td>
-   <td class="standard_table"><span class="cpp-source">
-   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1/ch_2</span></td>
-  </tr>
-  <tr>
-   <td class="standard_table"><strong>ストリーム(2) Ch2 (Camera2)/</strong></td>
-   <td class="standard_table"><span class="cpp-source">
-   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2/ch_2</span></td>
-  </tr>
-  <tr>
-   <td class="standard_table"><strong>ストリーム(1) Ch3 (Camera3)/</strong></td>
-   <td class="standard_table"><span class="cpp-source">
-   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1/ch_3</span></td>
-  </tr>
-  <tr>
-   <td class="standard_table"><strong>ストリーム(2) Ch3 (Camera3)/</strong></td>
-   <td class="standard_table"><span class="cpp-source">
-   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2/ch_3</span></td>
-  </tr>
-  <tr>
-   <td class="standard_table"><strong>ストリーム(1) Ch4 (Camera4)/</strong></td>
-   <td class="standard_table"><span class="cpp-source">
-   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1/ch_4</span></td>
-  </tr>
-  <tr>
-   <td class="standard_table"><strong>ストリーム(2) Ch4 (Camera4)/</strong></td>
-   <td class="standard_table"><span class="cpp-source">
-   rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2/ch_4</span></td>
-  </tr>
- </table>
- <p>&nbsp;</p>
+	<h2> <a name="1._RTSP 表記仕様">1. RTSP 表記仕様</a></h2>
+	<h4>[概要]</h4>
+  	<p> RTSP で接続するための表記を以下に記載します。</p>
+    <p> 「ネットワークカメラCGIコマンドインターフェース仕様書 統合版」<span class="super">[1]</span> で下記に記載されている情報を元に加筆しています。</p>
+    <ul>
+      <li>i-pro カメラ外部インタフェース仕様書ver1.59.pdf ： 「10.5. 汎用ビューアで H.264 を見る」</li>
+      <li>i-pro カメラ外部インタフェース仕様書ver1.59.pdf ： 「10.6. 汎用ビューアで H.265 を見る」</li>
+    </ul>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <h3>i-PRO カメラ</h3>
+    
+    <table class="border-collapse">
+      <tr>
+        <td class="standard_table"><strong>ストリーム(1)</strong></td>
+        <td class="standard_table">
+        <span class="cpp-source">rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1</span></td>
+      </tr>
+      <tr>
+        <td class="standard_table"><strong>ストリーム(2)</strong></td>
+        <td class="standard_table"><span class="cpp-source">rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2</span></td>
+      </tr>
+      <tr>
+        <td class="standard_table"><strong>ストリーム(3)</strong></td>
+        <td class="standard_table"><span class="cpp-source">rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_3</span></td>
+      </tr>
+      <tr>
+        <td class="standard_table"><strong>ストリーム(4)</strong></td>
+        <td class="standard_table"><span class="cpp-source">rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_4</span></td>
+      </tr>
+      </table>
+    <p>&nbsp;</p>
+    <p>(例) <span class="cpp-source">
+    rtsp://admin:password@192.168.0.10/MediaInput/stream_1</span></p>
+    <p>&nbsp;</p>
+    <p>補足： </p>
+    <ul>
+      <li>
+    <p>カメラ側の映像圧縮方式設定が H.264/H.265 のいずれの場合も上記で接続できました。</p>
+      </li>
+      <li>
+      <p>ストリーム(1)(2)のみのカメラもあります。詳細はご使用のカメラ仕様書をご確認ください。</p>
+      </li>
+      <li>
+      <p>i-PRO マルチセンサーカメラは仕様が異なります。下記表を参照ください。</p>
+      </li>
+    </ul>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    
+    <h3>i-PRO マルチセンサーカメラ（WV-X8570/WV-S8530 等）</h3>
+    
+    <table class="border-collapse">
+      <tr>
+        <td class="standard_table"><strong>ストリーム(1) Ch1 (Camera1)/</strong></td>
+        <td class="standard_table">
+        <span class="cpp-source">rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1</span><br>
+        <span class="cpp-source">rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1/ch_1</span></td>
+      </tr>
+      <tr>
+        <td class="standard_table"><strong>ストリーム(2) Ch1 (Camera1)/</strong></td>
+        <td class="standard_table"><span class="cpp-source">rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2</span><br>
+        <span class="cpp-source">rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2/ch_1</span></td>
+      </tr>
+      <tr>
+        <td class="standard_table"><strong>ストリーム(1) Ch2 (Camera2)/</strong></td>
+        <td class="standard_table"><span class="cpp-source">rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1/ch_2</span></td>
+      </tr>
+      <tr>
+        <td class="standard_table"><strong>ストリーム(2) Ch2 (Camera2)/</strong></td>
+        <td class="standard_table"><span class="cpp-source">rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2/ch_2</span></td>
+      </tr>
+      <tr>
+        <td class="standard_table"><strong>ストリーム(1) Ch3 (Camera3)/</strong></td>
+        <td class="standard_table"><span class="cpp-source">rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1/ch_3</span></td>
+      </tr>
+      <tr>
+        <td class="standard_table"><strong>ストリーム(2) Ch3 (Camera3)/</strong></td>
+        <td class="standard_table"><span class="cpp-source">rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2/ch_3</span></td>
+      </tr>
+      <tr>
+        <td class="standard_table"><strong>ストリーム(1) Ch4 (Camera4)/</strong></td>
+        <td class="standard_table"><span class="cpp-source">rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_1/ch_4</span></td>
+      </tr>
+      <tr>
+        <td class="standard_table"><strong>ストリーム(2) Ch4 (Camera4)/</strong></td>
+        <td class="standard_table"><span class="cpp-source">rtsp://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/MediaInput/stream_2/ch_4</span></td>
+      </tr>
+      </table>
+    <p>&nbsp;</p>
 </section>
 <p>&nbsp;</p>
 

@@ -10,8 +10,12 @@
   <!-- キャッシュ無効化 -->
   <meta http-equiv="Cache-Control" content="no-cache">
 	
+  <!-- タイトル -->
   <title>MJPEGで画像を取得する</title>
 	
+  <!-- ファビコン -->
+  <link rel="shortcut icon" href="../../favicon.ico">
+
   <!-- CSS -->
   <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="../../design.css" type="text/css">
@@ -54,7 +58,7 @@
     <strong>NOTE</strong><br>
     本ページは i-PRO株式会社 の有志メンバーにより記載されたものです。<br>
     本ページの情報は <a href="#ライセンス">ライセンス</a> に記載の条件で提供されます。
- </tr>
+  </tr>
 </table>
 <p> &nbsp;</p>
 <table style="border: 1px solid #808080; width: 800px; max-width:100%; background-color: #F0F0F0;">
@@ -132,14 +136,14 @@
 カメラ初期設定についてはカメラ毎の取扱説明書をご確認ください。</p>
 <p> 
 カメラのIPアドレスを確認・設定できる下記ツールを事前に入手しておくと便利です。</p>
-<ul>
- <li>
- <a href="https://connect.panasonic.com/jp-ja/products-services_security_support_specifications-manuals-firms-tool_2014040315191048" target="_blank">
- IP簡単設定ソフトウェア</a>&nbsp;（日本国内）</li>
- <li>
- <a href="https://bizpartner.panasonic.net/public/file/ip-setting-software" target="_blank">
- IP Setting Software</a>&nbsp;&nbsp;&nbsp;&nbsp; （グローバル）</li>
-</ul>
+ <ul>
+  <li>
+  <a href="https://connect.panasonic.com/jp-ja/products-services_security_support_specifications-manuals-firms-tool_2014040315191048" target="_blank">
+  IP簡単設定ソフトウェア</a>&nbsp;（日本国内）</li>
+  <li>
+  <a href="https://bizpartner.panasonic.net/public/file/ip-setting-software" target="_blank">
+  IP Setting Software</a>&nbsp;&nbsp;&nbsp;&nbsp; （グローバル）</li>
+ </ul>
 </section>
 
 <p>&nbsp;</p>
@@ -147,31 +151,29 @@
 <p>&nbsp;</p>
 
 <section>
- <h2><a name="1._MJPEG 表記仕様">1. MJPEG 表記仕様</a></h2>
- <h4>[概要]</h4>
- <p>MJPEG で接続するための表記を以下に記載します。</p>
- <p>「ネットワークカメラCGIコマンドインターフェース仕様書 統合版」<span class="super">[1]</span> 
- で下記に記載されている情報を元に加筆しています。</p>
- <ul>
-  <li>ネットワークカメラCGIコマンドインタフェース仕様ver.5.19.pdf： 「3.13 動画像取得(Motion JPEG 
-  形式取得：リアルタイム) (nphMotionJpeg)」</li>
- </ul>
- <p>&nbsp;</p>
- <p><span class="cpp-source">
- http://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/nphMotionJpeg?Resolution=&lt;解像度&gt;&amp;Quality=&lt;品質&gt;&amp;Framerate=&lt;フレームレート&gt;</span></p>
- <p>&nbsp;</p>
- <p>(例) <span class="cpp-source">
- http://admin:password@192.168.0.10/nphMotionJpeg?Resolution=1920x1080&amp;Quality=Standard&amp;Framerate=15</span></p>
- <p>&nbsp;</p>
- <p>&nbsp;</p>
- <h3>注意事項</h3>
- <ul>
-  <li>実験してみたところ、ストリーム(1)～(4) を On にしていると MJPEG の配信性能が落ちる様子です。フレームレートを例えば 15 
-  と設定しても最高 5fps ぐらいになるようです。<br>カメラの設定にて、ストリーム(1)～(4)を Off、にすることで 15fps 
-  の動作もできているように見えます。</li>
- </ul>
- <p>&nbsp;</p>
- <p>&nbsp;</p>
+	<h2> <a name="1._MJPEG 表記仕様">1. MJPEG 表記仕様</a></h2>
+	<h4>[概要]</h4>
+  	<p> MJPEG で接続するための表記を以下に記載します。</p>
+    <p> 「ネットワークカメラCGIコマンドインターフェース仕様書 統合版」<span class="super">[1]</span> で下記に記載されている情報を元に加筆しています。</p>
+    <ul>
+      <li>ネットワークカメラCGIコマンドインタフェース仕様ver.5.19.pdf： 「3.13 動画像取得(Motion JPEG 形式取得：リアルタイム) (nphMotionJpeg)」</li>
+    </ul>
+    <p>&nbsp;</p>
+    <p><span class="cpp-source">http://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/nphMotionJpeg?Resolution=&lt;解像度&gt;&amp;Quality=&lt;品質&gt;&amp;Framerate=&lt;フレームレート&gt;</span></p>
+    <p>&nbsp;</p>
+    <p>(例) <span class="cpp-source">
+    http://admin:password@192.168.0.10/nphMotionJpeg?Resolution=1920x1080&amp;Quality=Standard&amp;Framerate=15</span></p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <h3>注意事項</h3>
+    <ul>
+      <li>実験してみたところ、ストリーム(1)～(4) を On にしていると MJPEG の配信性能が落ちる様子です。フレームレートを例えば 15 
+      と設定しても最高 5fps ぐらいになるようです。<br>
+      カメラの設定にて、ストリーム(1)～(4)を Off、にすることで 15fps 
+      の動作もできているように見えます。</li>
+    </ul>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
 </section>
 <p>&nbsp;</p>
 
