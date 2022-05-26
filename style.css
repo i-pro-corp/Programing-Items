@@ -158,6 +158,7 @@ iframe{
 	#nav-open{
 		display: inline-block;
 		width: 48px;
+		min-width: 48px;
 		height: 40px;
 		vertical-align: middle;
 		margin: 0px;
