@@ -17,6 +17,7 @@ body{
   margin: 0px;
   padding: 0px;
   background-image:url('Images/title.svg');
+  background-position: left;
   background-repeat:no-repeat;
   background-size:contain;
   cursor: pointer;
