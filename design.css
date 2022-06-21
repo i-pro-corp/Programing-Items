@@ -169,19 +169,19 @@ div.status_ok{
 }
 
 div.status_information div:first-child{
-  background-image:url('images/StatusInformation.svg');
+  background-image:url('Images/StatusInformation.svg');
 }
 
 div.status_warning div:first-child{
-  background-image:url('images/StatusWarning.svg');
+  background-image:url('Images/StatusWarning.svg');
 }
 
 div.status_invalid div:first-child{
-  background-image:url('images/StatusInvalid.svg');
+  background-image:url('Images/StatusInvalid.svg');
 }
 
 div.status_ok div:first-child{
-  background-image:url('images/StatusOK.svg');
+  background-image:url('Images/StatusOK.svg');
 }
 
 div.status_information,
