@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="svg3326"
+   sodipodi:docname="StatusWarning.svg"
+   inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview3328"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="50.25"
+     inkscape:cx="13.870647"
+     inkscape:cy="8.0895522"
+     inkscape:window-width="1920"
+     inkscape:window-height="991"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer8" />
+  <defs
+     id="defs3314">
+    <style
+       id="style3312">.icon-canvas-transparent,.icon-vs-out{fill:#f6f6f6;}.icon-canvas-transparent{opacity:0;}.icon-vs-yellow{fill:#fc0;}</style>
+  </defs>
+  <title
+     id="title3316">StatusWarning_16x</title>
+  <g
+     inkscape:groupmode="layer"
+     id="layer8"
+     inkscape:label="Layer"
+     style="display:inline">
+    <g
+       id="g3408"
+       inkscape:label="gray_base"
+       style="display:inline"
+       sodipodi:insensitive="true">
+      <path
+         style="display:inline;fill:#f6f6f6;fill-opacity:1;stroke:none;stroke-width:1.01133px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="M 6.9486856,0 H 7 L 0,14 2,16 H 14 L 16,14 9,0 Z"
+         id="path3336"
+         sodipodi:nodetypes="cccccccc" />
+    </g>
+    <g
+       id="g3495"
+       inkscape:label="yellow_triangle"
+       style="display:inline">
+      <path
+         style="fill:#ffcc00;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="M 7.6,1 1.2,13.8 2.5,15 h 11 L 14.8,13.8 8.4,1 Z"
+         id="path3423"
+         sodipodi:nodetypes="ccccccc" />
+    </g>
+    <g
+       id="g3622"
+       inkscape:label="char_i"
+       sodipodi:insensitive="true"
+       style="display:inline">
+      <rect
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.02535"
+         id="rect3564"
+         width="2"
+         height="4.9950247"
+         x="7"
+         y="5" />
+      <rect
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.08293"
+         id="rect3618"
+         width="2"
+         height="2"
+         x="7"
+         y="11" />
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="svg20"
+   sodipodi:docname="StatusInformation.svg"
+   inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview22"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="50.25"
+     inkscape:cx="3.5522388"
+     inkscape:cy="8.2686567"
+     inkscape:window-width="1920"
+     inkscape:window-height="991"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs4">
+    <style
+       id="style2">.icon-canvas-transparent,.icon-vs-out{fill:#f6f6f6;}.icon-canvas-transparent{opacity:0;}.icon-vs-blue{fill:#1ba1e2;}.icon-white{fill:#fff;}</style>
+  </defs>
+  <title
+     id="title6">StatusInformation_16x</title>
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="Layer "
+     style="display:inline">
+    <g
+       id="g1196"
+       inkscape:label="gray_circle"
+       style="display:inline">
+      <circle
+         style="display:inline;opacity:1;fill:#f6f6f6;fill-opacity:1;stroke:none;stroke-width:1.20825"
+         id="path239"
+         cx="8"
+         cy="8"
+         r="8" />
+    </g>
+    <g
+       id="g1402"
+       inkscape:label="blue_circle"
+       style="display:inline">
+      <circle
+         style="display:inline;opacity:1;fill:#1ba1e2;fill-opacity:1;stroke:none;stroke-width:0.76515"
+         id="path1250"
+         cx="8"
+         cy="8"
+         r="7" />
+    </g>
+    <g
+       id="g1399"
+       inkscape:label="char_i">
+      <rect
+         style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.40779"
+         id="rect1304-2"
+         width="2"
+         height="7"
+         x="7"
+         y="6"
+         inkscape:label="rect1305" />
+      <rect
+         style="display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.752496"
+         id="rect1304"
+         width="2"
+         height="2"
+         x="7"
+         y="3" />
+    </g>
+  </g>
+  <metadata
+     id="metadata128">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>StatusInformation_16x</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

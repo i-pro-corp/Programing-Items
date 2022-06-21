@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="木下英俊">
+  <meta name="description" content="木下英俊が自身のためにプログラムメモを残すことを目的に作成したページです。">
+  <meta name="keywords" content="">
+  <!-- キャッシュ無効化 -->
+  <meta http-equiv="Cache-Control" content="no-cache">
+	
+   <!-- タイトル -->
+   <title>画像分類 - VGG</title>
+	
+  <!-- ファビコン -->
+  <link rel="shortcut icon" href="../../favicon.ico">
+
+  <!-- CSS -->
+  <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="../../design.css" type="text/css">
+  
+	<!-- Start for 'google-code-prettify' -->
+	<link href="../../prettify/styles/desert.css" rel="stylesheet" type="text/css">
+	<script src="../../prettify/prettify.js" type="text/javascript"></script>
+	<!-- End for 'google-code-prettify' -->	
+	
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5DFRG3H0KB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-5DFRG3H0KB');
+  </script>  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+  <style type="text/css">
+  .auto-style1 {
+    border-width: 0px;
+  }
+  .auto-style3 {
+    background-color: #484800;
+  }
+  .auto-style4 {
+    background-color: #FFFF00;
+  }
+  .auto-style6 {
+    text-decoration: underline;
+  }
+  </style>
+
+</head>
+
+<body onload="prettyPrint();">
+	
+<h1>画像分類 － VGG</h1>
+<p>&nbsp;</p>
+    <div class="status_information">
+      <div>
+      </div>
+      <div>
+        <p>本ページは i-PRO株式会社 の有志メンバーにより記載されたものです。<br>本ページの情報は <a href="#ライセンス">ライセンス</a> に記載の条件で提供されます。</p>
+      </div>
+    </div>
+<p> &nbsp;</p>
+
+<table style="border: 1px solid #808080; width: 800px; max-width: 100%; background-color: #F0F0F0;">
+  <tr>
+    <td>
+      <nav>
+        <h2> 目次</h2>
+        <p>
+        <a href="#1._準備">1. 準備</a><br>&nbsp;
+        <a href="#1-1._Pytorch_をインストールする">1-1. Pytorch をインストールする</a><br>&nbsp;
+        <a href="#1-2._「画像分類」を準備する">1-2. 「画像分類」を準備する</a><br>&nbsp;
+        <a href="#1-3._必要なライブラリをインストール">1-3. 必要なライブラリをインストール</a><br>
+        <a href="#2._静止画を画像分類する">2. 静止画を画像分類する</a><br>
+        <a href="#3._i-PRO_カメラの映像を画像分類する">3. i-PRO カメラの映像を画像分類する</a><br>
+        <a href="#4._i-PRO_カメラの映像と画像分類結果をGUI表示する_(tkinter)">4. i-PRO カメラの映像と画像分類結果をGUI表示する (tkinter)</a><br><br>
+        <a href="#ソースコード所在">ソースコード所在</a><br>
+        <a href="#ライセンス">ライセンス</a><br>
+        <a href="#参考">参考</a><br>
+        </p>
+      </nav>
+    </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<p> i-PRO のカメラ i-PRO mini (WV-S7130)、モジュールカメラ（AIスターターキット）を入手したので、カメラとPCを接続して動作するプログラムを作成してみました。こちらで紹介します。</p>
+<p> ここで記載の内容は、ほとんどの i-PRO カメラでそのまま利用できると思いますが未確認です。</p>
+<p> &nbsp;</p>
+<p>本ページでは、TyTorch および VGG16 というネットワークモデルを使用し、画像分類と呼ばれる AI 処理を行ってみます。</p>
+<p>VGG16 は、2014年の ILSVR で２位になった畳み込みニューラルネットワークです。オックスフォード大学の VGG(Visual Geometry 
+Group) チームが作成した16層から構成されるネットワークモデルであるため VGG16 と呼ばれています。 </p>
+<p>&nbsp;</p>
+<section>
+<p> "i-PRO mini" 紹介： </p>
+<ul>
+  <li><a href="https://cwc.i-pro.com/pages/i-pro-mini-lp" target="_blank">i-PRO 
+  mini</a></li>
+  <li>
+  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130ux" target="_blank">
+  i-PRO mini 有線LANモデル WV-S7130UX</a></li>
+  <li>
+  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130wux" target="_blank">
+  i-PRO mini 無線LANモデル WV-S7130WUX</a></li>
+  <li>
+  <a href="https://japancs.i-pro.com/space/DLJP/724085590/WV-S7130UX　i-PRO+mini+有線LANモデル" target="_blank">
+  WV-S7130UX　i-PRO mini 有線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
+  <li>
+  <a href="https://japancs.i-pro.com/space/DLJP/724086255/WV-S7130WUX　i-PRO+mini+無線LANモデル" target="_blank">
+  WV-S7130WUX　i-PRO mini 無線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
+</ul>
+<p> 
+<a href="images/i-PRO_mini.jpg" target="_blank">
+<img alt="" src="images/i-PRO_mini.jpg" class="border_with_drop-shadow" width="348"></a></p>
+<p>&nbsp;</p>
+<p>"モジュールカメラ" 紹介：</p>
+<ul>
+  <li><a href="https://moduca.i-pro.com" target="_blank">
+    モジュールカメラ｜ポータルサイト (i-pro.com)</a></li>
+  <li><a href="https://moduca.i-pro.com/space/MCT/768743132/各種マニュアル" target="_blank">
+    各種マニュアル - Module Camera Technical Information - モジュールカメラ｜ポータルサイト (i-pro.com)</a></li>
+</ul>
+<p> 
+<a href="images/ai_starter_kit_1.png" target="_blank">
+<img alt="" class="border_with_drop-shadow" src="images/ai_starter_kit_1.png" width="404"></a>
+<a href="images/ai_starter_kit_2.png" target="_blank">
+<img alt="" class="border_with_drop-shadow" src="images/ai_starter_kit_2.png" width="444"></a></p>
+<p> 
+&nbsp;</p>
+<p> 
+カメラ初期設定についてはカメラ毎の取扱説明書をご確認ください。</p>
+<p> 
+カメラのIPアドレスを確認・設定できる下記ツールを事前に入手しておくと便利です。</p>
+ <ul>
+  <li>
+  <a href="https://connect.panasonic.com/jp-ja/products-services_security_support_specifications-manuals-firms-tool_2014040315191048" target="_blank">
+  IP簡単設定ソフトウェア</a>&nbsp;（日本国内）</li>
+  <li>
+  <a href="https://bizpartner.panasonic.net/public/file/ip-setting-software" target="_blank">
+  IP Setting Software</a>&nbsp;&nbsp;&nbsp;&nbsp; （グローバル）</li>
+ </ul>
+</section>
+
+<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>
+
+<section>
+	<h2> <a name="1._準備">1. 準備</a></h2>
+	<h4>[概要]</h4>
+    <p>Python を事前にインストール済みであることを前提に記載します。</p>
+    <p>私の評価環境は以下の通りです。</p>
+  <p>&nbsp;</p>
+	
+	<h4>[評価環境]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>言語 :</td>
+	    <td>Python,</td>
+	    <td>3.10.4 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>Windows 11 home,</td>
+	    <td>21H2</td>
+	  </tr>
+	  <tr>
+	    <td></td>
+	    <td>Windows 10 Pro,</td>
+	    <td>21H1</td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+	<p>&nbsp;</p>
+	<p> &nbsp;</p>
+    <h3> <a name="1-1._Pytorch_をインストールする">1-1. Pytorch をインストールする</a></h3>
+    <p> (1)</p>
+    <p> 下記URLを開きます。</p>
+    <p> <a href="https://pytorch.org/get-started/locally/" target="_blank">
+    https://pytorch.org/get-started/locally/</a></p>
+    <p> &nbsp;</p>
+    <p> (2)</p>
+    <p> 下図のような画面を表示するので、使用される環境を選択します。</p>
+    <p> 私は Windows 環境で、多くの人が動作する例を作成したいので Computer Platform から CPU を選択してみました。<br>
+    Package はなんとなく&nbsp; Pip を選択してみます。</p>
+    <p> commandは <span class="cpp-source">pip3 install torch torchvision 
+    torchaudio</span> となりました。</p>
+    <p> 
+    <img alt="" class="border_with_drop-shadow" src="image_classification_vgg/img6.jpg" width="800"></p>
+    <p> <a href="image_classification_vgg/img5.jpg" target="_blank">
+    <img alt="" class="border_with_drop-shadow" src="image_classification_vgg/img5.jpg" width="800"></a></p>
+    <p> &nbsp;</p>
+    <p> ちなみに "CUDA 11.3" を選択すると <span class="cpp-source">pip3 install torch 
+    torchvision torchaudio --extra-index-url 
+    https://download.pytorch.org/whl/cu113</span> となりました。</p>
+    <p> &nbsp;</p>
+    <p> (3)</p>
+    <p> 表示されたコマンドをコマンドプロンプトなどのターミナルから入力することで Pytorch をインストールします。</p>
+    <p> &nbsp;</p>
+    <p> <a href="image_classification_vgg/img7.gif" target="_blank">
+    <img alt="" class="border_with_drop-shadow" src="image_classification_vgg/img7.gif" width="800"></a></p>
+    <p> &nbsp;</p>
+    <p> <a href="image_classification_vgg/img9.jpg" target="_blank">
+    <img alt="" class="border_with_drop-shadow" src="image_classification_vgg/img9.jpg" width="800"></a></p>
+    <p> &nbsp;</p>
+    <p> <a href="image_classification_vgg/imgD.gif" target="_blank">
+    <img alt="" class="border_with_drop-shadow" src="image_classification_vgg/imgD.gif" width="800"></a></p>
+    <p> &nbsp;</p>
+    <p> これで Pytorch のインストールを完了です。</p>
+    <p> &nbsp;</p>
+    <p> &nbsp;</p>
+    <h3> <a name="1-2._「画像分類」を準備する">1-2. 「画像分類」を準備する</a></h3>
+    <p> 作業フォルダを準備して、下記プログラムを保存します。</p>
+    <p> &nbsp;</p>
+  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/image_classification_vgg/preparation.py" target="_blank">preparation.py</a>"]</p>
+
+    <pre class="prettyprint linenums lang-py">import os
+import urllib.request
+
+# フォルダ「data」が存在しない場合はフォルダ data を作成します。
+data_dir = "./data/"
+if not os.path.exists(data_dir):
+    os.mkdir(data_dir)
+
+# ImageNetのclass_indexをダウンロードします。
+# Kerasで用意されているものです。下記オープンソースで使用している JSON ファイルです。
+# https://github.com/fchollet/deep-learning-models/blob/master/imagenet_utils.py
+url = "https://s3.amazonaws.com/deep-learning-models/image-models/imagenet_class_index.json"
+save_path = os.path.join(data_dir, "imagenet_class_index.json")
+
+if not os.path.exists(save_path):
+    urllib.request.urlretrieve(url, save_path)</pre>
+    <p> &nbsp;</p>
+    <p> そしてこのプログラムを実行すると、作業フォルダ中に data フォルダを作成してその中に "imagenet_class_index.json" 
+    というファイルを作成して保存してくれます。<br>このファイルは画像分類で使用する 1000種類 のラベル情報です。</p>
+    <p> &nbsp;</p>
+    <p> &nbsp;</p>
+    <h3> <a name="1-3._必要なライブラリをインストール">1-3. 必要なライブラリをインストール</a></h3>
+    <p> matplotlib を使用するので、下記コマンドによりインストールします。</p>
+    <p> <span class="cpp-source">pip install matplotlib </span></p>
+    <p> <a href="image_classification_vgg/img15.gif" target="_blank">
+    <img alt="" class="auto-style1" src="image_classification_vgg/img15.gif" width="800"></a></p>
+    <p> &nbsp;</p>
+	
+</section>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<section>
+  <h2><a name="2._静止画を画像分類する">2. 静止画を画像分類する</a></h2>
+  <h4>[概要]</h4>
+
+  <p>学習済みの VGG モデルを使用し、静止画（JPEGファイル）の画像分類を行ってみます。</p>
+  <p>ここでは入力画像として、 <a href="https://pixabay.com" target="_blank">https://pixabay.com</a> 
+  から取得した４つの画像（てんとう虫、ゴールデンレトリバー（犬）、車、デイジー（花））を使用させていただき実験してみます。</p>
+  <p>いずれも 商用利用無料、帰属表示必要なし、の画像です。<br>各画像の取得元は、下記ソースコード中に記載の URL を参照ください。</p>
+  <p>下記プログラムを実行する際は、ご自身で各画像をダウンロードして事前に data フォルダに保存してください。</p>
+  <p>&nbsp;</p>
+  <p>
+  <img alt="" src="image_classification_vgg/ladybug-g7744c038e_1280.jpg" width="400">
+  <img alt="" src="image_classification_vgg/marguerite-gfad1f1cea_1920.jpg" width="400">
+  <img alt="" src="image_classification_vgg/car-g955f2640f_1920.jpg" width="400">
+  <img alt="" src="image_classification_vgg/goldenretriever-3724972_640.jpg" width="400"></p>
+  <p>&nbsp;</p>
+
+  <h4>[評価環境]</h4>
+  <table>
+    <tbody>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+
+    <tr>
+      <td>言語 :</td>
+      <td>Python,</td>
+      <td>3.10.4 </td>
+    </tr>
+
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+
+    <tr>
+      <td>OS :</td>
+      <td>Windows 11 home,</td>
+      <td>21H2</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Windows 10 Pro,</td>
+      <td>21H1</td>
+    </tr>
+
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+  </tbody>
+  </table>
+
+  <p>&nbsp;</p>
+  <h4>[説明]</h4>
+  <p>部分ごとに説明して最後に全体ソースコードを示します。</p>
+  <p>&nbsp;</p>
+  <p>1.</p>
+  <p>パッケージのインポートを最初に行います。</p>
+  <pre class="prettyprint linenums lang-py">import numpy as np
+import json
+from PIL import Image
+import matplotlib.pyplot as plt
+
+import torch
+import torchvision
+from torchvision import models, transforms</pre>
+  <p>&nbsp;</p>
+
+  <p>2.</p>
+  <p>下記コードにより VGG16 の学習済みモデルをロードします。<br>
+  初めて実行する際は、学習済みパラメータをインターネットからダウンロードするため、実行に時間がかかります。</p>
+  <pre class="prettyprint linenums lang-py">        # Create an instance of the VGG16 model
+        self.net = models.vgg16( pretrained = True )
+        self.net.eval()             # Set to evaluation mode.
+
+        # Display network-model.
+        print(self.net)</pre>
+  <p>&nbsp;</p>
+  <p><span class="cpp-source">self.net = models.vgg16( pretrained = True )</span> 
+  により取得した学習済みモデルは下記に保存されます。<br>'~' はログインしているユーザーのホームディレクトリを意味します。</p>
+  <p>&nbsp;</p>
+  <p>
+  <a href="https://pytorch.org/docs/stable/hub.html#where-are-my-downloaded-models-saved" target="_blank">
+  Where are my downloaded models saved?</a></p>
+  <blockquote>
+    <p>The locations are used in the order of </p>
+    <ul>
+      <li>Calling <span class="cpp-source">hub.set_dir(&lt;PATH_TO_HUB_DIR&gt;)</span>
+      </li>
+      <li><span class="cpp-source">$TORCH_HOME/hub</span>, if environment 
+      variable <span class="cpp-source">TORCH_HOME</span> is set. </li>
+      <li><span class="cpp-source">$XDG_CACHE_HOME/torch/hub</span>, if 
+      environment variable <span class="cpp-source">XDG_CACHE_HOME</span> is 
+      set. </li>
+      <li><span class="cpp-source">~/.cache/torch/hub</span></li>
+    </ul>
+  </blockquote>
+  <p>私の場合は下記に vgg16-397923af.pth を保存していました。約540MBのファイルサイズでした。</p>
+  <p>"~.cache\torch\hub\checkpoints\vgg16-397923af.pth"</p>
+  <p>&nbsp;</p>
+
+  <p>3.</p>
+  <p>入力画像の前処理クラスを作成します。</p>
+  <ul>
+    <li>画像サイズを 224x224 にリサイズする必要があります。</li>
+    <li>色情報の規格化が必要です。RGB に対して平均が (0.485, 0.456, 0.406)、標準偏差が (0.229, 0.224, 
+    0.225) を設定します。学習済みの VGG16 モデルがこの規格化条件で前処理した画像で学習しているためこれと同じ値を設定する必要があります。</li>
+  </ul>
+  <pre class="prettyprint linenums lang-py">
+class BaseTransform():
+    '''
+    Pre-process the input image. Image resizing, color standardization, etc.
+    入力画像の前処理を行う。画像のリサイズ、色の標準化など。
+    '''
+
+    def __init__(self, resize, mean, std):
+        self.base_transform = transforms.Compose([
+            transforms.Resize((resize, resize)),    # Resize both long and short sides to the size of resize.
+            #transforms.Resize(resize),             # Resize the short edge length to the size of resize while preserving the aspect
+            #transforms.CenterCrop(resize),         # Crop the center of the image with resize × resize.
+            transforms.ToTensor(),                  # Convert to Torch-Tensor.
+            transforms.Normalize(mean, std)         # color standardization
+        ])
+
+    def __call__(self, img):
+        '''
+        Perform pre-process the input image.
+        '''
+        return self.base_transform(img)</pre>
+  <p>&nbsp;</p>
+  <p>こんな感じで BaseTransform クラスのインスタンスを生成するときに画像サイズ、規格化の情報を与えています。</p>
+  <pre class="prettyprint linenums lang-py">
+        # Create an instance of preprocessing.
+        resize = 224
+        mean = (0.485, 0.456, 0.406)
+        std = (0.229, 0.224, 0.225)
+        self.transform = BaseTransform(resize, mean, std)</pre>
+  <p>&nbsp;</p>
+
+  <p>4.</p>
+  <p>出力結果からラベルを判定するクラスを作成します。</p>
+  <p>最もスコアの高いラベル（predicted_label_name）とそのスコア（score）を返します。<br>
+    出力を softmax で処理することで全体（1000種別）のスコアを足すと 1.0 になるようにしています。</p>
+  <pre class="prettyprint linenums lang-py">class ILSVRCPredictor():
+    '''
+    Get the label name with the highest score from the calculation result.
+    演算結果から最もスコアの高いラベル名を取得する。
+    '''
+
+    def __init__(self, class_index):
+        '''
+        Constructor
+
+        Args:
+            class_index     [i] class index.
+        '''
+        self.class_index = class_index
+
+    def predict_max(self, out):
+        '''
+        Get the label name with the highest score from the calculation result.
+        最もスコアの高いラベル名を取得する。
+        '''
+        data = out.detach().numpy()
+        probabilities = torch.nn.functional.softmax(out, dim=1)[0]
+        maxid = np.argmax(data)
+
+        score = probabilities[maxid].item()
+        predicted_label_name = self.class_index[str(maxid)][1]
+
+        return predicted_label_name, score</pre>
+  <p>&nbsp;</p>
+
+  <p>5.</p>
+  <p>画像分類を行う本体のクラスを作成します。</p>
+  <pre class="prettyprint linenums lang-py">class ImagenetClassificationVgg():
+    '''
+    Image classification.
+    画像分類を行う。
+    '''
+
+    def __init__(self, class_index_file):
+        '''
+        Constructor
+
+        Args:
+            class_index_file:   [i] class index file path.
+        '''
+
+        # PyTorch version.
+        print("PyTorch Version: ", torch.__version__)
+        print("Torchvision Version: ", torchvision.__version__)
+
+        # Load a trained VGG-16 model.
+        # The first time you run it, it will take a long time to run because it will download the trained parameters.
+        # 学習済みの VGG-16 モデルをロードする。
+        # 初めて実行する際は、学習済みパラメータをダウンロードするため、実行に時間がかかります。
+
+        # Create an instance of the VGG16 model
+        self.net = models.vgg16( pretrained = True )
+        self.net.eval()             # Set to evaluation mode.
+
+        # Display network-model.
+        print(self.net)
+
+        # Create an instance of preprocessing.
+        resize = 224
+        mean = (0.485, 0.456, 0.406)
+        std = (0.229, 0.224, 0.225)
+        self.transform = BaseTransform(resize, mean, std)
+
+        # Load ILSVRC label information and create an ILSVRCPredictor instance.
+        self.ILSVRC_class_index = json.load( open(class_index_file, 'r') )
+        self.predictor = ILSVRCPredictor(self.ILSVRC_class_index)
+
+
+    def imagenet_classification_vgg(self, img, debug=False):
+        '''
+        Perform image classification.
+
+        Args:
+            img:        [i] An image for image classification. PIL.Image format.
+            debug:      [i] if set to True, display debug images.
+        Returns:
+            results:    Results of image classification.
+        '''
+        if debug==True:
+            # View original image.
+            plt.imshow(img)
+            plt.show()
+
+        # Preprocessing.
+        img_transformed = self.transform(img)  # torch.Size([3, 224, 224])
+
+        if debug==True:
+            # Display the image after preprocessing.
+            img_transformed_2 = img_transformed.numpy().transpose((1, 2, 0))
+            img_transformed_2 = np.clip(img_transformed_2, 0, 1)
+            plt.imshow(img_transformed_2)
+            plt.show()
+
+        # Added batch size dimension.
+        inputs = img_transformed.unsqueeze_(0)  # torch.Size([1, 3, 224, 224])
+
+        # ネットワークモデルへ画像を入力し、出力をラベルに変換
+        out = self.net(inputs)      # torch.Size([1, 1000])
+        result = self.predictor.predict_max(out)
+
+        return result</pre>
+  <p>&nbsp;</p>
+  
+  <p>6.</p>
+  <p>main 部分です。</p>
+  <p>ImagenetClassificatinVgg クラスのインスタンスを作成して分類を行う画像を入力するだけです。</p>
+  <pre class="prettyprint linenums lang-py">if __name__ == "__main__":
+    '''
+    main
+    '''
+    imagenetClassifigationVgg = ImagenetClassificationVgg('./data/imagenet_class_index.json')
+
+    # Open image file.
+    # https://pixabay.com/ja/photos/%e3%81%a6%e3%82%93%e3%81%a8%e3%81%86%e8%99%ab-%e7%94%b2%e8%99%ab-%e3%83%86%e3%83%b3%e3%83%88%e3%82%a6%e3%83%a0%e3%82%b7-1480102/
+    # https://pixabay.com/ja/service/license/
+    # 商用利用無料、帰属表示必要なし、1280x855
+    img = Image.open('./data/ladybug-g7744c038e_1280.jpg')
+    result = imagenetClassifigationVgg.do_classification(img)
+    print("Result: ", result)
+
+    # https://pixabay.com/ja/photos/goldenretriever-%E7%8A%AC-3724972/
+    # https://pixabay.com/ja/service/license/
+    # 商用利用無料、帰属表示必要なし、640x426
+    img = Image.open('./data/goldenretriever-3724972_640.jpg')
+    result = imagenetClassifigationVgg.do_classification(img)
+    print("Result: ", result)
+
+    # https://pixabay.com/ja/photos/%e8%bb%8a-%e7%94%b2%e8%99%ab-%e3%83%95%e3%82%a9%e3%83%ab%e3%82%af%e3%82%b9%e3%83%af%e3%83%bc%e3%82%b2%e3%83%b3-1283947/
+    # https://pixabay.com/ja/service/license/
+    # 商用利用無料、帰属表示必要なし、1920x1280
+    img = Image.open('./data/car-g955f2640f_1920.jpg')
+    result = imagenetClassifigationVgg.do_classification(img)
+    print("Result: ", result)
+
+    # https://pixabay.com/ja/photos/%e3%83%9e%e3%83%bc%e3%82%ac%e3%83%ac%e3%83%83%e3%83%88-%e3%83%87%e3%82%a4%e3%82%b8%e3%83%bc-%e8%8a%b1-729510/
+    # https://pixabay.com/ja/service/license/
+    # 商用利用無料、帰属表示必要なし、1920x1249
+    img = Image.open('./data/marguerite-gfad1f1cea_1920.jpg')
+    result = imagenetClassifigationVgg.do_classification(img)
+    print("Result: ", result)</pre>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>以下に全ソースコードを記載します。&nbsp;</p>
+
+  <p> &nbsp;</p>
+  <p>[全ソースコード &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/image_classification_vgg/classification_vgg.py" target="_blank">classsification_vgg.py</a>&quot;]</p>
+  <pre class="prettyprint linenums lang-py">import numpy as np
+import json
+from PIL import Image
+import matplotlib.pyplot as plt
+
+import torch
+import torchvision
+from torchvision import models, transforms
+
+
+class BaseTransform():
+    '''
+    Pre-process the input image. Image resizing, color standardization, etc.
+    入力画像の前処理を行う。画像のリサイズ、色の標準化など。
+    '''
+
+    def __init__(self, resize, mean, std):
+        self.base_transform = transforms.Compose([
+            transforms.Resize((resize, resize)),    # Resize both long and short sides to the size of resize.
+            transforms.ToTensor(),                  # Convert to Torch-Tensor.
+            transforms.Normalize(mean, std)         # color standardization
+        ])
+
+    def __call__(self, img):
+        '''
+        Perform pre-process the input image.
+        '''
+        return self.base_transform(img)
+
+
+class ILSVRCPredictor():
+    '''
+    Get the label name with the highest score from the calculation result.
+    演算結果から最もスコアの高いラベル名を取得する。
+    '''
+
+    def __init__(self, class_index):
+        '''
+        Constructor
+
+        Args:
+            class_index     [i] class index.
+        '''
+        self.class_index = class_index
+
+    def predict_max(self, out):
+        '''
+        Get the label name with the highest score from the calculation result.
+        最もスコアの高いラベル名を取得する。
+        '''
+        data = out.detach().numpy()
+        probabilities = torch.nn.functional.softmax(out, dim=1)[0]
+        maxid = np.argmax(data)
+
+        score = probabilities[maxid].item()
+        predicted_label_name = self.class_index[str(maxid)][1]
+
+        return predicted_label_name, score
+
+
+class ImagenetClassificationVgg():
+    '''
+    Image classification.
+    画像分類を行う。
+    '''
+
+    def __init__(self, class_index_file):
+        '''
+        Constructor
+
+        Args:
+            class_index_file:   [i] class index file path.
+        '''
+
+        # PyTorch version.
+        print("PyTorch Version: ", torch.__version__)
+        print("Torchvision Version: ", torchvision.__version__)
+
+        # Load a trained VGG-16 model.
+        # The first time you run it, it will take a long time to run because it will download the trained parameters.
+        # 学習済みの VGG-16 モデルをロードする。
+        # 初めて実行する際は、学習済みパラメータをダウンロードするため、実行に時間がかかります。
+
+        # Create an instance of the VGG16 model
+        self.net = models.vgg16( pretrained = True )
+        self.net.eval()             # Set to evaluation mode.
+
+        # Display network-model.
+        print(self.net)
+
+        # Create an instance of preprocessing.
+        resize = 224
+        mean = (0.485, 0.456, 0.406)
+        std = (0.229, 0.224, 0.225)
+        self.transform = BaseTransform(resize, mean, std)
+
+        # Load ILSVRC label information and create an ILSVRCPredictor instance.
+        self.ILSVRC_class_index = json.load( open(class_index_file, 'r') )
+        self.predictor = ILSVRCPredictor(self.ILSVRC_class_index)
+
+
+    def do_classification(self, img, debug=False):
+        '''
+        Perform image classification.
+
+        Args:
+            img:        [i] An image for image classification. PIL.Image format.
+            debug:      [i] if set to True, display debug images.
+        Returns:
+            results:    Results of image classification.
+        '''
+        if debug==True:
+            # View original image.
+            plt.imshow(img)
+            plt.show()
+
+        # Preprocessing.
+        img_transformed = self.transform(img)  # torch.Size([3, 224, 224])
+
+        if debug==True:
+            # Display the image after preprocessing.
+            img_transformed_2 = img_transformed.numpy().transpose((1, 2, 0))
+            img_transformed_2 = np.clip(img_transformed_2, 0, 1)
+            plt.imshow(img_transformed_2)
+            plt.show()
+
+        # Added batch size dimension.
+        inputs = img_transformed.unsqueeze_(0)  # torch.Size([1, 3, 224, 224])
+
+        # ネットワークモデルへ画像を入力し、出力をラベルに変換
+        out = self.net(inputs)      # torch.Size([1, 1000])
+        result = self.predictor.predict_max(out)
+
+        return result
+
+
+if __name__ == "__main__":
+    '''
+    main
+    '''
+    imagenetClassifigationVgg = ImagenetClassificationVgg('./data/imagenet_class_index.json')
+
+    # Open image file.
+    # https://pixabay.com/ja/photos/%e3%81%a6%e3%82%93%e3%81%a8%e3%81%86%e8%99%ab-%e7%94%b2%e8%99%ab-%e3%83%86%e3%83%b3%e3%83%88%e3%82%a6%e3%83%a0%e3%82%b7-1480102/
+    # https://pixabay.com/ja/service/license/
+    # 商用利用無料、帰属表示必要なし、1280x855
+    img = Image.open('./data/ladybug-g7744c038e_1280.jpg')
+    result = imagenetClassifigationVgg.do_classification(img)
+    print("Result: ", result)
+
+    # https://pixabay.com/ja/photos/goldenretriever-%E7%8A%AC-3724972/
+    # https://pixabay.com/ja/service/license/
+    # 商用利用無料、帰属表示必要なし、640x426
+    img = Image.open('./data/goldenretriever-3724972_640.jpg')
+    result = imagenetClassifigationVgg.do_classification(img)
+    print("Result: ", result)
+
+    # https://pixabay.com/ja/photos/%e8%bb%8a-%e7%94%b2%e8%99%ab-%e3%83%95%e3%82%a9%e3%83%ab%e3%82%af%e3%82%b9%e3%83%af%e3%83%bc%e3%82%b2%e3%83%b3-1283947/
+    # https://pixabay.com/ja/service/license/
+    # 商用利用無料、帰属表示必要なし、1920x1280
+    img = Image.open('./data/car-g955f2640f_1920.jpg')
+    result = imagenetClassifigationVgg.do_classification(img)
+    print("Result: ", result)
+
+    # https://pixabay.com/ja/photos/%e3%83%9e%e3%83%bc%e3%82%ac%e3%83%ac%e3%83%83%e3%83%88-%e3%83%87%e3%82%a4%e3%82%b8%e3%83%bc-%e8%8a%b1-729510/
+    # https://pixabay.com/ja/service/license/
+    # 商用利用無料、帰属表示必要なし、1920x1249
+    img = Image.open('./data/marguerite-gfad1f1cea_1920.jpg')
+    result = imagenetClassifigationVgg.do_classification(img)
+    print("Result: ", result)</pre>
+  <p>&nbsp;</p>
+  <p>実行結果です。コンソールへ出力された内容です。</p>
+  <pre>PyTorch Version:  1.11.0+cpu
+Torchvision Version:  0.12.0+cpu
+VGG(
+  (features): Sequential(
+    (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (1): ReLU(inplace=True)
+    (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (3): ReLU(inplace=True)
+    (4): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (5): Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (6): ReLU(inplace=True)
+    (7): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (8): ReLU(inplace=True)
+    (9): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (10): Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (11): ReLU(inplace=True)
+    (12): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (13): ReLU(inplace=True)
+    (14): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (15): ReLU(inplace=True)
+    (16): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (17): Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (18): ReLU(inplace=True)
+    (19): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (20): ReLU(inplace=True)
+    (21): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (22): ReLU(inplace=True)
+    (23): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (24): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (25): ReLU(inplace=True)
+    (26): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (27): ReLU(inplace=True)
+    (28): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (29): ReLU(inplace=True)
+    (30): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  )
+  (avgpool): AdaptiveAvgPool2d(output_size=(7, 7))
+  (classifier): Sequential(
+    (0): Linear(in_features=25088, out_features=4096, bias=True)
+    (1): ReLU(inplace=True)
+    (2): Dropout(p=0.5, inplace=False)
+    (3): Linear(in_features=4096, out_features=4096, bias=True)
+    (4): ReLU(inplace=True)
+    (5): Dropout(p=0.5, inplace=False)
+    (6): Linear(in_features=4096, out_features=1000, bias=True)
+  )
+)
+<span class="auto-style4">Result: ('ladybug', 0.9478541612625122) </span>
+<span class="auto-style4">Result: ('golden_retriever', 0.9413034915924072) </span>
+<span class="auto-style4">Result: ('sports_car', 0.3690492510795593) </span>
+<span class="auto-style4">Result: ('daisy', 0.9962427616119385)</span> </pre>
+  <p>&nbsp;</p>
+  <p>正しく画像分類できていそうです。</p>
+  <p>ImagenetClassificationVgg クラスのインスタンスを作成したらあとは画像を渡すだけ、という感じで実行できます。<br>
+  学習済みのモデルを使用して推論するだけならさほど難しく無いと思います。興味あればチャレンジしてみて下さい。</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+	
+<br>
+
+<section>
+  <h2><a name="3._i-PRO_カメラの映像を画像分類する">3. i-PRO カメラの映像を画像分類する</a></h2>
+  <h4>[概要]</h4>
+  <p>さて、i-PRO カメラと接続して取得した映像に対して「画像分類」をリアルタイムに実施してみたいと思います。</p>
+  <p>「<a href="connect_with_rtsp.html">RTSP 
+  で画像を取得する</a>」中で OpenCV による顔検知を作成しましたので、このプログラムを元に OpenCV 
+  の処理部分を上記で作成した物体検知へ変更してみたいと思います。</p>
+  <p>&nbsp;</p>
+  <h4>[評価環境]</h4>
+  <table>
+  <tbody>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+  
+    <tr>
+      <td>言語 :</td>
+      <td>Python,</td>
+      <td>3.10.4 </td>
+    </tr>
+  
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    
+    <tr>
+      <td>OS :</td>
+      <td>Windows 11 home,</td>
+      <td>21H2</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Windows 10 Pro,</td>
+      <td>21H1</td>
+    </tr>
+
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+  </tbody>
+  </table>
+  <p>&nbsp;</p>
+  <p>上記で作成した "imagenet_classsification_vgg.py" をそのままライブラリとして活用することができます。</p>
+  <p>具体的には、同じフォルダ中にある python のソースコードからであれば下記のように <span class="cpp-source">from 
+  imagenet_classsification_vgg import ImagenetClassificationVgg</span> 
+  と記載することでそのまま使用できます。</p>
+  <p>こんな方法を活用して必要最小限の情報記載で進めたいと思います。</p>
+  <p>&nbsp;</p>
+  <p>["<a href="https://github.com/i-pro-corp/python-examples/blob/main/image_classification_vgg/classification_main.py" target="_blank">classification_main.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">from PIL import Image
+<span class="auto-style3">from classification_vgg import ImagenetClassificationVgg</span>
+
+if __name__ == "__main__":
+    '''
+    main
+    '''
+    imagenetClassifigationVgg = ImagenetClassificationVgg('./data/imagenet_class_index.json')
+
+    # Open image file.
+    # https://pixabay.com/ja/photos/%e3%81%a6%e3%82%93%e3%81%a8%e3%81%86%e8%99%ab-%e7%94%b2%e8%99%ab-%e3%83%86%e3%83%b3%e3%83%88%e3%82%a6%e3%83%a0%e3%82%b7-1480102/
+    # https://pixabay.com/ja/service/license/
+    # 商用利用無料、帰属表示必要なし、1280x855
+    img = Image.open('./data/ladybug-g7744c038e_1280.jpg')
+    result = imagenetClassifigationVgg.imagenet_classification_vgg(img)
+    print("Result: ", result)</pre>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <h3>3-1. まずはシンプルに作成</h3>
+  <p>"connect_with_rtsp_3_1.py" 
+  を元に、RTSP接続して受信したカメラ映像をリアルタイムに画像分類するプログラムを作成してみます。</p>
+  <p>VGG の処理負荷はとても高そうなのでちょっと心配ですが、必要に応じてカメラ側の設定でフレームレートや解像度を下げて使用する、という方針で進めます。</p>
+  <p>&nbsp;</p>
+  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/image_classification_vgg/classification_with_camera_1.py" target="_blank">classification_with_camera_1.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    Image classification.
+    画像分類を行います。
+
+[Details]
+    This program connects to an i-PRO camera and classifies live images.
+    このプログラムは、i-PRO カメラと接続してライブ映像に対して画像分類を行います。
+
+[Library install]
+    torch, torchvision : see https://pytorch.org/get-started/locally/
+    cv2 :           pip install opencv-python
+    matplotlib :    pip install matplotlib
+    numpy :         pip install numpy
+    PIL :           pip install pillow
+    json :          Built-in module in Python, you don’t need to install it with pip.
+'''
+
+import cv2
+<span class="auto-style3">from PIL import Image</span>
+<span class="auto-style3">from classification_vgg import ImagenetClassificationVgg</span>    # Local module. See 'classification_vgg.py'.
+
+
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+
+
+# Exception 定義
+BackendError = type('BackendError', (Exception,), {})
+
+def IsWindowVisible(winname):
+    '''
+    Check if the target window exists.
+
+    Args:
+        winname :       Window title.
+    Returns:
+        True :          Exist.
+        False :         Not exist.
+    Raise:
+        BackendError :
+    '''
+    try:
+        ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
+        if ret == -1:
+            raise BackendError('Use Qt as backend to check whether window is visible or not.')
+
+        return bool(ret)
+
+    except cv2.error:
+        return False
+
+
+<span class="auto-style3">def CV2Pil(image):</span>
+<span class="auto-style3">    '''</span>
+<span class="auto-style3">    Convert from OpenCV to PIL.Image</span>
+<span class="auto-style3">    </span>
+<span class="auto-style3">    Params:</span>
+<span class="auto-style3">        image:  OpenCV image.</span>
+<span class="auto-style3">    Returns:</span>
+<span class="auto-style3">        PIL.Image format image.    </span>
+<span class="auto-style3">    '''</span>
+<span class="auto-style3">    new_image = image.copy()</span>
+<span class="auto-style3">    if new_image.ndim == 2:  # モノクロ</span>
+<span class="auto-style3">        pass</span>
+<span class="auto-style3">    elif new_image.shape[2] == 3:  # カラー</span>
+<span class="auto-style3">        new_image = cv2.cvtColor(new_image, cv2.COLOR_BGR2RGB)</span>
+<span class="auto-style3">    elif new_image.shape[2] == 4:  # 透過</span>
+<span class="auto-style3">        new_image = cv2.cvtColor(new_image, cv2.COLOR_BGRA2RGBA)</span>
+<span class="auto-style3">    new_image = Image.fromarray(new_image)</span>
+<span class="auto-style3">    return new_image</span>
+
+
+'''
+[Abstract]
+    main 関数
+'''
+if __name__ == '__main__':
+    # Create an instance of class ImagenetClassificationVgg.
+    <span class="auto-style3">imagenetClassifigationVgg = ImagenetClassificationVgg('./data/imagenet_class_index.json')</span>
+
+    # Create an instance of class cv2.VideoCapture
+    cap = cv2.VideoCapture(f"rtsp://{user_id}:{user_pw}@{host}/MediaInput/stream_1")
+
+    # 
+    windowInitialized = False
+
+    while True:
+        try:
+            ret, frame = cap.read()
+            if ret == True:
+                # Image classification
+                pilImage = CV2Pil(frame)
+                <span class="auto-style3">result, score = imagenetClassifigationVgg.do_classification(pilImage)</span>
+
+                if score &gt; 0.15:
+                    print(result, score)
+                else:
+                    print('None')
+
+                # Resize to a display size that fits on your PC screen.
+                width   = 640
+                height  = 480
+                h, w = frame.shape[:2]
+                aspect = w / h
+                if width / height &gt;= aspect:
+                    nh = height
+                    nw = round(nh * aspect)
+                else:
+                    nw = width
+                    nh = round(nw / aspect)
+                frame2 = cv2.resize(frame, (nw, nh))
+            
+                # Display image.
+                cv2.imshow(winname, frame2)
+
+                if windowInitialized==False:
+                    # Specify the display position only at the beginning.
+                    cv2.moveWindow(winname, 100, 100)
+                    windowInitialized = True
+
+            # Press the "q" key to finish.
+            k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
+            if k == ord("q"):
+                break
+            
+            # Exit if there is no specified window.
+            if not IsWindowVisible(winname):
+                break
+
+        except KeyboardInterrupt:
+            # Press ctrl -c on the console to exit the program.
+            print("KeyboardInterrupt")
+            break
+
+    print("Finish main()")
+    cap.release()
+    cv2.destroyAllWindows()</pre>
+  <p>&nbsp;</p>
+  <p>結果：</p>
+  <p>予想通り VGG の処理がとても重たく、PC性能にもよると思いますが、今回実施しているCPU処理ではフレームレートを 1,3,5fps 
+  程度に設定する必要がありそうです。</p>
+  <p>加えてフレームレートを下げても一定の遅延を発生しました。恐らく10フレーム程度のバッファリングが行われており、例えば 1fps 
+  に設定すると10秒程度の遅延を常に生じます。</p>
+  <p>
+  用途にもよりますが、ちょっと残念。映像表示だけでも10fps以上の通常表示を維持しつつ、画像分類の処理をできるだけ実施するというような改善を考えてみたいところです。</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <h3>3-2. マルチタスク化して処理を高速化してみる</h3>
+  <p><span>
+  そこで、画像分類の処理を別タスクに分離することで、映像受信と映像デコード処理を止めずにできるだけ顔検知をやってみる、という感じにプログラムを修正してみます。</span></p>
+  <p class="auto-style6">multiprocessing, queue というライブラリを使用して実現してみます。</p>
+  <p>こちらが新規に作成したプログラムです。"connect_with_rtsp_3_2.py" を元に作成しています。</p>
+  <p>&nbsp;</p>
+  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/image_classification_vgg/classification_with_camera_2.py" target="_blank">classification_with_camera_2.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    Try connecting to an i-PRO camera with RTSP.
+    RTSP で i-PRO カメラと接続してみる
+
+[Details]
+    image classification.
+
+[Author]
+    kinoshita hidetoshi (木下英俊)
+
+[Library install]
+    pip install opencv-python
+'''
+
+import cv2
+<span class="auto-style3">import multiprocessing as mp</span>
+<span class="auto-style3">from queue import Empty</span>
+from classification_vgg import ImagenetClassificationVgg
+from PIL import Image
+
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+
+# Exception 定義
+BackendError = type('BackendError', (Exception,), {})
+
+def IsWindowVisible(winname):
+    '''
+    Check if the target window exists.
+
+    Args:
+        winname :       Window title.
+    Returns:
+        True :          Exist.
+        False :         Not exist.
+    Raise:
+        BackendError :
+    '''
+    try:
+        ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
+        if ret == -1:
+            raise BackendError('Use Qt as backend to check whether window is visible or not.')
+
+        return bool(ret)
+
+    except cv2.error:
+        return False
+
+
+def CV2Pil(image):
+    '''
+    Convert from OpenCV to PIL.Image
+    
+    Params:
+        image:  OpenCV image.
+    Returns:
+        PIL.Image format image.    
+    '''
+    new_image = image.copy()
+    if new_image.ndim == 2:  # モノクロ
+        pass
+    elif new_image.shape[2] == 3:  # カラー
+        new_image = cv2.cvtColor(new_image, cv2.COLOR_BGR2RGB)
+    elif new_image.shape[2] == 4:  # 透過
+        new_image = cv2.cvtColor(new_image, cv2.COLOR_BGRA2RGBA)
+    new_image = Image.fromarray(new_image)
+    return new_image
+
+
+<span class="auto-style3">def ImageClassificationProcess(q):</span>
+<span class="auto-style3">    '''</span>
+<span class="auto-style3">    Image classification process.</span>
+
+<span class="auto-style3">    Args:</span>
+<span class="auto-style3">        q1 :        [i] 顔検知する画像を保存する Queue</span>
+<span class="auto-style3">        q2 :        [o] 顔検知した結果を保存する Queue</span>
+<span class="auto-style3">    Returns:</span>
+<span class="auto-style3">        None</span>
+<span class="auto-style3">    '''</span>
+<span class="auto-style3">    imagenetClassifigationVgg = ImagenetClassificationVgg('./data/imagenet_class_index.json')</span>
+
+<span class="auto-style3">    while True:</span>
+<span class="auto-style3">        try:</span>
+<span class="auto-style3">            image = q.get(True, 10)</span>
+
+<span class="auto-style3">            # 終了処理： q1.get から取得したものが int で -1 なら終了</span>
+<span class="auto-style3">            if type(image) == int:</span>
+<span class="auto-style3">                if image == -1:</span>
+<span class="auto-style3">                    break</span>
+
+<span class="auto-style3">            # Image classification</span>
+<span class="auto-style3">            pilImage = CV2Pil(image)</span>
+<span class="auto-style3">            result, score = imagenetClassifigationVgg.do_classification(pilImage)</span>
+
+<span class="auto-style3">            if score &gt; 0.15:</span>
+<span class="auto-style3">                print(result, score)</span>
+<span class="auto-style3">            else:</span>
+<span class="auto-style3">                print('None')</span>
+
+<span class="auto-style3">        except Empty: # timeout of q1.get()</span>
+<span class="auto-style3">            print("Timeout happen.(3)")</span>
+
+<span class="auto-style3">    print("Finish ImageClassificationProcess()")</span>    
+
+
+'''
+[Abstract]
+    main 関数
+'''
+if __name__ == '__main__':
+
+    cap = cv2.VideoCapture(f"rtsp://{user_id}:{user_pw}@{host}/MediaInput/stream_1")
+
+    #
+    windowInitialized = False
+
+<span class="auto-style3">    # Create and start image classification process.</span>
+<span class="auto-style3">    q = mp.Queue()</span>
+<span class="auto-style3">    p = mp.Process(target=ImageClassificationProcess, args=(q,))</span>
+<span class="auto-style3">    p.start()</span>
+
+    while True:
+        try:
+            ret, frame = cap.read()
+            if ret == True:
+                # 
+                if (q.qsize() &lt;= 1):
+                    q.put(frame)
+
+                # Resize to a display size that fits on your PC screen.
+                width   = 640
+                height  = 480
+                h, w = frame.shape[:2]
+                aspect = w / h
+                if width / height &gt;= aspect:
+                    nh = height
+                    nw = round(nh * aspect)
+                else:
+                    nw = width
+                    nh = round(nw / aspect)
+                frame2 = cv2.resize(frame, (nw, nh))
+            
+                # Display image.
+                cv2.imshow(winname, frame2)
+
+                if windowInitialized==False:
+                    # Specify the display position only at the beginning.
+                    cv2.moveWindow(winname, 100, 100)
+                    windowInitialized = True
+
+            # Press the "q" key to finish.
+            k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
+            if k == ord("q"):
+                break
+            
+            # Exit if there is no specified window.
+            if not IsWindowVisible(winname):
+                break
+
+        except KeyboardInterrupt:
+            # Press ctrl -c on the console to exit the program.
+            print("KeyboardInterrupt")
+            break
+
+<span class="auto-style3">    # Terminate process p</span>
+<span class="auto-style3">    q.put(-1)</span>
+<span class="auto-style3">    # Waiting for process p to finish</span>
+<span class="auto-style3">    p.join()</span>
+
+    print("Finish main()")
+    cap.release()
+    cv2.destroyAllWindows()</pre>
+  <p>&nbsp;</p>
+  <p>
+  <video autoplay="y" controls="" loop="y" muted="" src="image_classification_vgg/image_classification_1.mp4" width="800px">
+  </video> </p>
+  <p>[動画] i-PRO カメラと接続して、リアルタイムに画像分類</p>
+  <p>&nbsp;</p>
+  <p>CPU 版の PyTorch での動作ですが、十分に高速な処理をしてくれているように私は感じました。<br>GPU 
+  版を使うともっと素敵なパフォーマンスで動作することと思いますが、この画像分類についてはこれでもいろいろと活用できるのではないでしょうか。</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+	
+<br>
+
+<section>
+  <h2><a name="4._i-PRO_カメラの映像と画像分類結果をGUI表示する_(tkinter)">4. i-PRO 
+  カメラの映像と画像分類結果をGUI表示する (tkinter)</a></h2>
+  <h4>[概要]</h4>
+  <p>前述の画像分類を GUI（tkinter）版で作成してみます。</p>
+  <p>「<a href="connect_with_rtsp.html#7-3. メニュー・ボタンを追加して GUI アプリらしくしてみる"> 
+  RTSP で画像を取得する ： 7-3. メニュー・ボタンを追加して GUI アプリらしくしてみる</a>」で作成した GUI 
+  プログラムをベースに改造してみます。</p>
+  <p>&nbsp;</p>
+  <span class="auto-style6"><strong>ポイント</strong></span>
+  <ul>
+    <li>GUI 下部に "Class" と "Score" を表示するための Label 
+    を追加してみました。ここに画像分類した結果を表示するようにしてみます。</li>
+    <li>３章と同様に、２章で作成したモジュール "classification_vgg.py" を使います。同じフォルダにこのファイルを置いてください。</li>
+    <li>
+    映像表示に極力影響を与えないように、映像受信プロセス（ReceiveImageProcess）から画像分類プロセス（ImageClassificationProcess）へ画像データを渡し、別プロセスで画像分類を行っています。そして認識した結果のラベルとスコアを 
+    main プロセスへ渡して画面へ表示する、というようなデータの流れで作成しています。</li>
+  </ul>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <h4>[評価環境]</h4>
+  <table>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>言語 :</td>
+      <td>Python,</td>
+      <td>3.10.4 </td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>OS :</td>
+      <td>Windows 11 home,</td>
+      <td>21H2</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Windows 10 Pro,</td>
+      <td>21H1</td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/image_classification_vgg/classification_gui.py" target="_blank">classification_gui.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    Image classification.
+    画像分類を行います。
+
+[Details]
+    Create an application in the GUI using tkinter.
+    tkinter を使って GUI アプリケーションを作成します。
+    
+[Author]
+    kinoshita hidetoshi (木下英俊)
+
+[Library install]
+    pip install opencv-python
+'''
+
+import cv2
+import time
+import tkinter as tk
+from tkinter import messagebox
+from PIL import Image, ImageTk, ImageOps
+import multiprocessing as mp
+from queue import Empty
+<span class="auto-style3">from classification_vgg import ImagenetClassificationVgg    # Local module. See 'classification_vgg.py'.</span>
+
+
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+url         = f"rtsp://{user_id}:{user_pw}@{host}/MediaInput/stream_1"
+
+
+class Application(tk.Frame):
+    def __init__(self, master = None):
+        super().__init__(master)
+        self.pack()
+
+        # Window settings.
+        self.master.title("Display i-PRO camera with tkinter")      # Window title
+        self.master.geometry("800x600+100+100")                     # Window size, position
+
+        # Event registration for window termination.
+        self.master.protocol("WM_DELETE_WINDOW", self.on_closing_window)
+
+        # Create menu.
+        menubar = tk.Menu(self.master)
+        self.master.configure(menu=menubar)
+        filemenu = tk.Menu(menubar)
+        menubar.add_cascade(label='File', menu=filemenu)
+        filemenu.add_command(label='Quit', command = self.on_closing_window)
+
+        # Create button_frame
+        self.button_frame = tk.Frame(self.master, padx=10, pady=10, relief=tk.RAISED, bd=2)
+        self.button_frame.pack(side = tk.BOTTOM, fill=tk.X)
+
+<span class="auto-style3">        # Label</span>
+<span class="auto-style3">        self.label_frame1 = tk.Frame(self.button_frame, width=10)</span>
+<span class="auto-style3">        self.label_frame1.pack(side=tk.LEFT)</span>
+<span class="auto-style3">        self.label_frame2 = tk.Frame(self.button_frame, width=40)</span>
+<span class="auto-style3">        self.label_frame2.pack(side=tk.LEFT)</span>
+<span class="auto-style3">        self.class_text = tk.StringVar()</span>
+<span class="auto-style3">        self.score_text = tk.StringVar()</span>
+<span class="auto-style3">        self.class_text.set('')</span>
+<span class="auto-style3">        self.score_text.set('')</span>
+<span class="auto-style3">        self.label1 = tk.Label(self.label_frame1, text='Class: ').pack(side=tk.TOP)</span>
+<span class="auto-style3">        self.label2 = tk.Label(self.label_frame2, textvariable=self.class_text, relief=tk.RIDGE, width=20).pack(side=tk.TOP)</span>
+<span class="auto-style3">        self.label3 = tk.Label(self.label_frame1, text='Score: ').pack(side=tk.TOP)</span>
+<span class="auto-style3">        self.label4 = tk.Label(self.label_frame2, textvariable=self.score_text, relief=tk.RIDGE, width=20).pack(side=tk.TOP)</span>
+
+
+        # Create quit_button
+        self.quit_button = tk.Button(self.button_frame, text='Quit', width=10, command = self.on_closing_window)
+        self.quit_button.pack(side=tk.RIGHT)
+        
+        # Create canvas.
+        self.canvas = tk.Canvas(self.master)
+
+        # Add mouse click event to canvas.
+        self.canvas.bind('&lt;Button-1&gt;', self.canvas_click)
+
+        # Place canvas.
+        self.canvas.pack(expand = True, fill = tk.BOTH)
+
+        # Create queue and value for image receive process.
+        self.imageQueue = mp.Queue()
+        self.request = mp.Value('i', 0)     # -1 : Exit ReceiveImageProcess.
+                                            #  0 : Normal.
+                                            #  1 : Connect camera.
+                                            #  2 : Release camera.
+
+        # Create queue for classification process.
+<span class="auto-style3">        self.imageQueue2 = mp.Queue()</span>
+        self.resultQueue = mp.Queue()
+
+        # Create processes.
+        self.imageReceiveProcess = mp.Process(target=ReceiveImageProcess, args=(self.imageQueue, <span class="auto-style3">self.imageQueue2,</span> self.request))
+<span class="auto-style3">        self.classificationProcess = mp.Process(target=ImageClassificationProcess, args=(self.imageQueue2, self.resultQueue))</span>
+        self.imageReceiveProcess.start()
+<span class="auto-style3">        self.classificationProcess.start()</span>
+
+        # Raise a video display event (disp_image) after 500m
+        self.disp_id = self.after(500, self.disp_image)
+
+    def on_closing_window(self):
+        ''' Window closing event. '''
+
+        if messagebox.askokcancel("QUIT", "Do you want to quit?"):
+            # Request terminate process.
+            self.request.value = -1
+<span class="auto-style3">            self.imageQueue2.put(-1)</span>
+
+            # Waiting for process p to finish
+            time.sleep(1)
+
+            # Flash queue.
+            # The program cannot complete processes unless the queue is emptied.
+            for i in range(self.imageQueue.qsize()):
+                image = self.imageQueue.get()
+<span class="auto-style3">            for i in range(self.imageQueue2.qsize()):</span>
+<span class="auto-style3">                image = self.imageQueue2.get()</span>
+<span class="auto-style3">            for i in range(self.resultQueue.qsize()):</span>
+<span class="auto-style3">                result = self.resultQueue.get()</span>
+
+            # Wait for process to be terminated.
+            self.imageReceiveProcess.join()
+<span class="auto-style3">            self.classificationProcess.join()</span>
+            self.master.destroy()
+            print("Finish Application.")
+
+    def canvas_click(self, event):
+        ''' Event handling with mouse clicks on canvas '''
+
+        if self.disp_id is None:
+            # Connect camera.
+            self.request.value = 1
+            # Display image.
+            self.disp_image()
+
+        else:
+            # Release camera.
+            self.request.value = 2
+            # Cancel scheduling
+            self.after_cancel(self.disp_id)
+            self.disp_id = None
+
+    def disp_image(self):
+        ''' Display image on Canvas '''
+
+        # If there is data in the imageQueue, the program receives the data and displays the video.
+        num = self.imageQueue.qsize()
+        if num &gt; 0:
+            if (num &gt; 5):
+                num -= 1
+            for i in range(num):
+                cv_image = self.imageQueue.get()
+
+            # (2) Convert image from ndarray to PIL.Image.
+            pil_image = Image.fromarray(cv_image)
+
+            # Get canvas size.
+            canvas_width = self.canvas.winfo_width()
+            canvas_height = self.canvas.winfo_height()
+
+            # Resize the image to the size of the canvas without changing the aspect ratio.
+            # アスペクトを維持したまま画像を Canvas と同じサイズにリサイズ
+            pil_image = ImageOps.pad(pil_image, (canvas_width, canvas_height))
+
+            # (3) Convert image from PIL.Image to PhotoImage
+            # PIL.Image から PhotoImage へ変換する
+            self.photo_image = ImageTk.PhotoImage(image=pil_image)
+
+            # Display image on the canvas.
+            self.canvas.create_image(
+                canvas_width / 2,       # Image display position (center of the canvas)
+                canvas_height / 2,                   
+                image=self.photo_image  # image data
+                )
+        else:
+            pass
+
+        # Update GUI Label.
+        result_num = self.resultQueue.qsize()
+        if result_num &gt; 0:
+            for i in range(result_num):
+                label, score = self.resultQueue.get()
+            self.class_text.set(label)
+            score = '{:.4f}'.format(score)
+            self.score_text.set(score)
+
+        # Raise a video display event (disp_image) after 1ms.
+        self.disp_id = self.after(1, self.disp_image)
+
+
+def ReceiveImageProcess(imageQueue, <span class="auto-style3">imageQueue2,</span> request):
+    '''
+    Receive Image Process.
+
+    Args:
+        imageQueue      [o] Image data for display.
+<span class="auto-style3">        imageQueue2     [o] Image data for image classification.</span>
+        request         [i] Shared memory for receiving requests from the main process.
+                            -1: Terminate process.
+                             0: Nothing.
+                             1: Connect camera.
+                             2: Release camera connection.
+    Returns:
+        None
+    Raises
+        None
+    '''
+
+    # Connect camera.
+    cap = cv2.VideoCapture(url)
+
+    while True:
+        if cap != None:
+            # Get frame.
+            ret, frame = cap.read()
+
+            if ret == True:
+                # (1) Convert image from BGR to RGB.
+                cv_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+                # for display.
+                if imageQueue.qsize() &lt; 10:
+                    imageQueue.put(cv_image)
+                
+<span class="auto-style3">                # for image classification.</span>
+<span class="auto-style3">                if imageQueue2.qsize() &lt;= 1:</span>
+<span class="auto-style3">                    imageQueue2.put(cv_image)</span>
+
+            else:
+                print("cap.read() return False.")
+                # The timeout period seems to be 30 seconds.
+                # And there seems to be no API to change the timeout value.
+                time.sleep(1)
+
+                # Reconnect
+                cap.release()
+                cap = cv2.VideoCapture(url)
+        else:
+            time.sleep(0.1)
+                
+        # Check process termination request.
+        if request.value == -1:
+            # Terminate process.
+            cap.release()
+            request.value = 0
+            break
+
+        # Check connect request.
+        if request.value == 1:
+            cap = cv2.VideoCapture(url)
+            request.value = 0
+
+        # Check release request.
+        if request.value == 2:
+            cap.release()
+            cap = None
+            request.value = 0
+
+    print("Terminate ReceiveImageProcess().")
+
+
+<span class="auto-style3">def ImageClassificationProcess(imageQueue, resultQueue):</span>
+<span class="auto-style3">    '''</span>
+<span class="auto-style3">    Image classification process.</span>
+
+<span class="auto-style3">    Args:</span>
+<span class="auto-style3">        imageQueue :        [i] Image for image classification.</span>
+<span class="auto-style3">        resultQueue :       [o] Save classification result labels and scores.</span>
+<span class="auto-style3">    Returns:</span>
+<span class="auto-style3">        None</span>
+<span class="auto-style3">    '''</span>
+<span class="auto-style3">    imagenetClassifigationVgg = ImagenetClassificationVgg('./data/imagenet_class_index.json')</span>
+
+<span class="auto-style3">    while True:</span>
+<span class="auto-style3">        try:</span>
+<span class="auto-style3">            image = imageQueue.get(True, 10)</span>
+
+<span class="auto-style3">            # If type(image) is 'int' and image is -1, then this process is terminated.</span>
+<span class="auto-style3">            if type(image) == int:</span>
+<span class="auto-style3">                if image == -1:</span>
+<span class="auto-style3">                    break</span>
+
+<span class="auto-style3">            # Image classification</span>
+<span class="auto-style3">            pilImage = Image.fromarray(image)   # convert from OpenCV image to PIL.Image</span>
+<span class="auto-style3">            result, score = imagenetClassifigationVgg.do_classification(pilImage)</span>
+
+<span class="auto-style3">            if score &gt; 0.15:</span>
+<span class="auto-style3">                print(result, score)</span>
+<span class="auto-style3">                resultQueue.put((result, score))</span>
+<span class="auto-style3">            else:</span>
+<span class="auto-style3">                print('None')</span>
+<span class="auto-style3">                resultQueue.put(('None', 0.0))</span>
+
+<span class="auto-style3">        except Empty: # timeout of imageQueue.get()</span>
+<span class="auto-style3">            print("Timeout happen.(3)")</span>
+
+<span class="auto-style3">    print("Finish ImageClassificationProcess()")</span>
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = Application(master = root)
+    app.mainloop()</pre>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  
+  <p>
+    <video controls muted autoplay="y" loop="y" width="800px">
+      <source src="image_classification_vgg/classification_gui_with_camera.mp4" type="video/mp4">
+      動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+    </video>
+  </p>  
+  <p>[動画] i-PRO カメラと接続してリアルタイムに画像分類、GUI版</p>
+  
+  <p>&nbsp;</p>
+  <p>NOTE</p>
+  <ul>
+    <li>デスクトップPCなどではこのまま動作しましたが、標準的なノートPCでは処理負荷が高くて上記のままでは軽快に動作しませんでした。<br>
+    私の場合は接続先を stream_2 へ変更して映像の解像度を下げることで気持ちよく動作するようになりました。<br>
+    実際に動作させるPCの性能などに応じてカメラ映像の解像度やフレーム数などを適当に調整してみてください。</li>
+  </ul>
+  <p>&nbsp;</p>
+  <p>そこそこ良い感じに作れたのでは、と思っています。<br>
+  プログラムが約300ステップまで大きくなってきましたので、機能拡張はこの辺で一旦おしまいにしたいと思います。</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+	
+<p>&nbsp;</p>
+
+<section>
+  <h2><a name="ソースコード所在">ソースコード所在</a></h2>
+  <p>本ページで紹介のソースコードは、下記 github より取得できます。</p>
+  <p>下記 github のソースコードと本ページの内容は差異がある場合があります。</p>
+  <p><a href="https://github.com/i-pro-corp/python-examples" target="_blank">i-pro-corp/python-examples: Examples for i-PRO cameras. (github.com)</a></p>
+</section>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<section>
+  <h2><a name="ライセンス">ライセンス</a></h2>
+<p>本ページの情報は、特記無い限り下記ライセンスで提供されます。</p>
+<table class="border-collapse" style="width: 600px; background-color: #F0F0F0; word-break: break-word;">
+  <tr>
+    <td>
+    <br>Copyright 2022 i-PRO Co., Ltd.<br><br>Licensed under the Apache License, Version 
+    2.0 (the "License");<br>you may not use this file except in compliance with 
+    the License.<br>You may obtain a copy of the License at <br><br>&nbsp;&nbsp;&nbsp;
+    <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">http://www.apache.org/licenses/LICENSE-2.0</a><br><br>
+    Unless required by 
+    applicable law or agreed to in writing, software <br>distributed under the 
+    License is distributed on an "AS IS" BASIS, <br>WITHOUT WARRANTIES OR 
+    CONDITIONS OF ANY KIND, either express or implied. <br>See the License for 
+    the specific language governing permissions and<br>limitations under the 
+    License. <br> <br>
+    </td>
+  </tr>
+</table>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+
+
+<br>
+
+<section>
+	<h2><a name="参考">参考</a></h2>
+	<ul>
+		<li>[1] ネットワークカメラCGIコマンドインターフェース仕様書　統合版<br>
+      <a href="https://connect.panasonic.com/jp-ja/products-services_security_support_specifications-manuals-firms-dvlp_2012100910461872" target="_blank">
+        https://connect.panasonic.com/jp-ja/products-services_security_support_specifications-manuals-firms-dvlp_2012100910461872</a></li>
+    <li>[2] PyTorch<br>
+      <a href="https://pytorch.org/" target="_blank">
+        https://pytorch.org/</a></li>
+    <li>[3] 図書「作りながら学ぶ! PyTorch による発展ディープラーニング」小川雄太郎 [著]<br>
+        ISBN978-4-8399-7025-3</li>
+	</ul>
+</section>
+
+<p>&nbsp;</p>
+
+<hr>
+
+<p>&nbsp;</p>
+
+<section>
+	<h2 style="margin-bottom:5px">変更履歴</h2>
+	<table>
+	  <tr>
+	    <td class="td_history_date">2022/6/22</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">新規作成,</td>
+	    <td class="td_history">木下英俊 </td>
+	  </tr>
+	</table>
+</section>
+
+<p>&nbsp;</p>
+<p><a href="../../index.html" target="_parent">i-PRO - Programming Items トップページ</a></p>
+<p><a href="../../privacy_policy.html">プライバシーポリシー</a></p>
+<p>&nbsp;</p>
+
+<footer>
+	<p><small>&copy; 2022  i-PRO Co., Ltd.</small></p>
+</footer>
+
+</body>
+</html>
