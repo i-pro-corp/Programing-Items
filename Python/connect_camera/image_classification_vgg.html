@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="author" content="木下英俊">
-  <meta name="description" content="木下英俊が自身のためにプログラムメモを残すことを目的に作成したページです。">
-  <meta name="keywords" content="">
+  <meta name="author" content="kinoshita hidetosi (木下英俊)">
+  <meta name="description" content="Introducing programming for i-PRO cameras.">
+  <meta name="keywords" content="i-PRO">
   <!-- キャッシュ無効化 -->
   <meta http-equiv="Cache-Control" content="no-cache">
 	
    <!-- タイトル -->
-   <title>画像分類 - VGG</title>
+   <title>画像分類 - VGG16 | i-PRO - Programming Items</title>
 	
   <!-- ファビコン -->
   <link rel="shortcut icon" href="../../favicon.ico">
@@ -40,7 +40,7 @@
     border-width: 0px;
   }
   .auto-style3 {
-    background-color: #484800;
+    background-color: #505000;
   }
   .auto-style4 {
     background-color: #FFFF00;
@@ -54,7 +54,7 @@
 
 <body onload="prettyPrint();">
 	
-<h1>画像分類 － VGG</h1>
+<h1>画像分類 － VGG16</h1>
 <p>&nbsp;</p>
     <div class="status_information">
       <div>
@@ -89,36 +89,43 @@
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
-<p> i-PRO のカメラ i-PRO mini (WV-S7130)、モジュールカメラ（AIスターターキット）を入手したので、カメラとPCを接続して動作するプログラムを作成してみました。こちらで紹介します。</p>
-<p> ここで記載の内容は、ほとんどの i-PRO カメラでそのまま利用できると思いますが未確認です。</p>
-<p> &nbsp;</p>
-<p>本ページでは、TyTorch および VGG16 というネットワークモデルを使用し、画像分類と呼ばれる AI 処理を行ってみます。</p>
+<section>
+<p>本ページでは、i-PRO カメラと TyTorch および VGG16 という AI ネットワークモデルを使用して「画像分類」と呼ばれる AI 処理を行ってみます。</p>
 <p>VGG16 は、2014年の ILSVR で２位になった畳み込みニューラルネットワークです。オックスフォード大学の VGG(Visual Geometry 
 Group) チームが作成した16層から構成されるネットワークモデルであるため VGG16 と呼ばれています。 </p>
+ <p>作成したプログラムの動作例はこちらです。学習済みモデルを使用して1000種類の画像分類を行っています。画面下部に分類結果を表示しています。</p>
+ <p>
+    <video controls muted autoplay="y" loop="y" width="600px">
+      <source src="image_classification_vgg/classification_gui_with_camera.mp4" type="video/mp4">
+      動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+    </video></p>
+ <p>こちらに記載の内容は i-PRO のカメラ "i-PRO mini (WV-S7130)"、"モジュールカメラ（AIスターターキット）" を使って動作確認しています。未確認ですが他の i-PRO カメラを使用する場合も恐らくそのまま利用可能です。</p>
+</section>
+
 <p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>
+
 <section>
-<p> "i-PRO mini" 紹介： </p>
+<p class="auto-style6"> <strong>"i-PRO mini" 紹介： </strong> </p>
 <ul>
-  <li><a href="https://cwc.i-pro.com/pages/i-pro-mini-lp" target="_blank">i-PRO 
-  mini</a></li>
-  <li>
-  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130ux" target="_blank">
-  i-PRO mini 有線LANモデル WV-S7130UX</a></li>
-  <li>
-  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130wux" target="_blank">
-  i-PRO mini 無線LANモデル WV-S7130WUX</a></li>
-  <li>
-  <a href="https://japancs.i-pro.com/space/DLJP/724085590/WV-S7130UX　i-PRO+mini+有線LANモデル" target="_blank">
-  WV-S7130UX　i-PRO mini 有線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
-  <li>
-  <a href="https://japancs.i-pro.com/space/DLJP/724086255/WV-S7130WUX　i-PRO+mini+無線LANモデル" target="_blank">
-  WV-S7130WUX　i-PRO mini 無線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
+  <li><a href="https://cwc.i-pro.com/pages/i-pro-mini-lp" target="_blank">
+    i-PRO mini</a></li>
+  <li><a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130ux" target="_blank">
+    i-PRO mini 有線LANモデル WV-S7130UX</a></li>
+  <li>  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130wux" target="_blank">
+    i-PRO mini 無線LANモデル WV-S7130WUX</a></li>
+  <li><a href="https://japancs.i-pro.com/space/DLJP/724085590/WV-S7130UX　i-PRO+mini+有線LANモデル" target="_blank">
+    WV-S7130UX　i-PRO mini 有線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
+  <li><a href="https://japancs.i-pro.com/space/DLJP/724086255/WV-S7130WUX　i-PRO+mini+無線LANモデル" target="_blank">
+    WV-S7130WUX　i-PRO mini 無線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
 </ul>
 <p> 
 <a href="images/i-PRO_mini.jpg" target="_blank">
+
 <img alt="" src="images/i-PRO_mini.jpg" class="border_with_drop-shadow" width="348"></a></p>
 <p>&nbsp;</p>
-<p>"モジュールカメラ" 紹介：</p>
+<p class="auto-style6"><strong>"モジュールカメラ" 紹介：</strong></p>
 <ul>
   <li><a href="https://moduca.i-pro.com" target="_blank">
     モジュールカメラ｜ポータルサイト (i-pro.com)</a></li>
@@ -795,7 +802,7 @@ VGG(
 <section>
   <h2><a name="3._i-PRO_カメラの映像を画像分類する">3. i-PRO カメラの映像を画像分類する</a></h2>
   <h4>[概要]</h4>
-  <p>さて、i-PRO カメラと接続して取得した映像に対して「画像分類」をリアルタイムに実施してみたいと思います。</p>
+  <p>i-PRO カメラと接続して取得した映像に対して「画像分類」をリアルタイムに実施してみたいと思います。本章では認識結果をコンソールへ出力することとします。認識結果を映像上へテキストで重畳表示することも簡単にできますので、興味あればチャレンジしてみてください。</p>
   <p>「<a href="connect_with_rtsp.html">RTSP 
   で画像を取得する</a>」中で OpenCV による顔検知を作成しましたので、このプログラムを元に OpenCV 
   の処理部分を上記で作成した物体検知へ変更してみたいと思います。</p>
@@ -834,13 +841,19 @@ VGG(
   </tbody>
   </table>
   <p>&nbsp;</p>
-  <p>上記で作成した "imagenet_classsification_vgg.py" をそのままライブラリとして活用することができます。</p>
-  <p>具体的には、同じフォルダ中にある python のソースコードからであれば下記のように <span class="cpp-source">from 
+    <div class="status_ok">
+      <div>
+      </div>
+      <div>
+        <p><strong>ポイント</strong></p>
+        <p>上記で作成した "imagenet_classsification_vgg.py" をそのままライブラリとして活用します。<br>具体的には、同じフォルダ中にある python のソースコードからであれば下記のように  
+        <span class="cpp-source">from 
   imagenet_classsification_vgg import ImagenetClassificationVgg</span> 
-  と記載することでそのまま使用できます。</p>
-  <p>こんな方法を活用して必要最小限の情報記載で進めたいと思います。</p>
-  <p>&nbsp;</p>
-  <p>["<a href="https://github.com/i-pro-corp/python-examples/blob/main/image_classification_vgg/classification_main.py" target="_blank">classification_main.py</a>"]</p>
+  と記載することで作成済みプログラムをそのまま使用できます。</p>
+      </div>
+    </div>
+    <p>&nbsp;</p>
+  <p>["classification_main.py"]</p>
   <pre class="prettyprint linenums lang-py">from PIL import Image
 <span class="auto-style3">from classification_vgg import ImagenetClassificationVgg</span>
 
@@ -858,13 +871,14 @@ if __name__ == "__main__":
     result = imagenetClassifigationVgg.imagenet_classification_vgg(img)
     print("Result: ", result)</pre>
   <p>&nbsp;</p>
+  <p>こんな方針でプログラム作成を行っていきます。</p>
   <p>&nbsp;</p>
   <h3>3-1. まずはシンプルに作成</h3>
-  <p>"connect_with_rtsp_3_1.py" 
-  を元に、RTSP接続して受信したカメラ映像をリアルタイムに画像分類するプログラムを作成してみます。</p>
-  <p>VGG の処理負荷はとても高そうなのでちょっと心配ですが、必要に応じてカメラ側の設定でフレームレートや解像度を下げて使用する、という方針で進めます。</p>
+  <p>「<a href="connect_with_rtsp.html">RTSP 
+  で画像を取得する</a>」中で作成したプログラム "connect_with_rtsp_3_1.py" 
+  を元に改造することで、RTSP接続して受信したカメラ映像をリアルタイムに画像分類するプログラムを作成してみます。VGG の処理負荷はとても高そうなのでちょっと心配ですが、必要に応じてカメラ側の設定でフレームレートや解像度を下げて使用する、という方針で進めます。</p>
   <p>&nbsp;</p>
-  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/image_classification_vgg/classification_with_camera_1.py" target="_blank">classification_with_camera_1.py</a>"]</p>
+  <p>[プログラムソース "classification_with_camera_1.py"]</p>
   <pre class="prettyprint linenums lang-py">'''
 [Abstract]
     Image classification.
@@ -1021,7 +1035,7 @@ if __name__ == '__main__':
   <p class="auto-style6">multiprocessing, queue というライブラリを使用して実現してみます。</p>
   <p>こちらが新規に作成したプログラムです。"connect_with_rtsp_3_2.py" を元に作成しています。</p>
   <p>&nbsp;</p>
-  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/image_classification_vgg/classification_with_camera_2.py" target="_blank">classification_with_camera_2.py</a>"]</p>
+  <p>[プログラムソース "classification_with_camera_2.py"]</p>
   <pre class="prettyprint linenums lang-py">'''
 [Abstract]
     Try connecting to an i-PRO camera with RTSP.
@@ -1199,7 +1213,7 @@ if __name__ == '__main__':
     cv2.destroyAllWindows()</pre>
   <p>&nbsp;</p>
   <p>
-  <video autoplay="y" controls="" loop="y" muted="" src="image_classification_vgg/image_classification_1.mp4" width="800px">
+  <video autoplay="y" controls="" loop="y" muted="" src="image_classification_vgg/image_classification_1.mp4" width="600px">
   </video> </p>
   <p>[動画] i-PRO カメラと接続して、リアルタイムに画像分類</p>
   <p>&nbsp;</p>
@@ -1220,17 +1234,23 @@ if __name__ == '__main__':
   RTSP で画像を取得する ： 7-3. メニュー・ボタンを追加して GUI アプリらしくしてみる</a>」で作成した GUI 
   プログラムをベースに改造してみます。</p>
   <p>&nbsp;</p>
-  <span class="auto-style6"><strong>ポイント</strong></span>
-  <ul>
-    <li>GUI 下部に "Class" と "Score" を表示するための Label 
-    を追加してみました。ここに画像分類した結果を表示するようにしてみます。</li>
-    <li>３章と同様に、２章で作成したモジュール "classification_vgg.py" を使います。同じフォルダにこのファイルを置いてください。</li>
-    <li>
-    映像表示に極力影響を与えないように、映像受信プロセス（ReceiveImageProcess）から画像分類プロセス（ImageClassificationProcess）へ画像データを渡し、別プロセスで画像分類を行っています。そして認識した結果のラベルとスコアを 
-    main プロセスへ渡して画面へ表示する、というようなデータの流れで作成しています。</li>
-  </ul>
-  <p>&nbsp;</p>
-  <p>&nbsp;</p>
+    <div class="status_ok">
+      <div>
+      </div>
+      <div>
+        <p><strong>ポイント</strong></p>
+          <ul>
+            <li>GUI 下部に "Class" と "Score" を表示するための Label 
+            を追加してみました。ここに画像分類した結果を表示するようにしてみます。</li>
+            <li>３章と同様に、２章で作成したモジュール "classification_vgg.py" を使います。同じフォルダにこのファイルを置いてください。</li>
+            <li>
+            映像表示に極力影響を与えないように、映像受信プロセス（ReceiveImageProcess）から画像分類プロセス（ImageClassificationProcess）へ画像データを渡し、別プロセスで画像分類を行っています。そして認識した結果のラベルとスコアを 
+            main プロセスへ渡して画面へ表示する、というようなデータの流れで作成しています。</li>
+          </ul>
+      </div>
+    </div>
+    <p>&nbsp;</p>
+  &nbsp;
   <h4>[評価環境]</h4>
   <table>
     <tr>
@@ -1572,7 +1592,7 @@ if __name__ == "__main__":
   <p>&nbsp;</p>
   
   <p>
-    <video controls muted autoplay="y" loop="y" width="800px">
+    <video controls muted autoplay="y" loop="y" width="600px">
       <source src="image_classification_vgg/classification_gui_with_camera.mp4" type="video/mp4">
       動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
     </video>
@@ -1580,13 +1600,17 @@ if __name__ == "__main__":
   <p>[動画] i-PRO カメラと接続してリアルタイムに画像分類、GUI版</p>
   
   <p>&nbsp;</p>
-  <p>NOTE</p>
-  <ul>
-    <li>デスクトップPCなどではこのまま動作しましたが、標準的なノートPCでは処理負荷が高くて上記のままでは軽快に動作しませんでした。<br>
+    <div class="status_information">
+      <div>
+      </div>
+      <div>
+        <p><strong>NOTE</strong></p>
+        <p>デスクトップPCなどの高性能PCではこのまま動作しましたが、標準的なノートPCでは処理負荷が高くて上記のままでは軽快に動作しませんでした。<br>
     私の場合は接続先を stream_2 へ変更して映像の解像度を下げることで気持ちよく動作するようになりました。<br>
-    実際に動作させるPCの性能などに応じてカメラ映像の解像度やフレーム数などを適当に調整してみてください。</li>
-  </ul>
-  <p>&nbsp;</p>
+    実際に動作させるPCの性能などに応じてカメラ映像の解像度やフレーム数などを適当に調整してみてください。</p>
+      </div>
+    </div>
+    <p>&nbsp;</p>
   <p>そこそこ良い感じに作れたのでは、と思っています。<br>
   プログラムが約300ステップまで大きくなってきましたので、機能拡張はこの辺で一旦おしまいにしたいと思います。</p>
   <p>&nbsp;</p>
@@ -1654,6 +1678,12 @@ if __name__ == "__main__":
 <section>
 	<h2 style="margin-bottom:5px">変更履歴</h2>
 	<table>
+	  <tr>
+	    <td class="td_history_date">2022/7/20</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">微修正,</td>
+	    <td class="td_history">木下英俊</td>
+	  </tr>
 	  <tr>
 	    <td class="td_history_date">2022/6/22</td>
 	    <td class="td_history_separator">-</td>

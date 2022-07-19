@@ -22,9 +22,28 @@ h2{
 	font-size: 1.6rem;
 }
 
+p{
+	/*font-size: small;*/
+	color: #000000;
+	font-family: sans-serif;
+	margin: 6px 0px 6px 0px;
+}
+
 ul{
 	list-style-position:outside;
 }
+
+video{
+  max-width: 100%;
+  max-height: 80%;
+  border: thin solid #C0C0C0;
+}
+
+img{
+  max-width: 100%;
+  height: auto;
+}
+
 
 /*
 トップ画面のスタイル
@@ -39,7 +58,8 @@ ul{
 
 .post-title,
 .post-cate,
-.post-link{
+.post-link,
+.post-infomation{
 	margin-left: 120px;
 }
 

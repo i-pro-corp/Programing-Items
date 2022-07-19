@@ -11,7 +11,7 @@
   <meta http-equiv="Cache-Control" content="no-cache">
 	
   <!-- タイトル -->
-  <title>JPEGで画像を取得する</title>
+  <title>JPEGで画像を取得する | i-PRO - Programming Items</title>
 	
   <!-- ファビコン -->
   <link rel="shortcut icon" href="../../favicon.ico">
@@ -38,11 +38,14 @@
 
   <style type="text/css">
   .auto-style1 {
-    background-color: #484800;
+    background-color: #505000;
   }
   .super {
     vertical-align: super;
   }
+  .auto-style2 {
+ text-decoration: underline;
+}
   </style>
 
 </head>
@@ -84,34 +87,31 @@
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
-<p> i-PRO のカメラ i-PRO mini (WV-S7130)、モジュールカメラ（AIスターターキット）を入手したので、カメラとPCを接続して動作するプログラムを作成してみました。こちらで紹介します。</p>
-<p> ここで記載の内容は、ほとんどの i-PRO カメラでそのまま利用できると思いますが未確認です。</p>
-<p>&nbsp;</p>
+<p> i-PRO のカメラ i-PRO mini (WV-S7130)、モジュールカメラ（AIスターターキット）を入手したので、カメラとPCを接続して動作するプログラムを作成してみました。こちらで紹介します。ここで記載の内容は、ほとんどの i-PRO カメラでそのまま利用できると思いますが未確認です。</p>
+<p> &nbsp;</p>
+<hr>
+<p> &nbsp;</p>
+
 <section>
-<p> "i-PRO mini" 紹介： </p>
+<p class="auto-style2"> <strong>"i-PRO mini" 紹介：</strong></p>
 <ul>
-  <li><a href="https://cwc.i-pro.com/pages/i-pro-mini-lp" target="_blank">i-PRO 
-  mini</a></li>
-  <li>
-  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130ux" target="_blank">
-  i-PRO mini 有線LANモデル WV-S7130UX</a></li>
-  <li>
-  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130wux" target="_blank">
-  i-PRO mini 無線LANモデル WV-S7130WUX</a></li>
-  <li>
-  <a href="https://japancs.i-pro.com/space/DLJP/724085590/WV-S7130UX　i-PRO+mini+有線LANモデル" target="_blank">
-  WV-S7130UX　i-PRO mini 有線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
-  <li>
-  <a href="https://japancs.i-pro.com/space/DLJP/724086255/WV-S7130WUX　i-PRO+mini+無線LANモデル" target="_blank">
-  WV-S7130WUX　i-PRO mini 無線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
+  <li><a href="https://cwc.i-pro.com/pages/i-pro-mini-lp" target="_blank">
+    i-PRO mini</a></li>
+  <li><a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130ux" target="_blank">
+    i-PRO mini 有線LANモデル WV-S7130UX</a></li>
+  <li>  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130wux" target="_blank">
+    i-PRO mini 無線LANモデル WV-S7130WUX</a></li>
+  <li><a href="https://japancs.i-pro.com/space/DLJP/724085590/WV-S7130UX　i-PRO+mini+有線LANモデル" target="_blank">
+    WV-S7130UX　i-PRO mini 有線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
+  <li><a href="https://japancs.i-pro.com/space/DLJP/724086255/WV-S7130WUX　i-PRO+mini+無線LANモデル" target="_blank">
+    WV-S7130WUX　i-PRO mini 無線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
 </ul>
 <p> 
 <a href="images/i-PRO_mini.jpg" target="_blank">
-<img alt="" src="images/i-PRO_mini.jpg" class="border_with_drop-shadow" width="348"></a></p>
-<p> 
-&nbsp;</p>
-<p> 
-"モジュールカメラ" 紹介：</p>
+
+<img alt="i-PRO mini 画像" src="images/i-PRO_mini.jpg" class="border_with_drop-shadow" width="348"></a></p>
+<p>&nbsp;</p>
+<p class="auto-style2"><strong>"モジュールカメラ" 紹介：</strong></p>
 <ul>
   <li><a href="https://moduca.i-pro.com" target="_blank">
     モジュールカメラ｜ポータルサイト (i-pro.com)</a></li>
@@ -120,9 +120,9 @@
 </ul>
 <p> 
 <a href="images/ai_starter_kit_1.png" target="_blank">
-<img alt="" class="border_with_drop-shadow" src="images/ai_starter_kit_1.png" width="404"></a>
+<img alt="AI スターターキット 画像(1)" class="border_with_drop-shadow" src="images/ai_starter_kit_1.png" width="404"></a>
 <a href="images/ai_starter_kit_2.png" target="_blank">
-<img alt="" class="border_with_drop-shadow" src="images/ai_starter_kit_2.png" width="444"></a></p>
+<img alt="AI スターターキット 画像(2)" class="border_with_drop-shadow" src="images/ai_starter_kit_2.png" width="444"></a></p>
 <p> 
 &nbsp;</p>
 <p> 
@@ -156,7 +156,7 @@
  <p><span class="cpp-source">
  http://&lt;カメラのIPアドレス&gt;/cgi-bin/camera?resolution={resolution}</span></p>
  <p>&nbsp;</p>
- <p>補足説明</p>
+ <p class="auto-style2"><strong>補足説明:</strong></p>
  <ul>
   <li>resolution :<br>カメラ側で設定されている解像度から選択する必要があります。<br>
   カメラ側設定と一致する値が無い場合はカメラ側設定のデフォルト値が採用されます。</li>
@@ -329,13 +329,13 @@ cv2.destroyAllWindows()</pre>
 	<h4>[概要]</h4>
   <p>前章で作成したプログラムはとても簡単に作成できましたが、いろいろと課題がありました。<br>とりあえず下記３つの課題を解決してみます。</p>
   <p>&nbsp;</p>
-  <p>課題１<br>プログラムを起動するたびにウィンドウ位置が変わる。場合によっては画面外へ表示する場合もあって不便。<br>
+  <p><span class="auto-style2"><strong>課題１</strong></span><br>プログラムを起動するたびにウィンドウ位置が変わる。場合によっては画面外へ表示する場合もあって不便。<br>
   適当に画面内に収まる場所に表示してほしい。<br>⇨ 指定する場所にウィンドウを表示するようにします。</p>
   <p>&nbsp;</p>
-  <p>課題２<br>プログラムを終了するのが大変。<br>ウィンドウ右上の[x]を押すとウィンドウがいったん消えるが、すぐに再表示されて終われない。<br>⇨ 
+  <p><span class="auto-style2"><strong>課題２</strong></span><br>プログラムを終了するのが大変。<br>ウィンドウ右上の[x]を押すとウィンドウがいったん消えるが、すぐに再表示されて終われない。<br>⇨ 
   ウィンドウ右上の[x]ボタンでプログラムを終了できるようにします。</p>
   <p>&nbsp;</p>
-  <p>課題３<br>同様に、任意のキー入力でプログラムを終了できるとうれしい。<br>⇨ "q" キー押下でプログラムを終了できるようにします。</p>
+  <p><span class="auto-style2"><strong>課題３</strong></span><br>同様に、任意のキー入力でプログラムを終了できるとうれしい。<br>⇨ "q" キー押下でプログラムを終了できるようにします。</p>
   <p>&nbsp;</p>
   <p>&nbsp;</p>
 	<p> &nbsp;</p>
@@ -922,19 +922,20 @@ if __name__ == '__main__':
   例えばカメラを再起動するなどしても自動的に再接続を行って映像表示できるようにプログラムを修正してみます。</p>
   <p>"connect_with_jpeg_2.py" を元に再接続処理を追加してこの問題を解決してみたいと思います。</p>
   <p>&nbsp;</p>
-  <p><strong>ポイント</strong></p>
-  <ul>
-    <li>requests.get 関数はカメラと都度接続する関数なので、いわゆる再接続の処理は不要でした。<br>
-    タイムアウト発生時などの異常処理を追加するだけで期待する動作を実現できました。</li>
-  </ul>
-  <p>&nbsp;</p>
-  <p class="auto-style3"><strong>NOTE</strong></p>
-  <ul>
-    <li>切断の試験はカメラの電源をOff/Onする、通信をOff/Onする、などで試験してください。</li>
-    <li>requests.get 関数は引数としてタイムアウト時間を設定することができました。下記例では 10秒 を設定しています。<br>
-    適当な値へ変更するなどして挙動の変化を試してみてはいかがでしょうか。</li>
-  </ul>
-  <p>&nbsp;</p>
+    <div class="status_information">
+      <div>
+      </div>
+      <div>
+        <p><strong>NOTE</strong></p>
+        <ul>
+          <li>requests.get 関数はカメラと都度接続する関数なので、いわゆる再接続の処理は不要でした。<br>
+        タイムアウト発生時などの異常処理を追加するだけで期待する動作を実現できました。</li>
+          <li>切断の試験はカメラの電源をOff/Onする、通信をOff/Onする、などで試験してください。</li>
+          <li>requests.get 関数は引数としてタイムアウト時間を設定することができました。下記例では 10秒 を設定しています。<br>
+        適当な値へ変更するなどして挙動の変化を試してみてはいかがでしょうか。</li>
+		</ul>
+      </div>
+    </div>
   <p>&nbsp;</p>
   <h4>[評価環境]</h4>
   <table>
@@ -1078,7 +1079,7 @@ while True:
 
 cv2.destroyAllWindows()</pre>
   <p>&nbsp;</p>
-  <p><strong>補足：</strong></p>
+  <p class="auto-style2"><strong>補足：</strong></p>
   <p>上記ソースコードでは例外処理を３つ加えています。</p>
   <p>(1) requests.ConnectTimeout</p>
   <p style="margin-left:2em">
@@ -1104,11 +1105,17 @@ cv2.destroyAllWindows()</pre>
   <p>&nbsp;</p>
   <p>tkinter のインストール方法は環境により異なるようです。各人の環境にあった方法をインターネットで調べて実施してください。</p>
   <p>&nbsp;</p>
-  <p><strong>ポイント</strong></p>
-  <ul>
-    <li>tkinter で動画を表示するときは、after() 関数で繰り返し処理を行います。</li>
-    <li>tkinter で表示するために ImageTk.PhotoImage という型に変換する必要があります。</li>
-  </ul>
+    <div class="status_ok">
+      <div>
+      </div>
+      <div>
+        <p><strong>ポイント</strong></p>
+        <ul>
+          <li>tkinter で動画を表示するときは、after() 関数で繰り返し処理を行います。</li>
+          <li>tkinter で表示するために ImageTk.PhotoImage という型に変換する必要があります。</li>
+        </ul>
+      </div>
+    </div>
   <p>&nbsp;</p>
   <p>「<a href="connect_with_rtsp.html#7-3. メニュー・ボタンを追加して GUI アプリらしくしてみる">RTSP で画像を取得する ： 7-3. メニュー・ボタンを追加して GUI 
   アプリらしくしてみる</a>」で既に 
@@ -1422,6 +1429,12 @@ if __name__ == "__main__":
 <section>
 	<h2 style="margin-bottom:5px">変更履歴</h2>
 	<table>
+	  <tr>
+	    <td class="td_history_date">2022/7/20</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">微修正,</td>
+	    <td class="td_history">木下英俊</td>
+	  </tr>
 	  <tr>
 	    <td class="td_history_date">2022/5/26</td>
 	    <td class="td_history_separator">-</td>

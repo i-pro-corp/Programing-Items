@@ -30,6 +30,10 @@ iframe{
   border:none;
 }
 
+.display-none{
+  display:none;
+}
+
 #base {
   display: flex;
   flex-direction: column;

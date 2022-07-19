@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="kinoshita hidetosi (木下英俊)">
+  <meta name="description" content="Introducing programming for i-PRO cameras.">
+  <meta name="keywords" content="i-PRO">
+  
+  <!-- キャッシュ無効化 -->
+  <meta http-equiv="Cache-Control" content="no-cache">
+	
+  <!-- タイトル -->
+  <title>機能拡張ソフトウェア(WV-XAE200WUX)と接続する | i-PRO - Programming Items</title>
+	
+  <!-- ファビコン -->
+  <link rel="shortcut icon" href="../../favicon.ico">
+
+  <!-- CSS -->
+  <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="../../design.css" type="text/css">
+  
+	<!-- Start for 'google-code-prettify' -->
+	<link href="../../prettify/styles/desert.css" rel="stylesheet" type="text/css">
+	<script src="../../prettify/prettify.js" type="text/javascript"></script>
+	<!-- End for 'google-code-prettify' -->	
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5DFRG3H0KB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-5DFRG3H0KB');
+  </script>  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+  <style type="text/css">
+    .auto-style2 {
+      text-decoration: underline;
+    }
+  .auto-style3 {
+    background-color: #505000;
+  }
+  </style>
+
+</head>
+
+<body onload="prettyPrint();">
+	
+<h1>機能拡張ソフトウェア (WV-XAE200WUX) と接続する</h1>
+<p>&nbsp;</p>
+    <div class="status_information">
+      <div>
+      </div>
+      <div>
+        <p>本ページは i-PRO株式会社 の有志メンバーにより記載されたものです。<br>本ページの情報は <a href="#ライセンス">ライセンス</a> に記載の条件で提供されます。</p>
+      </div>
+    </div>
+
+<p>&nbsp;</p>
+<table style="border: 1px solid #808080; width: 800px; max-width: 100%; background-color: #F0F0F0;">
+  <tr>
+    <td>
+      <nav>
+        <h2> 目次</h2>
+        <p>
+        <a href="#1._WV-XAE200WUX_をインストールする">1. WV-XAE200WUX をインストールする</a><br>
+        <a href="#2._JPEGヘッダーから認識結果を取り出す">2. JPEGヘッダーから認識結果を取り出す</a><br>
+        <a href="#3._認識結果を枠と文字で描画する">3. 認識結果を枠と文字で描画する</a> <br>
+        <a href="#4._i-PRO_カメラとつないでリアルタイムで認識結果を表示する">4. i-PRO カメラとつないでリアルタイムで認識結果を表示する</a><br>
+        　<a href="#プログラム動作例">プログラム動作例</a><br>
+        <br>
+        <a href="#ソースコード所在">ソースコード所在</a><br>
+        <a href="#ライセンス">ライセンス</a><br>
+        <a href="#参考">参考</a><br>
+        </p>
+      </nav>
+    </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<section>
+  <p> 本ページでは、i-PRO の AI アプリ
+  「<strong><a href="https://connect.panasonic.com/jp-ja/products-services/security_software/lineup/wv-xae200w-xae201w-xle001w" target="_blank">WV-XAE200WUX (AI動体検知アプリケーション) </a> </strong>」
+  の認識結果をPC画面へライブ表示する Python プログラムを作成してみます。</p>
+  <p> i-PRO カメラと WV-XAE200WUX 
+  から受信したデータから認識結果をメタ情報として取り出し、その情報を使って受信した映像上に認識結果を図形と文字で表示する、というプログラムを作成します。このプログラムを応用することで、あなたは 
+  WV-XAE200WUX の認識結果をあなた独自の表現で画面へ表示することができるようになります。</p>
+  <p> こちらに記載の内容は i-PRO のカメラ "i-PRO mini (WV-S7130)"、"モジュールカメラ（AIスターターキット）" を使って動作確認しています。未確認ですが「WV-XAE200WUX (AI動体検知アプリケーション)」を使用できる他の i-PRO カメラを使用する場合も恐らくそのまま利用可能です。</p>
+  <p> 完成したプログラムの動作例はこちらです。他の動作例は本ページ内の <a href="#プログラム動作例">プログラム動作例</a> を参照してください。</p>
+
+  <video controls muted autoplay="y" loop="y" width="800">
+    <source src="connect_to_wv-xae200w/Person.mp4" type="video/mp4">
+    動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+  </video>
+
+</section>
+  
+<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>
+
+<section>
+<p class="auto-style2"> <strong>"i-PRO mini" 紹介： </strong> </p>
+<ul>
+  <li><a href="https://cwc.i-pro.com/pages/i-pro-mini-lp" target="_blank">
+    i-PRO mini</a></li>
+  <li><a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130ux" target="_blank">
+    i-PRO mini 有線LANモデル WV-S7130UX</a></li>
+  <li>  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130wux" target="_blank">
+    i-PRO mini 無線LANモデル WV-S7130WUX</a></li>
+  <li><a href="https://japancs.i-pro.com/space/DLJP/724085590/WV-S7130UX　i-PRO+mini+有線LANモデル" target="_blank">
+    WV-S7130UX　i-PRO mini 有線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
+  <li><a href="https://japancs.i-pro.com/space/DLJP/724086255/WV-S7130WUX　i-PRO+mini+無線LANモデル" target="_blank">
+    WV-S7130WUX　i-PRO mini 無線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
+</ul>
+<p> 
+<a href="images/i-PRO_mini.jpg" target="_blank">
+
+<img alt="" src="images/i-PRO_mini.jpg" class="border_with_drop-shadow" width="348"></a></p>
+<p>&nbsp;</p>
+<p class="auto-style2"><strong>"モジュールカメラ" 紹介：</strong></p>
+<ul>
+  <li><a href="https://moduca.i-pro.com" target="_blank">
+    モジュールカメラ｜ポータルサイト (i-pro.com)</a></li>
+  <li><a href="https://moduca.i-pro.com/space/MCT/768743132/各種マニュアル" target="_blank">
+    各種マニュアル - Module Camera Technical Information - モジュールカメラ｜ポータルサイト (i-pro.com)</a></li>
+</ul>
+<p> 
+<a href="images/ai_starter_kit_1.png" target="_blank">
+<img alt="" class="border_with_drop-shadow" src="images/ai_starter_kit_1.png" width="404"></a>
+<a href="images/ai_starter_kit_2.png" target="_blank">
+<img alt="" class="border_with_drop-shadow" src="images/ai_starter_kit_2.png" width="444"></a></p>
+<p> 
+&nbsp;</p>
+<p> 
+カメラ初期設定についてはカメラ毎の取扱説明書をご確認ください。</p>
+<p> 
+カメラのIPアドレスを確認・設定できる下記ツールを事前に入手しておくと便利です。</p>
+ <ul>
+  <li>
+  <a href="https://connect.panasonic.com/jp-ja/products-services_security_support_specifications-manuals-firms-tool_2014040315191048" target="_blank">
+  IP簡単設定ソフトウェア</a>&nbsp;（日本国内）</li>
+  <li>
+  <a href="https://bizpartner.panasonic.net/public/file/ip-setting-software" target="_blank">
+  IP Setting Software</a>&nbsp;&nbsp;&nbsp;&nbsp; （グローバル）</li>
+ </ul>
+</section>
+
+<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>
+
+<section>
+	<h2> <a name="1._WV-XAE200WUX_をインストールする">1. WV-XAE200WUX をインストールする</a></h2>
+    <p> "i-PRO mini" は購入した時点で WV-XAE200WUX (AI動体検知アプリケーション) をインストール済みです。<br>
+    モジュールカメラは購入時点で WV-XAE200WUX (AI動体検知アプリケーション) を未インストールですが、<a href="https://moduca.i-pro.com/space/MCP/768743111/AIソフトウェア#i-PRO　AIアプリケーション一覧" target="_blank">こちら</a> 
+    からダウンロード可能です。<br>「90日間試用」のライセンスで提供ですが、追加料金なしで90日も使えるとも言えますね。とりあえず有効化して遊んでみたいと思います。（気に入ったら購入してください。）</p>
+    <p> 最新版の方が認識性能など向上しているので、ここではインストール済みの "i-PRO mini" もまずは最新ファームウェアを取得してアップデートすることから開始したいと思います。以下の手順で行います。</p>
+	<h4>&nbsp;</h4>
+    <p>1. 最新版ファームウェアを入手（ダウンロード）</p>
+    <p>下記から最新版ファームウェアを入手します。</p>
+    <ul>
+      <li><a href="https://japancs.i-pro.com/space/DLJP/788989682/WV-XAE200WUX　カメラ用機能拡張ソフトウェア（AI動体検知アプリケーション）" target="_blank">
+	      WV-XAE200WUX　カメラ用機能拡張ソフトウェア（AI動体検知アプリケーション） - ダウンロード - i-PRO サポートポータル</a></li>
+      <li><a href="https://moduca.i-pro.com/space/MCP/768743111/AIソフトウェア#i-PRO　AIアプリケーション一覧" target="_blank">
+        モジュールカメラ | ポータルサイト | AIアプリケーション一覧</a></li>
+    </ul>
+    <p>※本書記載時点の最新版は v2.20 でした。</p>
+    <p>&nbsp;</p>
+    <p>2. カメラへインストール</p>
+    <p> カメラを起動してブラウザから接続します。</p>
+    <p> 「設定」&gt;「ソフトウェア管理」 を開きます。</p>
+    <p> AI-VMD (AI動体検知アプリケーション) のバージョンを確認すると "2.11" となっています。最新版ではないので、上記で取得した最新版へアップデートします。</p>
+    <p> 
+    <img alt="" class="border_with_drop-shadow" src="connect_to_wv-xae200w/img9.jpg" width="800"></p>
+    <p> &nbsp;</p>
+    <p> 「ファイルの選択」&gt;「AI-VMDをバージョンアップする」&gt;「実行」 を順にクリックします。</p>
+    <p> 選択するファイルは *.ext です。ここでは「XAE200_v220.ext」というファイルを選択しています。</p>
+    <p> 
+    <img alt="" class="border_with_drop-shadow" src="connect_to_wv-xae200w/imgD.jpg" width="800"></p>
+    <p> &nbsp;</p>
+    <p> こんな確認画面を表示するので、［OK］ボタンをクリックします。</p>
+    <p> 
+    <img alt="" class="border_with_drop-shadow" src="connect_to_wv-xae200w/img12.jpg"></p>
+    <p> &nbsp;</p>
+    <p> ファームウェアアップデート中の画面です。</p>
+    <p> 
+    <img alt="" class="border_with_drop-shadow" src="connect_to_wv-xae200w/img14.jpg" width="800"></p>
+    <p> &nbsp;</p>
+    <p> これで最新版(v2.20)へアップデートできました。</p>
+    <p> 
+    <img alt="" class="border_with_drop-shadow" src="connect_to_wv-xae200w/img15.jpg" width="800"></p>
+    <p> &nbsp;</p>
+    <p>3. 続いて AI-VMD を有効化します。</p>
+    <p>［設定］タブの「機能拡張ソフトウェア」から「AI-VMD」をクリックします。</p>
+    <p><a href="connect_to_wv-xae200w/img4C.jpg" target="_blank">
+    <img alt="" class="border_with_drop-shadow" src="connect_to_wv-xae200w/img4C.jpg" width="800"></a></p>
+    <p>&nbsp;</p>
+    <p>
+    初めて使用する場合は下図画面を表示するので、試用を始める場合は下図「AI-VMDを使用する（試用期間：90日）」をクリックします。ずっと使用したい場合は別途 
+    WV-XAE200WUX のライセンスを購入してライセンス登録を行う必要があります。</p>
+    <p><img alt="" src="connect_to_wv-xae200w/img4E.jpg" width="800"></p>
+    <p>&nbsp;</p>
+    <p> 4.&nbsp;続いて AI-VMD の設定を行います。ここでは "検知エリア１" のみを設定しておきます。</p>
+    <ul>
+      <li>検知エリア： 全領域 （左側画面の全体を白い線の枠で囲うように設定します）</li>
+      <li>検知オブジェクト： "人物"、"車"、"二輪車"</li>
+      <li>検知モード： "侵入検知" </li>
+    </ul>
+    
+    <p>［重要］更に画面下方にある［設 定］ボタンをクリックするのを忘れないようにしましょう。</p>
+    
+    <p><a href="connect_to_wv-xae200w/img1B.jpg" target="_blank">
+    <img alt="" src="connect_to_wv-xae200w/img1B.jpg" width="800" class="border_with_drop-shadow"></a></p>
+    <p> &nbsp;</p>
+    <p> 5. 「ライブ画」を表示してみます。<br>ちゃんと私を「HUMAN」として見つけてくれました。</p>
+
+<video controls muted autoplay="y" loop="y" src="connect_to_wv-xae200w/ai-vmd sample.mp4" width="800px">
+  <p>動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。</p>
+</video>
+
+<p>[動画] 「AI動体検知アプリケーション」を動かしてみた様子</p>
+
+<p>&nbsp;</p>
+
+</section>
+
+<p>&nbsp;</p>
+
+<section>
+  <h2><a name="2._JPEGヘッダーから認識結果を取り出す">2. JPEGヘッダーから認識結果を取り出す</a></h2>
+  <h4>[概要]</h4>
+  <p>前章で記載の通り、カメラブラウザの画面上で WV-XAE200WUX の認識結果を閲覧することができます。
+  しかし、i-PRO カメラから映像を受け取りPC上で映像を表示する独自のプログラムをあなたが単純に作成するだけでは、
+  カメラブラウザのように WV-XAE200WUX の認識結果の表示を行うことはできません。
+  i-PRO カメラから認識結果を受け取って認識結果を描画するプログラムを作成する必要があります。これを実現する方法について、以下で順番に説明を行っていきます。 </p>
+  <p>本章では、まずは認識結果を受け取って取り出すまでについて説明します。</p>
+  <p>資料<span>[1][4] </span>によると JPEG, RTSP ともにパケットに AI 認識結果を記録しているようです。</p>
+  <p>私の技量では RTSP からこの情報を取り出すのは難があるので、JPEG から情報を取り出す方針とします。<br>JPEG 
+  ヘッダのコメント領域に記録されているということなので、JPEG ヘッダを分析して情報を取り出してみます。</p>
+  <p>
+  いきなりカメラと接続してチャレンジするのは大変なので、まずは静止画（JPEG）ファイルを取得し、これをバイナリエディタなどで実際のデータ構造を確認しながら方針や実現方法などを検討していきたいと思います。</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <h4>[評価環境]</h4>
+  <table>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>言語 :</td>
+      <td>Python,</td>
+      <td>3.10.4</td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>OS :</td>
+      <td>Windows 11 home,</td>
+      <td>21H2</td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>機能拡張ソフトウェア :</td>
+      <td>WV-XAE200WUX,</td>
+      <td>2.20</td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p>(1)</p>
+  <p>
+  「<a href="connect_with_jpeg.html#5._連番の_JPEG_ファイルで保存する">JPEGで画像を取得する - 5.連番のJPEGファイルで保存する</a>」
+  「<a href="connect_with_mjpeg.html#5._連番の_JPEG_ファイルで保存する">MJPEGで画像を取得する - 5.連番のJPEGファイルで保存する</a>」
+  に記載の方法を使って、WV-XAE200WUX を動作している状態の JPEG ファイルをPCに保存します。
+  </p>
+  <p>&nbsp;</p>
+  <p>(2)</p>
+  <p>資料<span>[1][4]</span>、JPEGファイル構造の資料<span>[3]</span>、 
+  (1)で保存したファイルをバイナリエディタで表示した結果を見比べて確認などしていきます。</p>
+  <p>まずは仕様確認です。</p>
+  <p>資料<span>[1]</span>の「i-proカメラ外部インタフェース仕様書ver1.59.pdf - 13.3.3. 
+  JPEG」に下図のように記載されています。</p>
+  <p>&nbsp;</p>
+  <p><img alt="" class="border" src="connect_to_wv-xae200w/img19.jpg"></p>
+  <p>&nbsp;</p>
+    <div class="status_ok">
+      <div>
+      </div>
+      <div>
+        <p><strong>ポイント</strong></p>
+        <ul>
+         <li>JPEGファイルは SOI(0xFFD8) で始まる。</li>
+         <li>JPEGファイルは EOI(0xFFD9) で終わる。</li>
+         <li>メタ情報（付加情報）はコメント領域に記録されている。（COM(0xFFFE)）</li>
+        </ul>
+      </div>
+    </div>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>資料<span>[4] </span>の「3. 付加情報」「3.1. 基本情報」「3.2. 結果情報」で下図のように記載されています。</p>
+  <p>
+  <img alt="" src="connect_to_wv-xae200w/img5.jpg" width="800" class="border"></p>
+  <p>
+  <img alt="" src="connect_to_wv-xae200w/img6.jpg" width="600"></p>
+  <p>
+  <img alt="" src="connect_to_wv-xae200w/img7.jpg" width="600"></p>
+  
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>
+  <img alt="" src="connect_to_wv-xae200w/imgC.jpg" width="800" class="border"></p>
+  <p>
+  <img alt="" src="connect_to_wv-xae200w/imgG.jpg" width="600" class="border"></p>
+  <p>
+  <img alt="" src="connect_to_wv-xae200w/imgE.jpg" width="600" class="border"></p>
+  <p>
+  <img alt="" src="connect_to_wv-xae200w/imgF.jpg" width="600" class="border"></p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>(3)</p>
+  <p>以上を踏まえて、実際に取得した JPEG ファイルを解析します。</p>
+  <p>下記内容は私が作成した image_000001.jpg 
+  の例です。あなたが準備したデータとデータ構造は同じですが、具体的なデータは異なる内容となります。</p>
+  <p>&nbsp;</p>
+  <p>[図： image_000001.jpg バイナリデータ解析結果]</p>
+  <p><img alt="" class="border" src="connect_to_wv-xae200w/img2A.jpg"></p>
+  <p>&nbsp;</p>
+  <p>WV-XAE200WUX に関係する個所に絞って記載するとポイントは以下の通りです。</p>
+    <div class="status_ok">
+      <div>
+      </div>
+      <div>
+        <p><strong>ポイント</strong></p>
+        <ul>
+         <li>コメント領域中に "WV-XAE200WUX 付加情報" を記録している。</li>
+         <li>"WV-XAE200WUX 付加情報" のタグコードは "0x002F"。</li>
+         <li>コメント領域には他の付加情報も保存されている。</li>
+         <li>"WV-XAE200WUX 付加情報" のデータ長は、検知数に応じて変わる可変長。</li>
+        </ul>
+      </div>
+    </div>
+    <p>&nbsp;</p>
+  <table border="1" class="border-collapse">
+    <caption>[表: WV-XAE200WUX 付加情報部分を解析した結果]</caption>
+    <thead class="standard_table">
+      <tr>
+        <th>データ</th>
+        <th>項目</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tr>
+      <td>00 2F</td>
+      <td>ID (16 bit)</td>
+      <td>付加情報（0x002F）</td>
+    </tr>
+    <tr>
+      <td>00 28</td>
+      <td>Length (16 bit)</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>62 81 E9 F2</td>
+      <td>UtcClock (32 bit)</td>
+      <td>UTC clock 1970年からの通算秒<br><br>
+      <hr>
+      <br>0x6281E9F2 = 1,652,681,202[秒]<br>
+      = 19,128[日] + 6[時間] + 6[分] + 42[秒]<br>⇨ 2022年5月16日、タイムゾーン(+9)を考慮すると 
+      15時6分42秒、正しそうです。</td>
+    </tr>
+    <tr>
+      <td rowspan="5">09</td>
+      <td>RFU (1 bit)</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>TimeZoneDirection (1 bit)</td>
+      <td>0: プラス、1: マイナス</td>
+    </tr>
+    <tr>
+      <td>SummerTime (1 bit)</td>
+      <td>0: サマータイム外、1: サマータイム中</td>
+    </tr>
+    <tr>
+      <td>TimeZoneHour (5 bit)</td>
+      <td>TimeZoneHour ; 9</td>
+    </tr>
+    <tr>
+      <td colspan="2">以上から、0x09 はタイムゾーン "+9", "サマータイム外" という意味です。</td>
+    </tr>
+    <tr>
+      <td>00</td>
+      <td>TimeZoneMinute (8 bit)</td>
+      <td>TimeZoneMinute = 0</td>
+    </tr>
+    <tr>
+      <td>00 2E</td>
+      <td>FrameTime (16 bit)</td>
+      <td>Utcclkを補足する10msec単位のカウンタ<br>0x00：&nbsp; 0msec<br>0x01： 10msec<br>～<br>
+      0x63：990msec </td>
+    </tr>
+    <tr>
+      <td>01 00</td>
+      <td>algorithmID (16 bit)</td>
+      <td>"0x0100" 固定</td>
+    </tr>
+    <tr>
+      <td rowspan="4">00 02</td>
+      <td>RFU (6 bit)<br></td>
+      <td>000000(b) 固定</td>
+    </tr>
+    <tr>
+      <td><span lang="EN-US">resultinfoflag</span> (1 bit)</td>
+      <td><span>結果情報（枠情報）があるかないか<br>0: 無し<br>1: あり</span></td>
+    </tr>
+    <tr>
+      <td>uniqueinfoflag (1 bit)</td>
+      <td>固有情報があるかないか<br>0: 無し<br>1: あり<br><br>
+      <hr>
+      <br>WV-XAE200WUX では 0 固定。未使用と同意。</td>
+    </tr>
+    <tr>
+      <td colspan="2">以上から、0x02 は "検知結果あり" を意味します。</td>
+    </tr>
+    <tr>
+      <td>00 10</td>
+      <td>resultInfoLength (16 bit)</td>
+      <td>結果情報（Result information）の長さ。 Byte 単位。<br><br><hr><br>AreaNum * 
+      AreaLength [bytes] と同じ値となります。<br></td>
+    </tr>
+    <tr>
+      <td rowspan="2">04 10</td>
+      <td>AreaNum (6 bit)<br></td>
+      <td>AreaNum = 1 ; 検知数 1 の意味<br></td>
+    </tr>
+    <tr>
+      <td>AreaLength (10 bit)</td>
+      <td>AreaLength = 0x10 = 16 [bytes]<br><br>
+      <hr>
+      <br>16[bytes] は下記 [表: Result 
+      information of the detected area] が示すデータサイズです。<br>この例では次に記載の AreaNum が 1 
+      なので、resultInfoLength は0x10(16)バイトとなります。</td>
+    </tr>
+    <tr>
+      <td>03 20</td>
+      <td><span lang="EN-US">Imgwidth</span> (16 bit)</td>
+      <td>画像幅<br><br>0x0320 = 800 [px]</td>
+    </tr>
+    <tr>
+      <td>01 C2</td>
+      <td>Imgheight (16 bit)</td>
+      <td>画像高さ<br><br>0x01C2 = 450 [px]</td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p>＝＝＝ この範囲を検知した数だけ反復</p>
+  <table border="1" class="border-collapse">
+    <caption>[表: Result information of the detected area]</caption>
+    <thead class="standard_table">
+      <tr>
+        <th>データ</th>
+        <th>項目</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tr>
+      <td>0B 6A</td>
+      <td>AreaID (16 bit)<br></td>
+      <td>検出枠のID (0 ～ 65,535)<br><br>0x0B6A = 2,922</td>
+    </tr>
+    <tr>
+      <td>00 01</td>
+      <td>dtctarea (16 bit)<br><br></td>
+      <td>エリアごとに1ビットを割り当て。<br>検知条件を満足するエリアのビットを '1' とする。<br>&nbsp;<br>0x0001：検知条件1 
+      検出エリア1 <br>0x0002：検知条件1 検出エリア2 <br>0x0004：検知条件1 検出エリア3 <br>0x0008：検知条件1 
+      検出エリア4 <br>0x0010：検知条件1 検出エリア5 <br>0x0020：検知条件1 検出エリア6 <br>0x0040：検知条件1 
+      検出エリア7 <br>0x0080：検知条件1 検出エリア8 <br>0x0100：検知条件2 検出エリア1 <br>0x0200：検知条件2 
+      検出エリア2 <br>0x0400：検知条件2 検出エリア3 <br>0x0800：検知条件2 検出エリア4 <br>0x1000：検知条件2 
+      検出エリア5 <br>0x2000：検知条件2 検出エリア6 <br>0x4000：検知条件2 検出エリア7 <br>0x8000：検知条件2 
+      検出エリア8 <br><br><hr><br>0x0001 ; 検知条件1 検出エリア1 で検知</td>
+    </tr>
+    <tr>
+      <td rowspan="3">10 01</td>
+      <td>almtype (4 bit)<br><br><br></td>
+      <td>発報した際の検出種別 <br>0x1：侵入検知 <br>0x2：滞留検知 
+      <br>0x3：方向検知 <br>0x4：置き去り・持ち去り検知 <br>0x5：ラインクロス検知 <br>0xF：未発報 
+      <br><br><hr><br>almtype= 1 (侵入検知)<br>
+      </td>
+    </tr>
+    <tr>
+      <td>dir (16 bit)</td>
+      <td>方向検知・ラインクロス検知で発報時の方向 <br>0x00：方向なし（方向検知・ラインクロス未発報時）<br>0x01：上　　　<br>0x02：右上 <br>
+      0x03：右　　　<br>0x04：右下 <br>0x05：下　　　<br>0x06：左下 <br>0x07：左　　<br>0x08：左上 <br>
+      0x10：A→B <br>0x20：B→A <br>0x30：A⇔B <br>
+      <br><hr><br>dir = 0 (方向なし)</td>
+    </tr>
+    <tr>
+      <td><span lang="EN-US">almobj</span> (4 bit)</td>
+      <td>発報した検知対象物<br>0x0：種別なし（almtyp が 0x4 のとき）<br>0x1：人物<br>0x2：車<br>0x3：二輪車<br>
+      0x4：未発報（今後の発報候補。almtype が 0xF のとき）<br>
+      <br><hr><br>almobj = 1 (人物)</td>
+    </tr>
+    <tr>
+      <td>00 00</td>
+      <td>RFU (16 bit)</td>
+      <td>H'0000 固定</td>
+    </tr>
+    <tr>
+      <td>01 0B</td>
+      <td>hstart (16 bit)</td>
+      <td>0x010B = 267</td>
+    </tr>
+    <tr>
+      <td>00 A7</td>
+      <td>vstart (16 bit)</td>
+      <td>0x00A7 = 167</td>
+    </tr>
+    <tr>
+      <td>00 E3</td>
+      <td>hcnt (16 bit)</td>
+      <td>0x00E3 = 227</td>
+    </tr>
+    <tr>
+      <td>00 D7</td>
+      <td>vcnt (16 bit)</td>
+      <td>0x00D7 = 215</td>
+    </tr>
+  </table>
+  <p>＝＝＝ ここまで</p>
+  <p>&nbsp;</p>
+  <p>(注) RFU : Rest for Future Use (将来使用のための未使用領域)</p>
+  <p>&nbsp;</p>
+  <p>(4)</p>
+  <p>ここまでの情報を踏まえて、JPEGファイルを解析して WV-XAE200WUX 付加情報を取得するプログラムを作成してみます。</p>
+  <p>&nbsp;</p>
+  <p>(4-1) 最初に対象バイナリデータが JPEG ファイルであるかを確認する関数を作成します。</p>
+  <p>バイナリデータの先頭が SOI(0xffd8) で末尾が EOI(0xffd9) であればOKとしています。</p>
+  <pre class="prettyprint linenums lang-py">def IsJpegFile(data):
+    '''
+    Check if data is JPEG data.
+    data が JPEG データであることを確認する。
+
+    Args:
+        data            [i] Data to be confirmed.
+    Returns:
+        True            Data is JPEG.
+        False           Data is not JPEG.
+    Raises
+        None
+    '''
+    result = False
+
+    length = len(data)
+    if length &gt;= 4:
+        SOI, = struct.unpack('&gt;H', data[0:2])
+        EOI, = struct.unpack('&gt;H', data[length-2:length])
+        if SOI == 0xffd8 and EOI == 0xffd9:
+            result = True
+
+    return result</pre>
+  <p>&nbsp;</p>
+  <p>(4-2) JPEGヘッダ情報を分析してタグを抽出する関数を作成します。</p>
+  <p>ANS.1 形式と似た TLV 構造になっているので、関数に渡されたデータ先頭から JPEG 仕様に従って Tag, Length, Value 
+  を取り出します。</p>
+  <pre class="prettyprint linenums lang-py">def ParseJpegHeadder(data):
+    '''
+    Get Tag, Length, Value (data_interior), the following data from JPEG header data.
+    JPEG ヘッダデータから Tag, Length, Value(data_interior), 次のデータ を取得する。
+
+    Args:
+        data            [i] Data to be confirmed.
+    Returns:
+        result          True:   success
+                        False:  failure
+        tag             Tag
+        length          Length
+        data_interior   Value. If it does not exist, it will be None.
+        data_next       The following data after data_interior. If it does not exist, it will be None.
+    Raises
+        None
+    '''
+    result = False
+    tag = 0
+    length = 0
+    data_length = len(data)
+    data_interior = None
+    data_next = None
+
+    if data_length &gt;= 4:
+        tag, length, = struct.unpack('&gt;HH', data[0:4])
+        if tag &amp; 0xff00 == 0xff00:
+            if length + 2 &lt;= data_length:
+                data_interior = data[4:length+2]
+                data_next = data[length+2:data_length]
+                result = True
+
+    return result, tag, length, data_interior, data_next</pre>
+  <p>&nbsp;</p>
+  <p>(4-3) コメント領域のデータを渡すことで WV-XAE200WUX 付加情報を取得する関数を作成します。</p>
+  <p>WV-XAE200WUX データのタグは 0x002f なので、これを探します。</p>
+  <p>見つけたらこの後で記載する ParseAivmdResult 関数に渡して詳細分析を行います。</p>
+  <pre class="prettyprint linenums lang-py">def ParseJpegComment(data):
+    '''
+    This function obtains the WV-XAE200WUX (aivmd) recognition result from the JPEG comment data.
+    JPEG コメントデータから WV-XAE200WUX (aivmd) 認識結果を取得する。
+
+    Args:
+        data            [i] JPEG comment data.
+    Returns:
+        result          True:   success
+                        False:  failure
+        aivmd_result    The WV-XAE200WUX (aivmd) recognition result.
+    Raises
+        None
+    '''
+    result = False
+    aivmd_result = None
+    length = len(data)
+
+    while True:
+        if length &gt;= 4:
+            tag, data_length = struct.unpack('&gt;HH', data[0:4])
+            if data_length &lt;= length:
+                data_interior = data[4: data_length]
+                data = data[data_length:]
+                length -= data_length
+
+                if tag == 0x002f:   # 0x002f means AI-VMD meta information.
+                    aivmd_result = ParseAivmdResult(data_interior)
+                    result = True
+                    break
+            else:
+                break
+        else:
+            break
+    
+    return result, aivmd_result</pre>
+  <p>&nbsp;</p>
+  <p>(4-4) 取得した WV-XAE200WUX 付加情報を渡すと詳細を分析してくれる関数を作成します。</p>
+  <p>各データを切り出しして、辞書形式にして保存します。</p>
+  <pre class="prettyprint linenums lang-py">def ParseAivmdResult(data):
+    '''
+    This function gets the recognition result in dictionary format from the WV-XAE200WUX (AI-VMD) recognition result.
+    WV-XAE200WUX (AI-VMD) 認識結果から辞書形式の認識結果を取得する。
+
+    Args:
+        data            [i] WV-XAE200WUX (aivmd) recognition result.
+    Returns:
+        result          True:   success
+                        False:  failure
+        aivmd_result    the recognition result in dictionary format.
+    Raises
+        None
+    '''
+    result = {}
+    result['detectResult'] = []
+    length = len(data)
+
+    UTCClock, timeZone, timeZoneMinute, frameTime   = struct.unpack('&gt;LBBH', data[ 0: 8])
+    algorithmId, resultInfo, resultInfoLength       = struct.unpack('&gt;HHH',  data[ 8:14])
+    areaInfo, imageWidth, imageHeight               = struct.unpack('&gt;HHH',  data[14:20])
+    areaNum = (areaInfo &gt;&gt; 10) &amp; 0x3f
+    areaLength = areaInfo &amp; 0x3ff
+    timeZoneDirection = (timeZone &gt;&gt; 6) &amp; 0x01
+    summerTime = (timeZone &gt;&gt; 5) &amp; 0x01
+    if timeZoneDirection == 0:
+        timeZoneHour = + (timeZone &amp; 0x1f)
+    else:
+        timeZoneHour = - (timeZone &amp; 0x1f)
+    resultInfoFlag = (resultInfo &gt;&gt; 1) &amp; 0x01
+    uniqueinfoflag = (resultInfo &gt;&gt; 0) &amp; 0x01
+
+    result['UTCClock']          = UTCClock
+    result['timeZoneDirection'] = timeZoneDirection
+    result['summerTime']        = summerTime
+    result['timeZoneHour']      = timeZoneHour
+    result['timeZoneMinute']    = timeZoneMinute
+    result['frameTime']         = frameTime
+    result['algorithmId']       = algorithmId           # 0x0100 fixed.
+    result['resultInfoFlag']    = resultInfoFlag        # 0: detection,  1: no detection
+    result['uniqueinfoflag']    = uniqueinfoflag
+    result['resultInfoLength']  = resultInfoLength      # areaNum * areaLength [bytes]
+    result['areaNum']           = areaNum
+    result['areaLength']        = areaLength 
+    result['imageWidth']        = imageWidth
+    result['imageHeight']       = imageHeight
+
+    offset = length - resultInfoLength
+
+    if (algorithmId==0x0100) and (resultInfoLength == areaNum * areaLength):
+        for i in range(areaNum):
+            areaId, detectArea, alarm   = struct.unpack('&gt;HHH10x', data[offset+areaLength*i:offset+areaLength*(i+1)])
+            hstart, vstart, hcnt, vcnt  = struct.unpack('&gt;8xHHHH', data[offset+areaLength*i:offset+areaLength*(i+1)])
+            almType = (alarm &gt;&gt; 12) &amp; 0x0f      
+            direction = (alarm &gt;&gt; 8) &amp; 0x0f     
+            almObj = (alarm &amp; 0xff)             
+
+            detectResult = {}
+            detectResult['areaId']      = areaId
+            detectResult['detectArea']  = detectArea
+            detectResult['almType']     = almType       # 1:Intruders, 2:Loitering, 3:Direction, 4:Object, 5:Cross line, 8:AI
+            detectResult['Dir']         = direction     # 1:Up, 2:Up right, 3:Right, 4:Down right, 5:Down, 6:Down left, 7:Left, 8:Up left,
+                                                        # 9:A→B, 10:B→A, 11:A⇔B
+            detectResult['almObj']      = almObj        # 1: Person, 2: Car, 3: Bike, 4: Unknown
+            detectResult['hstart']      = hstart
+            detectResult['vstart']      = vstart
+            detectResult['hcnt']        = hcnt
+            detectResult['vcnt']        = vcnt
+
+            result['detectResult'].append(detectResult)
+
+    return result</pre>
+  <p>&nbsp;</p>
+  <p>(4-5) 以上の関数を使用して全体処理する部分を作成します。</p>
+  <p>概要説明省略、ソースコード中のコメントをご確認ください。</p>
+  <pre class="prettyprint linenums lang-py">def ParseJpegFile(data):
+    '''
+    This function obtains the WV-XAE200WUX (aivmd) recognition results from the JPEG data.
+    JPEG データから WV-XAE200WUX (aivmd) 認識結果を取得する。
+
+    Args:
+        data            [i] Data to be confirmed.
+    Returns:
+        result          True:   success
+                        False:  failure
+        aivmd_result    The WV-XAE200WUX (aivmd) recognition result.
+    Raises
+        None
+    '''
+    result = False
+    aivmd_result = None
+
+    if IsJpegFile(data) == True:
+        next_data = data[2:]
+        while True:
+            result, tag, length, data, next_data = ParseJpegHeadder(next_data)
+
+            if tag == 0xffda:   # SOS (Start Of Scan)
+                break
+            if result==False:
+                break
+            if tag == 0xfffe:   # COM (Comment)
+                result, aivmd_result = ParseJpegComment(data)
+                break
+
+    return result, aivmd_result
+
+
+if __name__ == "__main__":
+    '''
+    __main__ function.
+
+    Raises
+        FileNotFoundError
+    '''
+    filename = 'image_000001.jpg'
+
+    with open(filename, 'rb') as fin:
+        binaryData = fin.read()
+
+    result, aivmd_result = ParseJpegFile(binaryData)
+    if result==True:
+        print(aivmd_result)
+    else:
+        print('Failure.')</pre>
+  <p>&nbsp;</p>
+  <p>(4-6) 最後に、プログラム全体を示します。</p>
+  <p>["<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_to_wv-xae200w/parse_jpeg.py" target="_blank">parse_jpeg.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    This program extracts the recognition result of WV-XAE200WUX (AI-VMD) from the JPEG file.
+    WV-XAE200WUX (AI-VMD) の認識結果を JPEG ファイルから取り出します。
+
+[Details]
+    This program has been confirmed to work with WV-XAE200WUX Ver. 2.20.
+
+[Library install]
+
+'''
+
+import struct
+
+
+def ParseAivmdResult(data):
+    '''
+    This function gets the recognition result in dictionary format from the WV-XAE200WUX (AI-VMD) recognition result.
+    WV-XAE200WUX (AI-VMD) 認識結果から辞書形式の認識結果を取得する。
+
+    Args:
+        data            [i] WV-XAE200WUX (aivmd) recognition result.
+    Returns:
+        result          True:   success
+                        False:  failure
+        aivmd_result    the recognition result in dictionary format.
+    Raises
+        None
+    '''
+    result = {}
+    result['detectResult'] = []
+    length = len(data)
+
+    UTCClock, timeZone, timeZoneMinute, frameTime   = struct.unpack('&gt;LBBH', data[ 0: 8])
+    algorithmId, resultInfo, resultInfoLength       = struct.unpack('&gt;HHH',  data[ 8:14])
+    areaInfo, imageWidth, imageHeight               = struct.unpack('&gt;HHH',  data[14:20])
+    areaNum = (areaInfo &gt;&gt; 10) &amp; 0x3f
+    areaLength = areaInfo &amp; 0x3ff
+    timeZoneDirection = (timeZone &gt;&gt; 6) &amp; 0x01
+    summerTime = (timeZone &gt;&gt; 5) &amp; 0x01
+    if timeZoneDirection == 0:
+        timeZoneHour = + (timeZone &amp; 0x1f)
+    else:
+        timeZoneHour = - (timeZone &amp; 0x1f)
+    resultInfoFlag = (resultInfo &gt;&gt; 1) &amp; 0x01
+    uniqueinfoflag = (resultInfo &gt;&gt; 0) &amp; 0x01
+
+    result['UTCClock']          = UTCClock
+    result['timeZoneDirection'] = timeZoneDirection
+    result['summerTime']        = summerTime
+    result['timeZoneHour']      = timeZoneHour
+    result['timeZoneMinute']    = timeZoneMinute
+    result['frameTime']         = frameTime
+    result['algorithmId']       = algorithmId           # 0x0100 fixed.
+    result['resultInfoFlag']    = resultInfoFlag        # 0: detection,  1: no detection
+    result['uniqueinfoflag']    = uniqueinfoflag
+    result['resultInfoLength']  = resultInfoLength      # areaNum * areaLength [bytes]
+    result['areaNum']           = areaNum
+    result['areaLength']        = areaLength 
+    result['imageWidth']        = imageWidth
+    result['imageHeight']       = imageHeight
+
+    offset = length - resultInfoLength
+
+    if (algorithmId==0x0100) and (resultInfoLength == areaNum * areaLength):
+        for i in range(areaNum):
+            areaId, detectArea, alarm   = struct.unpack('&gt;HHH10x', data[offset+areaLength*i:offset+areaLength*(i+1)])
+            hstart, vstart, hcnt, vcnt  = struct.unpack('&gt;8xHHHH', data[offset+areaLength*i:offset+areaLength*(i+1)])
+            almType = (alarm &gt;&gt; 12) &amp; 0x0f      
+            direction = (alarm &gt;&gt; 8) &amp; 0x0f     
+            almObj = (alarm &amp; 0xff)             
+
+            detectResult = {}
+            detectResult['areaId']      = areaId
+            detectResult['detectArea']  = detectArea
+            detectResult['almType']     = almType       # 1:Intruders, 2:Loitering, 3:Direction, 4:Object, 5:Cross line, 8:AI
+            detectResult['Dir']         = direction     # 1:Up, 2:Up right, 3:Right, 4:Down right, 5:Down, 6:Down left, 7:Left, 8:Up left,
+                                                        # 9:A→B, 10:B→A, 11:A⇔B
+            detectResult['almObj']      = almObj        # 1: Person, 2: Car, 3: Bike, 4: Unknown
+            detectResult['hstart']      = hstart
+            detectResult['vstart']      = vstart
+            detectResult['hcnt']        = hcnt
+            detectResult['vcnt']        = vcnt
+
+            result['detectResult'].append(detectResult)
+
+    return result
+
+
+def ParseJpegComment(data):
+    '''
+    This function obtains the WV-XAE200WUX (aivmd) recognition result from the JPEG comment data.
+    JPEG コメントデータから WV-XAE200WUX (aivmd) 認識結果を取得する。
+
+    Args:
+        data            [i] JPEG comment data.
+    Returns:
+        result          True:   success
+                        False:  failure
+        aivmd_result    The WV-XAE200WUX (aivmd) recognition result.
+    Raises
+        None
+    '''
+    result = False
+    aivmd_result = None
+    length = len(data)
+
+    while True:
+        if length &gt;= 4:
+            tag, data_length = struct.unpack('&gt;HH', data[0:4])
+            if data_length &lt;= length:
+                data_interior = data[4: data_length]
+                data = data[data_length:]
+                length -= data_length
+
+                if tag == 0x002f:   # 0x002f means AI-VMD meta information.
+                    aivmd_result = ParseAivmdResult(data_interior)
+                    result = True
+                    break
+            else:
+                break
+        else:
+            break
+    
+    return result, aivmd_result
+
+
+def ParseJpegHeadder(data):
+    '''
+    Get Tag, Length, Value (data_interior), the following data from JPEG header data.
+    JPEG ヘッダデータから Tag, Length, Value(data_interior), 次のデータ を取得する。
+
+    Args:
+        data            [i] Data to be confirmed.
+    Returns:
+        result          True:   success
+                        False:  failure
+        tag             Tag
+        length          Length
+        data_interior   Value. If it does not exist, it will be None.
+        data_next       The following data after data_interior. If it does not exist, it will be None.
+    Raises
+        None
+    '''
+    result = False
+    tag = 0
+    length = 0
+    data_length = len(data)
+    data_interior = None
+    data_next = None
+
+    if data_length &gt;= 4:
+        tag, length, = struct.unpack('&gt;HH', data[0:4])
+        if tag &amp; 0xff00 == 0xff00:
+            if length + 2 &lt;= data_length:
+                data_interior = data[4:length+2]
+                data_next = data[length+2:data_length]
+                result = True
+
+    return result, tag, length, data_interior, data_next
+
+
+def IsJpegFile(data):
+    '''
+    Check if data is JPEG data.
+    data が JPEG データであることを確認する。
+
+    Args:
+        data            [i] Data to be confirmed.
+    Returns:
+        True            Data is JPEG.
+        False           Data is not JPEG.
+    Raises
+        None
+    '''
+    result = False
+
+    length = len(data)
+    if length &gt;= 4:
+        SOI, = struct.unpack('&gt;H', data[0:2])
+        EOI, = struct.unpack('&gt;H', data[length-2:length])
+        if SOI == 0xffd8 and EOI == 0xffd9:
+            result = True
+
+    return result
+
+
+def ParseJpegFile(data):
+    '''
+    JPEG データから WV-XAE200WUX (aivmd) 認識結果を取得する。
+
+    Args:
+        data            [i] Data to be confirmed.
+    Returns:
+        result          True:   success
+                        False:  failure
+        aivmd_result    The WV-XAE200WUX (aivmd) recognition result.
+    Raises
+        None
+    '''
+    result = False
+    aivmd_result = None
+
+    if IsJpegFile(data) == True:
+        next_data = data[2:]
+        while True:
+            result, tag, length, data, next_data = ParseJpegHeadder(next_data)
+
+            if tag == 0xffda:   # SOS (Start Of Scan)
+                break
+            if result==False:
+                break
+            if tag == 0xfffe:   # COM (Comment)
+                result, aivmd_result = ParseJpegComment(data)
+                break
+
+    return result, aivmd_result
+
+
+if __name__ == "__main__":
+    '''
+    __main__ function.
+
+    Raises
+        FileNotFoundError
+    '''
+    filename = 'image_000001.jpg'
+
+    with open(filename, 'rb') as fin:
+        binaryData = fin.read()
+
+    result, aivmd_result = ParseJpegFile(binaryData)
+    if result==True:
+        print(aivmd_result)
+    else:
+        print('Failure.')</pre>
+  <p>&nbsp;</p>
+  <p>実行結果の例です。</p>
+  <p><a href="connect_to_wv-xae200w/img8.jpg" target="_blank">
+  <img alt="" class="border_with_drop-shadow" src="connect_to_wv-xae200w/img8.jpg" width="800"></a></p>
+  <p>&nbsp;</p>
+  <table class="border-collapse" width="800">
+    <caption>[図] プログラム実行結果 例</caption>
+    <tr>
+      <td class="standard_table">{'detectResult': [{'areaId': 2922, 
+      'detectArea': 1, 'almType': 1, 'Dir': 0, 'almObj': 1, 'hstart': 267, 
+      'vstart': 167, 'hcnt': 227, 'vcnt': 215}], 'UTCClock': 1652681202, 
+      'timeZoneDirection': 0, 'summerTime': 0, 'timeZoneHour': 9, 
+      'timeZoneMinute': 0, 'frameTime': 46, 'algorithmId': 256, 
+      'resultInfoFlag': 1, 'uniqueinfoflag': 0, 'resultInfoLength': 16, 
+      'areaNum': 1, 'areaLength': 16, 'imageWidth': 800, 'imageHeight': 450}</td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p>JPEG ファイルから WV-XAE200WUX の認識結果を取り出すことができました。</p>
+  <p>&nbsp;</p>
+</section>
+
+<br>
+
+<section>
+  <h2><a name="3._認識結果を枠と文字で描画する">3. 認識結果を枠と文字で描画する</a></h2>
+  <p>&nbsp;</p>
+  <h4>[概要]</h4>
+  <p>前章で JPEG ファイルから認識結果を取り出ししました。</p>
+  <p>
+  この章では、JPEGファイルから取り出した認識結果を使用して画像上の認識位置に枠を、分類結果として文字を、それぞれ描画して表示するサンプルプログラムを作成してみたいと思います。</p>
+  <p>&nbsp;</p>
+  <h4>[評価環境]</h4>
+  <table>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>言語 :</td>
+      <td>Python,</td>
+      <td>3.10.4 </td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>OS :</td>
+      <td>Windows 11 home,</td>
+      <td>21H2</td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>機能拡張ソフトウェア :</td>
+      <td>WV-XAE200WUX,</td>
+      <td>2.20</td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+    <div class="status_ok">
+      <div>
+      </div>
+      <div>
+        <p><strong>ポイント</strong></p>
+        <ul>
+         <li>下記プログラムの最初で <span class="cpp-source">from 
+    parse_jpeg import ParseJpegFile</span> を宣言することで、上記で作成した "parse_jpeg.py" を使用します。</li>
+          <li>このため、以下のプログラムと同じ場所に "parse_jpeg.py" を保存する必要があります。 </li>
+        </ul>
+      </div>
+    </div>
+  <p>&nbsp;</p>
+  <p>["<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_to_wv-xae200w/draw_aivmd_rect.py" target="_blank">draw_aivmd_rect.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    This program extracts the recognition result of AI-VMD (WV-XAE200WUX) from the JPEG file,
+    and the program draws the recognition result on the received video.
+    AI-VMD (WV-XAE200WUX) の認識結果を JPEG ファイルから取り出し、受信した映像に認識結果を描画します。
+
+[Details]
+    This program has been confirmed to work with WV-XAE200WUX Ver. 2.20.
+
+[Library install]
+    cv2:    pip install opencv-python
+    numpy:  pip install numpy
+
+[Note]
+    You need to save "parse_jpeg.py" in the same location as this program.
+'''
+
+import numpy as np
+import cv2
+<span class="auto-style3">from parse_jpeg import ParseJpegFile</span>
+
+
+def DrawAivmdRect(img, aivmd_result):
+    '''
+    This function draws recognition frames and texts on a given image according to the WV-XAE200WUX (AI-VMD) recognition result.
+    WV-XAE200WUX (AI-VMD) 認識結果に従って、与えられた画像に認識枠とテキストを描画する。
+
+    Args:
+        img             [i] OpenCV image
+        aivmd_result    [i] WV-XAE200WUX (aivmd) recognition result.
+    Returns:
+        img             Image with recognition frames and texts drawn.
+    Raises
+        None
+    '''
+    img_width  = img.shape[1]
+    img_height = img.shape[0]
+    aivmd_image_width = aivmd_result['imageWidth']
+    aivmd_image_height = aivmd_result['imageHeight']
+
+    # Draw rectangles and labels.
+    if len(aivmd_result['detectResult']) != 0:
+        for result in aivmd_result['detectResult']:
+            pos_x = int(result['hstart'] * img_width  / aivmd_image_width)
+            pos_y = int(result['vstart'] * img_height / aivmd_image_height)
+            w     = int(result['hcnt']   * img_width  / aivmd_image_width)
+            h     = int(result['vcnt']   * img_height / aivmd_image_height)
+            obj   = int(result['almObj'])
+
+            label = ''
+            thickness = 3
+
+            if obj == 1:
+                # Person
+                label = 'Person'
+                color = (0,0,255)   # red
+            if obj == 2:
+                # Car
+                label = 'Car'
+                color = (255,0,0)   # blue
+            if obj == 3:
+                # Bike
+                label = 'Bike'
+                color = (0,255,0)   # green
+            if obj == 4:
+                # Future notification candidates
+                label = ''
+                color = (255,255,0) # sky blue
+                thickness = 1
+
+            # draw rectangles.
+            cv2.rectangle(img, (pos_x, pos_y), (pos_x + w, pos_y + h), color, thickness=thickness)
+
+            # draw text.
+            label_pos_x = pos_x
+            label_pos_y = pos_y - 10
+            if label_pos_y &lt;= 10:
+                label_pos_y = pos_y + h + 30
+            cv2.putText(img,
+                text = label,
+                org = (label_pos_x, label_pos_y),
+                fontFace = cv2.FONT_HERSHEY_SIMPLEX,
+                fontScale = 1.0,
+                color = color,
+                thickness = 2,
+                lineType = cv2.LINE_AA)
+
+    return img
+
+
+if __name__ == "__main__":
+    '''
+    __main__ function.
+
+    Raises
+        FileNotFoundError :     Make sure that there is a file to set in FileName.
+    '''
+    filename = 'image_000001.jpg'       # Set the file name you use for the evaluation here.
+
+    with open(filename, 'rb') as fin:
+        binaryData = fin.read()
+
+    # Convert from binary to ndarray.
+    img_buf= np.frombuffer(binaryData, dtype=np.uint8)
+
+    # Convert from ndarray to OpenCV image.
+    img = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
+
+    # Extracts the recognition result of WV-XAE200WUX (AI-VMD) from the JPEG file.
+    result, aivmd_result = <span class="auto-style3">ParseJpegFile(binaryData)</span>
+
+    if result==True:
+        # Draws the recognition result on the received video.
+        img = <span class="auto-style3">DrawAivmdRect(img, aivmd_result)</span>
+
+    # Please modify the value to fit your PC screen size.
+    resizedImage = cv2.resize(img, (1280, 720))
+
+    # Display video.
+    windowTitle = "AI-VMD detection result."
+    cv2.imshow(windowTitle, resizedImage)
+    cv2.moveWindow(windowTitle, 100, 30)
+    cv2.waitKey(0)      # necessary to display the video by imshow()</pre>
+  <p>&nbsp;</p>
+  <h4>[プログラム動作例]</h4>
+  <p>上記プログラムを実際に動作させた例を以下に記載します。</p>
+  <p>ここでは入力画像として、 <a href="https://pixabay.com/" target="_blank">
+  https://pixabay.com</a> から取得した動画（<a href="https://pixabay.com/ja/videos/原付-トラフィック-街-5638/" target="_blank">https://pixabay.com/ja/videos/原付-トラフィック-街-5638/</a>）をテストに使用させていただきました。</p>
+  <p>商用利用無料、帰属表示必要なし、のコンテンツです。</p>
+  <p>PC上で再生表示する動画を i-PRO カメラで接写しているため、画質が荒いこと、認識精度が微妙なこと、はご容赦ください。</p>
+  <p>&nbsp;</p>
+  <p>
+  <img alt="" class="border_with_drop-shadow" src="connect_to_wv-xae200w/img16.jpg" width="800"></p>
+  <p>&nbsp;</p>
+  <p>これぐらいの比較的簡単なプログラムで WV-XAE200WUX の結果を独自のPC表示することができました。<br>
+  これで色や文字を独自に加工することもできますし、この結果を使って様々な応用を行うことも可能になるのではと考えます。</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+
+
+<p>&nbsp;</p>
+<section>
+  <h2><a name="4._i-PRO_カメラとつないでリアルタイムで認識結果を表示する">4. i-PRO 
+  カメラとつないでリアルタイムで認識結果を表示する</a></h2>
+  <p>&nbsp;</p>
+  <h4>[概要]</h4>
+  <p>本章ではここまでで作成したプログラムを活用して、i-PRO カメラの映像をライブで表示しつつ WV-XAE200WUX 
+  の認識結果を画面へ表示してみたいと思います。</p>
+  <p>&nbsp;</p>
+  <h4>[評価環境]</h4>
+  <table>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>言語 :</td>
+      <td>Python,</td>
+      <td>3.10.4 </td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>OS :</td>
+      <td>Windows 11 home,</td>
+      <td>21H2</td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+    <tr>
+      <td>機能拡張ソフトウェア :</td>
+      <td>WV-XAE200WUX,</td>
+      <td>2.20</td>
+    </tr>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+    <div class="status_ok">
+      <div>
+      </div>
+      <div>
+        <p><strong>ポイント</strong></p>
+        <ul>
+         <li>ここまでに作成した "parse_jpeg.py" を使用します。<br><span class="cpp-source">from 
+    parse_jpeg import ParseJpegFile</span> を宣言します。</li>
+         <li>ここまでに作成した "draw_aivmd_rect.py" を使用します。<br><span class="cpp-source">from 
+    draw_aivmd_rect import DrawAivmdRect</span> を宣言します。</li>
+         <li>これらプログラムを流用することにより、下記プログラムで WV-XAE200WUX のために行っている処理は下記部分だけとなっています。</li>
+        </ul>
+      </div>
+    </div>
+  <blockquote>
+    # Extracts the recognition result of WV-XAE200WUX (AI-VMD) from the JPEG file.<br>
+    result, aivmd_result = ParseJpegFile(jpg)<br><br>if result==True:<br>&nbsp;&nbsp;&nbsp; # 
+    Draws the recognition result on the received video.<br>&nbsp; &nbsp; frame = 
+    DrawAivmdRect(frame, aivmd_result)
+  </blockquote>
+  <p>以上のようなプログラムの作りとなっているため、下記プログラムと同じ場所に "parse_jpeg.py", "draw_aivmd_rect.py" 
+  を保存している必要があります。 </p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>["<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_to_wv-xae200w/show_live_camera.py" target="_blank">show_live_camera.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    This program connects to an i-PRO camera and draws the recognition result 
+    of AI-VMD (WV-XAE200WUX) on the received video.
+    i-PRO カメラと接続して、AI-VMD (WV-XAE200WUX) の認識結果を受信した映像に描画します。
+
+[Details]
+    This program has been confirmed to work with WV-XAE200WUX Ver. 2.20.
+
+[library install]
+    pip install opencv-python
+'''
+
+import cv2
+import numpy as np
+import urllib.request as rq
+import urllib.error
+<span class="auto-style3">from parse_jpeg import ParseJpegFile</span>
+<span class="auto-style3">from draw_aivmd_rect import DrawAivmdRect</span>
+
+
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+resolution  = "1920x1080"       # Resolution
+framerate   =  15               # Frame rate
+
+# URL
+url = f"http://{host}/cgi-bin/nphMotionJpeg?Resolution={resolution}&amp;Quality=Standard&amp;Framerate={framerate}"
+
+
+# Exception 定義
+BackendError = type('BackendError', (Exception,), {})
+
+def IsWindowVisible(winname):
+    '''
+    [Abstract]
+        Check if the target window exists.
+        対象ウィンドウが存在するかを確認する。
+    [Param]
+        winname :       Window title
+    [Return]
+        True :          exist
+                        存在する
+        False :         not exist
+                        存在しない
+    [Exception]
+        BackendError :
+    '''
+    try:
+        ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
+        if ret == -1:
+            raise BackendError('Use Qt as backend to check whether window is visible or not.')
+
+        return bool(ret)
+
+    except cv2.error:
+        return False
+
+
+def set_digest_auth(uri, user, passwd):
+    '''
+    [abstract]
+        Authenticate with the IP camera.
+
+    [params]
+        uri:      CGI command for start mjpeg stream.
+        user:     user-id for camera.
+        passwd:   user-password for camera.
+    '''
+    pass_mgr = rq.HTTPPasswordMgrWithDefaultRealm()
+    pass_mgr.add_password(realm=None, uri=uri, user=user, passwd=passwd)
+    auth_handler = rq.HTTPDigestAuthHandler(pass_mgr)
+    opener = rq.build_opener(auth_handler)
+    rq.install_opener(opener)
+
+
+if __name__ == "__main__":
+    '''
+    [abstract]
+        __main__ function.
+
+    [raises]
+        None
+    '''
+    connection = False
+    while True:
+        try:
+            if connection == False:
+                set_digest_auth(url, user_id, user_pw)
+                stream = rq.urlopen(url, timeout=10)
+                data = bytes()
+                connection = True
+
+            temp = stream.read(1024)
+
+            if len(temp) == 0:
+                # Probably not properly connected to the camera.
+                print("[ERROR] len(temp) == 0")
+                stream.close()
+                connection = False
+
+            data += temp
+            a = data.find(b'\xff\xd8')     # SOI  (Start of Image)  0xFFD8
+            b = data.find(b'\xff\xd9')     # EOI  (End   of Image)  0xFFD9
+            if a != -1 and b != -1:
+                jpg = data[a:b+2]
+                data = data[b+2:]
+
+                # Convert binary data to ndarray type.
+                img_buf = np.frombuffer(jpg, dtype=np.uint8)
+
+                # Decode ndarray data to OpenCV format image data.
+                frame = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
+
+                # Extracts the recognition result of WV-XAE200WUX (AI-VMD) from the JPEG file.
+                <span class="auto-style3">result, aivmd_result = ParseJpegFile(jpg)</span>
+
+                if result==True:
+                    # Draws the recognition result on the received video.
+                    <span class="auto-style3">frame = DrawAivmdRect(frame, aivmd_result)</span>
+
+                # Please modify the value to fit your PC screen size.
+                frame2 = cv2.resize(frame, (1280, 720))
+
+                # Display video.
+                cv2.imshow(winname, frame2)
+
+                # Press the "q" key to finish.
+                k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
+                if k == ord("q"):
+                    break
+                
+                # Exit the program if there is no specified window.
+                if not IsWindowVisible(winname):
+                    break
+
+        except KeyboardInterrupt:
+            # Press '[ctrl] + [c]' on the console to exit the program.
+            print("KeyboardInterrupt")
+            break
+
+        except TimeoutError:
+            print("[ERROR] TimeoutError happen.")
+            if connection == True:
+                stream.close()
+                connection = False
+
+        except urllib.error.URLError:
+            print("[ERROR] URLError happen.")
+            if connection == True:
+                stream.close()
+                connection = False
+
+    cv2.destroyAllWindows()</pre>
+  <p>&nbsp;</p>
+  <h4><a name="プログラム動作例">プログラム動作例</a></h4>
+  <p>上記プログラムを実際に動作させた例を以下に記載します。</p>
+  <p>ここでは入力画像として、 <a href="https://pixabay.com/" target="_blank">
+  https://pixabay.com</a> から取得した下記動画をテストに使用させていただきました。</p>
+  <p>いずれも 商用利用無料、帰属表示必要なし、のコンテンツです。</p>
+  <p>PC上で再生表示する動画を i-PRO カメラで接写しているため、画質が荒いこと、認識精度が微妙なこと、はご容赦ください。</p>
+  <p>&nbsp;</p>
+  <p>[結果１] 「<a href="https://pixabay.com/ja/videos/人-商業-店-忙しい-モール-6387/" target="_blank">人 
+  商業 店 - Free video on Pixabay</a>」の例<span>。侵入検知、MJPEG接続（注意：カメラのストリーム1～4 を Off 
+  に設定しています）</span></p>
+  <video autoplay="y" controls="" loop="y" muted="" src="connect_to_wv-xae200w/Person.mp4" width="800">
+  </video>
+  <p>&nbsp;</p>
+  <p>[結果２] 「<a href="https://pixabay.com/ja/videos/車両-車-歩行者-タイ-113769/" target="_blank">車両 
+  車 歩行者 - Free video on Pixabay</a>」の例<span>。侵入検知、MJPEG接続（注意：カメラのストリーム1～4 を Off 
+  に設定しています）</span></p>
+  <video autoplay="y" controls="" loop="y" muted="" src="connect_to_wv-xae200w/Car_and_Bike_1.mp4" width="800">
+  </video><p>&nbsp;</p>
+  <p>[結果３] 「<a href="https://pixabay.com/ja/videos/車-高速道路-速度-モーション-1900/" target="_blank">車 
+  高速道路 速度 - Free video on Pixabay</a>」の例<span>。侵入検知、MJPEG接続（注意：カメラのストリーム1～4 を Off 
+  に設定しています）</span></p>
+  <video autoplay="y" controls="" loop="y" muted="" src="connect_to_wv-xae200w/Car_and_Bike_2.mp4" width="800">
+  </video><p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+<p>&nbsp;</p>
+
+<section>
+  <h2><a name="ソースコード所在">ソースコード所在</a></h2>
+  <p>本ページで紹介のソースコードは、下記 github より取得できます。</p>
+  <p>下記 github のソースコードと本ページの内容は差異がある場合があります。</p>
+  <p><a href="https://github.com/i-pro-corp/python-examples" target="_blank">i-pro-corp/python-examples: Examples for i-PRO cameras. (github.com)</a></p>
+</section>
+<br>
+
+
+<br>
+
+<section>
+  <h2><a name="ライセンス">ライセンス</a></h2>
+<p>本ページの情報は、特記無い限り下記ライセンスで提供されます。</p>
+<table class="border-collapse" style="width: 600px; background-color: #F0F0F0; word-break: break-word;">
+  <tr>
+    <td>
+    <br>Copyright 2022 i-PRO Co., Ltd.<br><br>Licensed under the Apache License, Version 
+    2.0 (the "License");<br>you may not use this file except in compliance with 
+    the License.<br>You may obtain a copy of the License at <br><br>&nbsp;&nbsp;&nbsp;
+    <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">http://www.apache.org/licenses/LICENSE-2.0</a><br><br>
+    Unless required by 
+    applicable law or agreed to in writing, software <br>distributed under the 
+    License is distributed on an "AS IS" BASIS, <br>WITHOUT WARRANTIES OR 
+    CONDITIONS OF ANY KIND, either express or implied. <br>See the License for 
+    the specific language governing permissions and<br>limitations under the 
+    License. <br> <br>
+    </td>
+  </tr>
+</table>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+
+
+<br>
+
+<section>
+  <h2><a name="参考">参考</a></h2>
+  <ul>
+    <li>[1] ネットワークカメラCGIコマンドインターフェース仕様書　統合版<br>
+      <a href="https://connect.panasonic.com/jp-ja/products-services_security_support_specifications-manuals-firms-dvlp_2012100910461872" target="_blank">
+        https://connect.panasonic.com/jp-ja/products-services_security_support_specifications-manuals-firms-dvlp_2012100910461872</a></li>
+    <li>[2] AI動体検知アプリケーション、AIプライバシーガードアプリケーション、AIプロセッサー解除ライセンス WV-XAE200W / WV-XAE201W / WV-XLE001W - 映像管理ソフト 製品一覧 - 監視・防犯システム - Panasonic<br>
+      <a href="https://connect.panasonic.com/jp-ja/products-services/security_software/lineup/wv-xae200w-xae201w-xle001w" target="_blank">
+        https://connect.panasonic.com/jp-ja/products-services/security_software/lineup/wv-xae200w-xae201w-xle001w</a></li>
+    <li>[3] WV-XAE200WUX　カメラ用機能拡張ソフトウェア（AI動体検知アプリケーション） - ダウンロード - i-PRO サポートポータル<br>
+      <a href="https://japancs.i-pro.com/space/DLJP/788989682/WV-XAE200WUX　カメラ用機能拡張ソフトウェア（AI動体検知アプリケーション）" target="_blank">
+        https://japancs.i-pro.com/space/DLJP/788989682/WV-XAE200WUX　カメラ用機能拡張ソフトウェア（AI動体検知アプリケーション）</a></li>
+    <li>[4] AIネットワークカメラ用機能拡張ソフトウェア（AI動体検知アプリケーション）外部インターフェイス仕様書 - v1.00<br>
+      <a href="https://japancs.i-pro.com/space/DEVJP/789059438" target="_blank">
+        https://japancs.i-pro.com/space/DEVJP/789059438</a></li>
+  </ul>
+</section>
+
+<p>&nbsp;</p>
+
+<hr>
+
+<p>&nbsp;</p>
+
+<section>
+	<h2 style="margin-bottom:5px">変更履歴</h2>
+	<table>
+	  <tr>
+	    <td class="td_history_date">2022/07/20</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">新規作成,</td>
+	    <td class="td_history">木下英俊 </td>
+	  </tr>
+	</table>
+</section>
+
+<p>&nbsp;</p>
+<p><a href="../../index.html" target="_parent">i-PRO - Programming Items トップページ</a></p>
+<p><a href="../../privacy_policy.html">プライバシーポリシー</a></p>
+<p>&nbsp;</p>
+
+<footer>
+	<p><small>&copy; 2022  i-PRO Co., Ltd.</small></p>
+</footer>
+
+</body>
+</html>

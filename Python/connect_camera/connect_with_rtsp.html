@@ -11,7 +11,7 @@
   <meta http-equiv="Cache-Control" content="no-cache">
 	
   <!-- タイトル -->
-  <title>RTSPで画像を取得する</title>
+  <title>RTSPで画像を取得する | i-PRO - Programming Items</title>
 	
   <!-- ファビコン -->
   <link rel="shortcut icon" href="../../favicon.ico">
@@ -38,11 +38,14 @@
 
   <style type="text/css">
   .auto-style2 {
-    background-color: #484800;
+    background-color: #505000;
   }
   .super {
     vertical-align: super;
   }
+  .auto-style3 {
+ text-decoration: underline;
+}
   </style>
 
 </head>
@@ -92,34 +95,31 @@
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
-<p> i-PRO のカメラ i-PRO mini (WV-S7130)、モジュールカメラ（AIスターターキット）を入手したので、カメラとPCを接続して動作するプログラムを作成してみました。こちらで紹介します。</p>
-<p> ここで記載の内容は、ほとんどの i-PRO カメラでそのまま利用できると思いますが未確認です。</p>
-<p>&nbsp;</p>
+<p> i-PRO のカメラ i-PRO mini (WV-S7130)、モジュールカメラ（AIスターターキット）を入手したので、カメラとPCを接続して動作するプログラムを作成してみました。こちらで紹介します。ここで記載の内容は、ほとんどの i-PRO カメラでそのまま利用できると思いますが未確認です。</p>
+<p> &nbsp;</p>
+<hr>
+<p> &nbsp;</p>
+
 <section>
-<p> "i-PRO mini" 紹介： </p>
+<p class="auto-style3"> <strong>"i-PRO mini" 紹介： </strong> </p>
 <ul>
-  <li><a href="https://cwc.i-pro.com/pages/i-pro-mini-lp" target="_blank">i-PRO 
-  mini</a></li>
-  <li>
-  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130ux" target="_blank">
-  i-PRO mini 有線LANモデル WV-S7130UX</a></li>
-  <li>
-  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130wux" target="_blank">
-  i-PRO mini 無線LANモデル WV-S7130WUX</a></li>
-  <li>
-  <a href="https://japancs.i-pro.com/space/DLJP/724085590/WV-S7130UX　i-PRO+mini+有線LANモデル" target="_blank">
-  WV-S7130UX　i-PRO mini 有線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
-  <li>
-  <a href="https://japancs.i-pro.com/space/DLJP/724086255/WV-S7130WUX　i-PRO+mini+無線LANモデル" target="_blank">
-  WV-S7130WUX　i-PRO mini 無線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
+  <li><a href="https://cwc.i-pro.com/pages/i-pro-mini-lp" target="_blank">
+    i-PRO mini</a></li>
+  <li><a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130ux" target="_blank">
+    i-PRO mini 有線LANモデル WV-S7130UX</a></li>
+  <li>  <a href="https://cwc.i-pro.com/collections/camera/products/wv-s7130wux" target="_blank">
+    i-PRO mini 無線LANモデル WV-S7130WUX</a></li>
+  <li><a href="https://japancs.i-pro.com/space/DLJP/724085590/WV-S7130UX　i-PRO+mini+有線LANモデル" target="_blank">
+    WV-S7130UX　i-PRO mini 有線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
+  <li><a href="https://japancs.i-pro.com/space/DLJP/724086255/WV-S7130WUX　i-PRO+mini+無線LANモデル" target="_blank">
+    WV-S7130WUX　i-PRO mini 無線LANモデル - ダウンロード - i-PRO サポートポータル</a></li>
 </ul>
 <p> 
 <a href="images/i-PRO_mini.jpg" target="_blank">
-<img alt="" src="images/i-PRO_mini.jpg" class="border_with_drop-shadow" width="348"></a></p>
-<p> 
-&nbsp;</p>
-<p> 
-"モジュールカメラ" 紹介：</p>
+
+<img alt="i-PRO mini 画像" src="images/i-PRO_mini.jpg" class="border_with_drop-shadow" width="348"></a></p>
+<p>&nbsp;</p>
+<p class="auto-style3"><strong>"モジュールカメラ" 紹介：</strong></p>
 <ul>
   <li><a href="https://moduca.i-pro.com" target="_blank">
     モジュールカメラ｜ポータルサイト (i-pro.com)</a></li>
@@ -128,9 +128,9 @@
 </ul>
 <p> 
 <a href="images/ai_starter_kit_1.png" target="_blank">
-<img alt="" class="border_with_drop-shadow" src="images/ai_starter_kit_1.png" width="404"></a>
+<img alt="AI スターターキット 画像(1)" class="border_with_drop-shadow" src="images/ai_starter_kit_1.png" width="404"></a>
 <a href="images/ai_starter_kit_2.png" target="_blank">
-<img alt="" class="border_with_drop-shadow" src="images/ai_starter_kit_2.png" width="444"></a></p>
+<img alt="AI スターターキット 画像(2)" class="border_with_drop-shadow" src="images/ai_starter_kit_2.png" width="444"></a></p>
 <p> 
 &nbsp;</p>
 <p> 
@@ -187,7 +187,7 @@
     <p>(例) <span class="cpp-source">
     rtsp://admin:password@192.168.0.10/MediaInput/stream_1</span></p>
     <p>&nbsp;</p>
-    <p>補足： </p>
+    <p class="auto-style3"><strong>補足： </strong> </p>
     <ul>
       <li>
     <p>カメラ側の映像圧縮方式設定が H.264/H.265 のいずれの場合も上記で接続できました。</p>
@@ -390,13 +390,13 @@ cv2.destroyAllWindows()</pre>
 	<h4>[概要]</h4>
   <p>前章で作成したプログラムはとても簡単に作成できましたが、いろいろと課題がありました。<br>とりあえず下記３つの課題を解決してみます。</p>
   <p>&nbsp;</p>
-  <p>課題１<br>プログラムを起動するたびにウィンドウ位置が変わる。場合によっては画面外へ表示する場合もあって不便。<br>
+  <p><span class="auto-style3"><strong>課題１</strong></span><br>プログラムを起動するたびにウィンドウ位置が変わる。場合によっては画面外へ表示する場合もあって不便。<br>
   適当に画面内に収まる場所に表示してほしい。<br>⇨ 指定する場所にウィンドウを表示するようにします。</p>
   <p>&nbsp;</p>
-  <p>課題２<br>プログラムを終了するのが大変。<br>ウィンドウ右上の[x]を押すとウィンドウがいったん消えるが、すぐに再表示されて終われない。<br>⇨ 
+  <p><span class="auto-style3"><strong>課題２</strong></span><br>プログラムを終了するのが大変。<br>ウィンドウ右上の[x]を押すとウィンドウがいったん消えるが、すぐに再表示されて終われない。<br>⇨ 
   ウィンドウ右上の[x]ボタンでプログラムを終了できるようにします。</p>
   <p>&nbsp;</p>
-  <p>課題３<br>同様に、任意のキー入力でプログラムを終了できるとうれしい。<br>⇨ "q" キー押下でプログラムを終了できるようにします。</p>
+  <p><span class="auto-style3"><strong>課題３</strong></span><br>同様に、任意のキー入力でプログラムを終了できるとうれしい。<br>⇨ "q" キー押下でプログラムを終了できるようにします。</p>
   <p>&nbsp;</p>
     <p>&nbsp;</p>
 	<p> &nbsp;</p>
@@ -786,7 +786,7 @@ if __name__ == '__main__':
     cap.release()
     cv2.destroyAllWindows()</pre>
   <p>&nbsp;</p>
-  <p>結果：</p>
+  <p class="auto-style3"><strong>結果：</strong></p>
   <p>私のゲーミングPCではこれでもそこそこ動作しました。思ったより動く、という感想です。</p>
   <p>が、それでもだんだん映像が遅れていきます。<br>顔検知処理と描画の部分をコメントアウトすると、映像表示の遅れはなくなります。<br>
   やはり顔検知処理は PC にとって結構重たい処理のようです。</p>
@@ -797,15 +797,19 @@ if __name__ == '__main__':
   <p>
   そこで、顔検知部分を別タスクに分離することで、映像受信と映像デコード処理を止めずにできるだけ顔検知をやってみる、という感じにプログラムを修正してみます。</p>
   <p>&nbsp;</p>
-  <p><strong>NOTE</strong></p>
-  <ul>
-    <li>別タスクというと一般的なプログラムでは "スレッド" というテクニックを使いますが、どうやら CPython 
-    と呼ばれるプラットフォームの場合はスレッドは複数の処理を同時に実行してくれないらしいです。そこで、ここではプロセスを使用します。</li>
-    <li>Queue というIOでプロセス間で情報をやり取りします。</li>
-    <li>顔検知を行った映像と赤枠表示する映像は異なるものになりますが、ここではこれを許容することとします。</li>
-  </ul>
-  <p>
-  &nbsp;</p>
+    <div class="status_ok">
+      <div>
+      </div>
+      <div>
+        <p><strong>ポイント</strong></p>
+        <ul>
+          <li>別タスクというと一般的なプログラムでは "スレッド" というテクニックを使いますが、どうやら CPython 
+        と呼ばれるプラットフォームの場合はスレッドは複数の処理を同時に実行してくれないらしいです。そこで、ここではプロセスを使用します。</li>
+          <li>Queue というIOでプロセス間で情報をやり取りします。</li>
+          <li>顔検知を行った映像と赤枠表示する映像は異なるものになりますが、ここではこれを許容することとします。</li>
+    		</ul>
+      </div>
+    </div>
   <p>&nbsp;</p>
   <p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_rtsp/connect_with_rtsp_3_2.py" target="_blank">connect_with_rtsp_3_2.py</a>&quot;]</p>
   <pre class="prettyprint linenums lang-py">
@@ -1005,7 +1009,7 @@ if __name__ == '__main__':
     cap.release()
     cv2.destroyAllWindows()</pre>
   <p>&nbsp;</p>
-  <p>結果：</p>
+  <p class="auto-style3"><strong>結果：</strong></p>
   <p>期待する動作をしてくれるようになりました。</p>
   <p>プロセス起動の引数として cascade を一緒に渡したかったのですが、"cannot pickle object" 
   というエラーを発生して実現できませんでした。残念ながら cascade をグローバル変数へ変更することで問題を回避しています。<br>対応策がわかったら記事をアップデートしたいと思います。</p>
@@ -1267,8 +1271,30 @@ if __name__ == '__main__':
   関数のタイムアウトは30秒となっているようです。30秒以内に接続が復活していれば自動的に再接続してくれるのですが、30秒を超えると自動的には復活しません。</p>
   <p>"connect_with_rtsp_2.py" を元に再接続処理を追加してこの問題を解決してみたいと思います。</p>
   <p>&nbsp;</p>
-  <p>切断の試験はカメラの電源をOff/Onする、通信をOff/Onする、などで試験してください。</p>
-  <p>カメラとの接続が正常状態に戻ってから再接続までは最長30秒かかります。気長にお待ちください。</p>
+    <div class="status_ok">
+      <div>
+      </div>
+      <div>
+        <p><strong>ポイント</strong></p>
+        <ul>
+          <li>read() の戻り値が False であったら再接続を行います。</li>
+          <li>release() で切断後、cv2.VideoCapture() で再接続します。</li>
+        </ul>
+      </div>
+    </div>
+  <p>&nbsp;</p>
+    <div class="status_information">
+      <div>
+      </div>
+      <div>
+        <p><strong>NOTE</strong></p>
+        <ul>
+          <li>切断の試験はカメラの電源をOff/Onする、通信をOff/Onする、などで試験してください。</li>
+          <li>カメラとの接続が正常状態に戻ってから再接続までは最長30秒かかります。気長にお待ちください。</li>
+          <li>read() のタイムアウト時間を変更する API を確認できませんでした。おそらく固定値で変更できないと思われます。</li>
+    		</ul>
+      </div>
+    </div>
   <p>&nbsp;</p>
   <p>&nbsp;</p>
   <h4>[評価環境]</h4>
@@ -1414,13 +1440,19 @@ if __name__ == '__main__':
   <p>&nbsp;</p>
   <p>tkinter のインストール方法は環境により異なるようです。各人の環境にあった方法をインターネットで調べて実施してください。</p>
   <p>&nbsp;</p>
-  <p><strong>ポイント</strong></p>
-  <ul>
-    <li>tkinter で動画を表示するときは、after() 関数で繰り返し処理を行います。</li>
-    <li>tkinter で表示するために ImageTk.PhotoImage という型に変換する必要があります。<br>numpy.ndarray → 
-    PIL.Image → ImageTk.PhotoImage という順に変換して tkinter で表示します。</li>
-    <li>OpenCVの画像は BGR の並び順になっています。tkinker で表示するために BGR データを RGB へ並び替える必要があります。</li>
-  </ul>
+    <div class="status_ok">
+      <div>
+      </div>
+      <div>
+        <p><strong>ポイント</strong></p>
+        <ul>
+          <li>tkinter で動画を表示するときは、after() 関数で繰り返し処理を行います。</li>
+          <li>tkinter で表示するために ImageTk.PhotoImage という型に変換する必要があります。<br>numpy.ndarray → 
+          PIL.Image → ImageTk.PhotoImage という順に変換して tkinter で表示します。</li>
+          <li>OpenCVの画像は BGR の並び順になっています。tkinker で表示するために BGR データを RGB へ並び替える必要があります。</li>
+        </ul>
+      </div>
+    </div>
   <p>&nbsp;</p>
   
   <h4>[評価環境]</h4>
@@ -1608,11 +1640,17 @@ if __name__ == "__main__":
   <p>ここでは、映像受信を別プロセスにしてパフォーマンス改善を試みてみます。<br>受信した映像を Queue に蓄積すれば、Queue 
   の蓄積数を確認して以降の処理を間引くこともできそうです。これも合わせてやってみましょう。</p>
   <p>&nbsp;</p>
-  <p><strong>ポイント</strong></p>
-  <ul>
-    <li>映像受信処理を別プロセスにする</li>
-    <li>Queue に蓄積された映像枚数が一定数より多い場合、取得した映像の画像変換と表示を行わない。</li>
-  </ul>
+    <div class="status_ok">
+      <div>
+      </div>
+      <div>
+        <p><strong>ポイント</strong></p>
+        <ul>
+          <li>映像受信処理を別プロセスにする。</li>
+          <li>Queue に蓄積された映像枚数が一定数より多い場合、取得した映像の画像変換と表示を行わない。</li>
+        </ul>
+      </div>
+    </div>
   <p>&nbsp;</p>
   <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_rtsp/connect_with_rtsp_6_2.py" target="_blank">connect_with_rtsp_6_2.py</a>"]</p>
   <pre class="prettyprint linenums lang-py">'''
@@ -1837,11 +1875,17 @@ if __name__ == "__main__":
   <p>プログラム "connect_with_rtsp_6_2.py" により GUI で映像表示をそれなりにできるようになりました。</p>
   <p>ここではメニュー、ボタンをそれぞれ追加することで GUI アプリっぽくしてみます。</p>
   <p>&nbsp;</p>
-  <p><strong>ポイント</strong></p>
-  <ul>
-    <li>[File] &gt; [Quit] メニューを追加する</li>
-    <li>[Quit] ボタンを追加する</li>
-  </ul>
+    <div class="status_ok">
+      <div>
+      </div>
+      <div>
+        <p><strong>ポイント</strong></p>
+        <ul>
+          <li>[File] &gt; [Quit] メニューを追加する。</li>
+          <li>[Quit] ボタンを追加する。</li>
+        </ul>
+      </div>
+    </div>
   <p>&nbsp;</p>
   <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_rtsp/connect_with_rtsp_6_3.py" target="_blank">connect_with_rtsp_6_3.py</a>"]</p>
   <pre class="prettyprint linenums lang-py">'''
@@ -2145,6 +2189,12 @@ if __name__ == "__main__":
 <section>
 	<h2 style="margin-bottom:5px">変更履歴</h2>
 	<table>
+	  <tr>
+	    <td class="td_history_date">2022/7/20</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">微修正,</td>
+	    <td class="td_history">木下英俊</td>
+	  </tr>
 	  <tr>
 	    <td class="td_history_date">2022/5/26</td>
 	    <td class="td_history_separator">-</td>
