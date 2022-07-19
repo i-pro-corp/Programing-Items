@@ -9,32 +9,42 @@
 
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/</loc>
-  <lastmod>2022-06-21T10:38:34+00:00</lastmod>
+  <lastmod>2022-07-19T10:08:20+00:00</lastmod>
   <priority>1.00</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/whats_new.html</loc>
-  <lastmod>2022-06-21T10:38:34+00:00</lastmod>
+  <lastmod>2022-07-19T10:08:20+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
+  <loc>https://i-pro-corp.github.io/Programing-Items/Python/install_python.html</loc>
+  <lastmod>2022-07-19T10:08:20+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
   <loc>https://i-pro-corp.github.io/Programing-Items/Python/connect_camera/connect_with_rtsp.html</loc>
-  <lastmod>2022-06-21T10:38:34+00:00</lastmod>
+  <lastmod>2022-07-19T10:08:20+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/Python/connect_camera/connect_with_jpeg.html</loc>
-  <lastmod>2022-06-21T10:38:34+00:00</lastmod>
+  <lastmod>2022-07-19T10:08:20+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/Python/connect_camera/connect_with_mjpeg.html</loc>
-  <lastmod>2022-06-21T10:38:34+00:00</lastmod>
+  <lastmod>2022-07-19T10:08:20+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://i-pro-corp.github.io/Programing-Items/Python/connect_camera/connect_to_wv-xae200w.html</loc>
+  <lastmod>2022-07-19T10:08:20+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/Python/connect_camera/image_classification_vgg.html</loc>
-  <lastmod>2022-06-21T10:38:34+00:00</lastmod>
+  <lastmod>2022-07-19T10:08:20+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 
