@@ -37,15 +37,15 @@
   <!-- Global site tag (gtag.js) - Google Analytics -->
 
   <style type="text/css">
-  .auto-style1 {
-    background-color: #505000;
-  }
-  .super {
-    vertical-align: super;
-  }
-  .auto-style2 {
- text-decoration: underline;
-}
+    .auto-style1 {
+      background-color: #505000;
+    }
+    .super {
+      vertical-align: super;
+    }
+    .auto-style2 {
+      text-decoration: underline;
+    }
   </style>
 
 </head>
@@ -246,8 +246,7 @@
   <p> &nbsp;</p>
 	
 	<p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_jpeg/connect_with_jpeg_1.py" target="_blank">connect_with_jpeg_1.py</a>&quot;]</p>
-  <pre class="prettyprint linenums lang-py">
-'''
+  <pre class="prettyprint linenums lang-py">'''
 [Abstract]
     Try connecting to an i-PRO camera with JPEG(1 shot).
     JPEG(1 shot) で i-PRO カメラと接続してみる
@@ -257,9 +256,9 @@
     まずはやってみる
 
 [Library install]
-    pip install opencv-python
-    pip install numpy
-    pip install requests
+    cv2:        pip install opencv-python
+    numpy:      pip install numpy
+    requests:   pip install requests
 '''
 
 import requests
@@ -278,25 +277,24 @@ url = f"http://{host}/cgi-bin/camera?resolution={resolution}"
 
 while True:
     try:
-        # 画像の取得
+        # Request and receive image from camera.
         rs = requests.get(url, auth=HTTPDigestAuth(user_id, user_pw))
 
-        # binary データを ndarray 型へ変換
+        # Convert from binary to ndarray.
         img_buf= np.frombuffer(rs.content, dtype=np.uint8)
 
-        # バイナリデータをデコードして画像データにする
+        # Convert from ndarray to OpenCV image.
         img1 = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
 
-        # 使っているPC画面に適当に収まる表示大きさへリサイズ
+        # Please modify the value to fit your PC screen size.
         img2 = cv2.resize(img1, (1280, 720))
 
-        # 映像表示
+        # Display video.
         cv2.imshow(winname, img2)
-        cv2.waitKey(1)      # imshow() を表示するためにはこの１行が必要！！
+        cv2.waitKey(1)      # necessary to display the video by imshow ()
 
     except KeyboardInterrupt:
-        # コンソール上で ctrl-c を押すとプログラムを終了する。
-        # GUI 上で ctrl-c してもプログラムを終了できない。
+        # Press '[ctrl] + [c]' on the console to exit the program.
         print("KeyboardInterrupt")
         break
     
@@ -431,11 +429,11 @@ cv2.destroyAllWindows()</pre>
     [Issues 3]
     Modify the program so that you can exit the program by pressing the [q] key.
     "q" キー押下でプログラムを終了できるようにします。
-    
+
 [Library install]
-    pip install opencv-python
-    pip install numpy
-    pip install requests
+    cv2:        pip install opencv-python
+    numpy:      pip install numpy
+    requests:   pip install requests
 '''
 
 import requests
@@ -443,11 +441,11 @@ from requests.auth import HTTPDigestAuth
 import numpy as np
 import cv2
 
-user_id     = "user-id"         # ご使用のカメラ設定に合わせて変更
-user_pw     = "password"        # ご使用のカメラ設定に合わせて変更
-host        = "192.168.0.10"    # ご使用のカメラ設定に合わせて変更
-winname     = "VIDEO"           # ウィンドウタイトル
-resolution  = 1920              # 解像度
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+resolution  = 1920              # Resolution
 
 # URL
 url = f"http://{host}/cgi-bin/camera?resolution={resolution}"
@@ -458,18 +456,21 @@ url = f"http://{host}/cgi-bin/camera?resolution={resolution}"
 <span class="auto-style1"># Exception 定義</span>
 <span class="auto-style1">BackendError = type('BackendError', (Exception,), {})</span>
 
-<span class="auto-style1">'''</span>
-<span class="auto-style1">[Abstract]</span>
-<span class="auto-style1">    対象ウィンドウが存在するかを確認する。</span>
-<span class="auto-style1">[Param]</span>
-<span class="auto-style1">    winname :       ウィンドウタイトル</span>
-<span class="auto-style1">[Return]</span>
-<span class="auto-style1">    True :          対象ウィンドウは存在する</span>
-<span class="auto-style1">    False :         対象ウィンドウは存在しない</span>
-<span class="auto-style1">[Exception]</span>
-<span class="auto-style1">    BackendError :  バックエンドで使用している Qt でエラー発生</span>
-<span class="auto-style1">'''</span>
 <span class="auto-style1">def IsWindowVisible(winname):</span>
+<span class="auto-style1">    '''</span>
+<span class="auto-style1">    [Abstract]</span>
+<span class="auto-style1">        Check if the target window exists.</span>
+<span class="auto-style1">        対象ウィンドウが存在するかを確認する。</span>
+<span class="auto-style1">    [Param]</span>
+<span class="auto-style1">        winname :       Window title</span>
+<span class="auto-style1">    [Return]</span>
+<span class="auto-style1">        True :          exist</span>
+<span class="auto-style1">                        存在する</span>
+<span class="auto-style1">        False :         not exist</span>
+<span class="auto-style1">                        存在しない</span>
+<span class="auto-style1">    [Exception]</span>
+<span class="auto-style1">        BackendError :</span>
+<span class="auto-style1">    '''</span>
 <span class="auto-style1">    try:</span>
 <span class="auto-style1">        ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)</span>
 <span class="auto-style1">        if ret == -1:</span>
@@ -483,37 +484,37 @@ url = f"http://{host}/cgi-bin/camera?resolution={resolution}"
 
 while True:
     try:
-        # 画像の取得
+        # Request and receive image from camera.
         rs = requests.get(url, auth=HTTPDigestAuth(user_id, user_pw))
 
-        # binary データを ndarray 型へ変換
+        # Convert from binary to ndarray.
         img_buf= np.frombuffer(rs.content, dtype=np.uint8)
 
-        # バイナリデータをデコードして画像データにする
+        # Convert from ndarray to OpenCV image.
         img1 = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
 
-        # 使っているPC画面に適当に収まる表示大きさへリサイズ
+        # Please modify the value to fit your PC screen size.
         img2 = cv2.resize(img1, (1280, 720))
 
-        # 映像表示
+        # Display video.
         cv2.imshow(winname, img2)
 
 <span class="auto-style1">        if initialized==False:</span>
-<span class="auto-style1">            # 最初の起動時のみ表示位置を指定</span>
+<span class="auto-style1">            # Specify window position only once at startup.</span>
 <span class="auto-style1">            cv2.moveWindow(winname, 100, 100)</span>
 <span class="auto-style1">            initialized = True</span>
-<span class="auto-style1">        </span>
+<span class="auto-style1">            </span>
 <span class="auto-style1">        # Press the "q" key to finish.</span>
 <span class="auto-style1">        k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()</span>
 <span class="auto-style1">        if k == ord("q"):</span>
 <span class="auto-style1">            break</span>
-<span class="auto-style1">        </span>
-<span class="auto-style1">        # 指定ウィンドウが無かったら終了</span>
+
+<span class="auto-style1">        # Exit the program if there is no specified window.</span>
 <span class="auto-style1">        if not IsWindowVisible(winname):</span>
 <span class="auto-style1">            break</span>
 
     except KeyboardInterrupt:
-        # コンソール上で ctrl-c を押すとプログラムを終了する。
+        # Press '[ctrl] + [c]' on the console to exit the program.
         print("KeyboardInterrupt")
         break
 
@@ -610,18 +611,21 @@ cv2.destroyAllWindows()</pre>
 	<p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_jpeg/connect_with_jpeg_3.py" target="_blank">connect_with_jpeg_3.py</a>&quot;]</p>
   <pre class="prettyprint linenums lang-py">'''
 [Abstract]
-    JPEG(1shot) でカメラと接続します。
+    Try connecting to an i-PRO camera with JPEG(1 shot).
+    JPEG(1 shot) で i-PRO カメラと接続してみる
 
 [Details]
-    ここでは opencv を使って顔検知を追加してみます。
+    Let's add face detection using OpenCV.
+    OpenCV を使って顔検知を追加してみます
 
 [Library install]
-    pip install opencv-python
-    pip install numpy
-    pip install requests
+    cv2:        pip install opencv-python
+    numpy:      pip install numpy
+    requests:   pip install requests
 
 [OpenCV]
-    下記URLからファイル "haarcascade_frontalface_alt2.xml" を入手すること
+    Get the file "haarcascade_frontalface_alt2.xml" from the URL below.
+    下記URLからファイル "haarcascade_frontalface_alt2.xml" を入手するしてください。
     https://github.com/opencv/opencv/tree/master/data/haarcascades
 '''
 
@@ -631,39 +635,42 @@ import numpy as np
 import cv2
 
 
-user_id     = "admin"           # ご使用のカメラ設定に合わせて変更
-user_pw     = "Admin12345"      # ご使用のカメラ設定に合わせて変更
-host        = "192.168.2.126"   # ご使用のカメラ設定に合わせて変更
-winname     = "VIDEO"           # ウィンドウタイトル
-resolution  = 1920              # 解像度
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+resolution  = 1920              # Resolution
 
 # URL
 url = f"http://{host}/cgi-bin/camera?resolution={resolution}"
 
-<span class="auto-style1"># 顔を識別するためのファイル</span>
-<span class="auto-style1">cascade_file = "haarcascade_frontalface_alt2.xml"       # 顔</span>
-<span class="auto-style1">#cascade_file = "haarcascade_eye.xml"                   # 目？</span>
-<span class="auto-style1">#cascade_file = "haarcascade_eye_tree_eyeglasses.xml"   # 目？</span>
+<span class="auto-style1"># haarcascade file for opencv cascade classification.</span>
+<span class="auto-style1">cascade_file = "haarcascade_frontalface_alt2.xml"       # face</span>
+<span class="auto-style1">#cascade_file = "haarcascade_eye.xml"                   # eye ?</span>
+<span class="auto-style1">#cascade_file = "haarcascade_eye_tree_eyeglasses.xml"   # eye ?</span>
 <span class="auto-style1">cascade = cv2.CascadeClassifier(cascade_file)</span>
 
 #
 initialized = False
 
-# Exception 定義
+# Exception definition.
 BackendError = type('BackendError', (Exception,), {})
 
-'''
-[Abstract]
-    対象ウィンドウが存在するかを確認する。
-[Param]
-    winname :       ウィンドウタイトル
-[Return]
-    True :          対象ウィンドウは存在する
-    False :         対象ウィンドウは存在しない
-[Exception]
-    BackendError :  バックエンドで使用している Qt でエラー発生
-'''
 def IsWindowVisible(winname):
+    '''
+    [Abstract]
+        Check if the target window exists.
+        対象ウィンドウが存在するかを確認する。
+    [Param]
+        winname :       Window title
+    [Return]
+        True :          exist
+                        存在する
+        False :         not exist
+                        存在しない
+    [Exception]
+        BackendError :
+    '''
     try:
         ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
         if ret == -1:
@@ -675,60 +682,60 @@ def IsWindowVisible(winname):
         return False
 
 
-
-'''
-[Abstract]
-    main 関数
-'''
 if __name__ == '__main__':
-
+    '''
+    [Abstract]
+        main function
+    '''
     while True:
+        try:
+            # Request and receive image from camera.
+            rs = requests.get(url, auth=HTTPDigestAuth(user_id, user_pw))
 
-        # 画像を取得
-        rs = requests.get(url, auth=HTTPDigestAuth(user_id, user_pw))
+            # Convert from binary to ndarray.
+            img_buf= np.frombuffer(rs.content, dtype=np.uint8)
 
-        # binary データを ndarray 型へ変換
-        img_buf= np.frombuffer(rs.content, dtype=np.uint8)
+            # Convert from ndarray to OpenCV image.
+            img1 = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
 
-        # バイナリデータをデコードして画像データ(OpenCV形式)にする
-        img1 = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
+<span class="auto-style1">            # Convert to grayscale image for face detection.</span>
+<span class="auto-style1">            img_gray = cv2.imdecode(img_buf, cv2.IMREAD_GRAYSCALE)</span>
 
-<span class="auto-style1">        # 顔検出のためにグレイスケール画像に変換</span>
-<span class="auto-style1">        img_gray = cv2.imdecode(img_buf, cv2.IMREAD_GRAYSCALE)</span>
-<span class="auto-style1">        </span>
-<span class="auto-style1">        # 検出した顔の位置情報を取得</span>
-<span class="auto-style1">        face_list = cascade.detectMultiScale(img_gray, minSize=(100, 100))</span>
-<span class="auto-style1">        </span>
-<span class="auto-style1">        # 顔を検出したらループ処理を終了</span>
-<span class="auto-style1">        if len(face_list) != 0:</span>
-<span class="auto-style1">            #print("Find face.")</span>
-<span class="auto-style1">            </span>
-<span class="auto-style1">            for (pos_x, pos_y, w, h) in face_list:</span>
-<span class="auto-style1">                print(f"pos_x = {pos_x}, pos_y = {pos_y}, w = {w}, h = {h}")</span>
-<span class="auto-style1">                cv2.rectangle(img1, (pos_x, pos_y), (pos_x + w, pos_y + h), (0,0,255), thickness=5)</span>
+<span class="auto-style1">            # Detect faces from image.</span>
+<span class="auto-style1">            face_list = cascade.detectMultiScale(img_gray, minSize=(100, 100))</span>
 
-        # 使っているPC画面に適当に収まる表示大きさへリサイズ
-        img2 = cv2.resize(img1, (1280, 720))
+<span class="auto-style1">            # Draw red frames for the number of detected faces.</span>
+<span class="auto-style1">            if len(face_list) != 0:</span>
+<span class="auto-style1">                for (pos_x, pos_y, w, h) in face_list:</span>
+<span class="auto-style1">                    print(f"pos_x = {pos_x}, pos_y = {pos_y}, w = {w}, h = {h}")</span>
+<span class="auto-style1">                    cv2.rectangle(img1, (pos_x, pos_y), (pos_x + w, pos_y + h), (0,0,255), thickness=5)</span>
 
-        # 映像表示
-        cv2.imshow(winname, img2)
+            # Please modify the value to fit your PC screen size.
+            img2 = cv2.resize(img1, (1280, 720))
 
-        if initialized==False:
-            # 最初の起動時のみ表示位置を指定
-            cv2.moveWindow(winname, 100, 100)
-            initialized = True
+            # Display video.
+            cv2.imshow(winname, img2)
+
+            if initialized==False:
+                # Specify window position only once at startup.
+                cv2.moveWindow(winname, 100, 100)
+                initialized = True
             
-        # Press the "q" key to finish.
-        k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
-        if k == ord("q"):
-            break
+            # Press the "q" key to finish.
+            k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
+            if k == ord("q"):
+                break
 
-        # 指定ウィンドウが無かったら終了
-        if not IsWindowVisible(winname):
-            break
+            # Exit the program if there is no specified window.
+            if not IsWindowVisible(winname):
+                break
 
-    cv2.destroyAllWindows()
-</pre>
+        except KeyboardInterrupt:
+            # Press '[ctrl] + [c]' on the console to exit the program.
+            print("KeyboardInterrupt")
+            break
+        
+    cv2.destroyAllWindows()</pre>
   <p>&nbsp;</p>
   <p>&nbsp;</p>
 
@@ -793,34 +800,37 @@ if __name__ == '__main__':
 	<p>&nbsp;</p>
 
   <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_jpeg/connect_with_jpeg_4.py" target="_blank">connect_with_jpeg_4.py</a>"]</p>
-  <pre class="prettyprint linenums lang-py">
-'''
+  <pre class="prettyprint linenums lang-py">'''
 [Abstract]
-    JPEG(1shot) でカメラと接続します。
+    Try connecting to an i-PRO camera with JPEG(1 shot).
+    JPEG(1 shot) で i-PRO カメラと接続してみる
 
 [Details]
+    Save the received JPEG image as a file.
+    Add a 6-digit number to the end of the file name and save it as a serial number.
+
     受信した JPEG 画像をファイル保存します。
     ファイル名の末尾に６ケタの番号を付けて連番で保存します。
 
 [Library install]
-    pip install opencv-python
-    pip install numpy
-    pip install requests
+    cv2:        pip install opencv-python
+    numpy:      pip install numpy
+    requests:   pip install requests
 '''
 
 import requests
 from requests.auth import HTTPDigestAuth
 import numpy as np
 import cv2
-<span class="auto-style1">import os</span>
+import os
 
 
-user_id     = "user-id"         # ご使用のカメラ設定に合わせて変更
-user_pw     = "password"        # ご使用のカメラ設定に合わせて変更
-host        = "192.168.0.10"    # ご使用のカメラ設定に合わせて変更
-winname     = "VIDEO"           # ウィンドウタイトル
-resolution  = 1920              # 解像度
-<span class="auto-style1">pathOut     = 'image'           # 画像ファイル保存フォルダ</span>
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+resolution  = 1920              # Resolution
+<span class="auto-style1">pathOut     = 'image'           # Image file save folder name</span>
 
 # URL
 url = f"http://{host}/cgi-bin/camera?resolution={resolution}"
@@ -828,19 +838,21 @@ url = f"http://{host}/cgi-bin/camera?resolution={resolution}"
 # Exception 定義
 BackendError = type('BackendError', (Exception,), {})
 
-
-'''
-[Abstract]
-    対象ウィンドウが存在するかを確認する。
-[Param]
-    winname :       ウィンドウタイトル
-[Return]
-    True :          対象ウィンドウは存在する
-    False :         対象ウィンドウは存在しない
-[Exception]
-    BackendError :  バックエンドで使用している Qt でエラー発生
-'''
 def IsWindowVisible(winname):
+    '''
+    [Abstract]
+        Check if the target window exists.
+        対象ウィンドウが存在するかを確認する。
+    [Param]
+        winname :       Window title
+    [Return]
+        True :          exist
+                        存在する
+        False :         not exist
+                        存在しない
+    [Exception]
+        BackendError :
+    '''
     try:
         ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
         if ret == -1:
@@ -852,66 +864,71 @@ def IsWindowVisible(winname):
         return False
 
 
-<span class="auto-style1">'''</span>
-<span class="auto-style1">[Abstract]</span>
-<span class="auto-style1">    バイナリデータを指定ファイル名で保存する</span>
-<span class="auto-style1">[Param]</span>
-<span class="auto-style1">    data :      保存するバイナリデータ</span>
-<span class="auto-style1">    filename :  ファイル名</span>
-<span class="auto-style1">'''</span>
 <span class="auto-style1">def SaveBinaryData(data, filename):</span>
+<span class="auto-style1">    '''</span>
+<span class="auto-style1">    [Abstract]</span>
+<span class="auto-style1">        バイナリデータを指定ファイル名で保存する</span>
+<span class="auto-style1">    [Param]</span>
+<span class="auto-style1">        data :      保存するバイナリデータ</span>
+<span class="auto-style1">        filename :  ファイル名</span>
+<span class="auto-style1">    '''</span>
 <span class="auto-style1">    fout = open(filename, 'wb')</span>
 <span class="auto-style1">    fout.write(data)</span>
 <span class="auto-style1">    fout.close()</span>
 
 
-'''
-[Abstract]
-    main 関数
-'''
 if __name__ == '__main__':
-
+    '''
+    [Abstract]
+        main function
+    '''
     initialized = False
 <span class="auto-style1">    count = 0</span>
 <span class="auto-style1">    if not os.path.exists(pathOut):</span>
 <span class="auto-style1">        os.mkdir(pathOut)</span>
 
     while True:
-        # 画像の取得
-        rs = requests.get(url, auth=HTTPDigestAuth(user_id, user_pw))
+        try:
+            # Request and receive image from camera.
+            rs = requests.get(url, auth=HTTPDigestAuth(user_id, user_pw))
 
-<span class="auto-style1">        # ファイル保存</span>
-<span class="auto-style1">        count += 1</span>
-<span class="auto-style1">        filename = os.path.join(pathOut, 'image_{:06d}.jpg'.format(count))</span>
-<span class="auto-style1">        SaveBinaryData(rs.content, filename)</span>
+<span class="auto-style1">            # Save jpeg file.</span>
+<span class="auto-style1">            count += 1</span>
+<span class="auto-style1">            filename = os.path.join(pathOut, 'image_{:06d}.jpg'.format(count))</span>
+<span class="auto-style1">            SaveBinaryData(rs.content, filename)</span>
 
-        # binary データを ndarray 型へ変換
-        img_buf= np.frombuffer(rs.content, dtype=np.uint8)
+            # Convert from binary to ndarray.
+            img_buf= np.frombuffer(rs.content, dtype=np.uint8)
 
-        # バイナリデータをデコードして画像データにする
-        img1 = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
+            # Convert from ndarray to OpenCV image.
+            img1 = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
 
-        # リサイズ
-        img2 = cv2.resize(img1, (1280, 720))
+            # Please modify the value to fit your PC screen size.
+            img2 = cv2.resize(img1, (1280, 720))
 
-        # 映像表示
-        cv2.imshow(winname, img2)
+            # Display video.
+            cv2.imshow(winname, img2)
 
-        if initialized==False:
-            # 最初の起動時のみ表示位置を指定
-            cv2.moveWindow(winname, 100, 100)
-            initialized = True
+            if initialized==False:
+                # Specify window position only once at startup.
+                cv2.moveWindow(winname, 100, 100)
+                initialized = True
             
-        # Press the "q" key to finish.
-        k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
-        if k == ord("q"):
-            break
+            # Press the "q" key to finish.
+            k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
+            if k == ord("q"):
+                break
 
-        # 指定ウィンドウが無かったら終了
-        if not IsWindowVisible(winname):
+            # Exit the program if there is no specified window.
+            if not IsWindowVisible(winname):
+                break
+    
+        except KeyboardInterrupt:
+            # Press '[ctrl] + [c]' on the console to exit the program.
+            print("KeyboardInterrupt")
             break
     
-    cv2.destroyAllWindows() </pre>
+    cv2.destroyAllWindows()</pre>
   <p>&nbsp;</p>
   <p>&nbsp;</p>
 </section>
@@ -979,9 +996,9 @@ if __name__ == '__main__':
     "connect_with_jpeg_2.py" へ映像切断時の再接続処理を追加する。
 
 [Library install]
-    pip install opencv-python
-    pip install numpy
-    pip install requests
+    cv2:        pip install opencv-python
+    numpy:      pip install numpy
+    requests:   pip install requests
 '''
 
 import requests
@@ -1034,7 +1051,7 @@ def IsWindowVisible(winname):
 while True:
     try:
         # Request and receive image from camera.
-        rs = requests.get(url, auth=HTTPDigestAuth(user_id, user_pw), <span class="auto-style1">timeout=10</span>)
+        rs = requests.get(url, auth=HTTPDigestAuth(user_id, user_pw), timeout=10)
 
         # Convert from binary to ndarray.
         img_buf= np.frombuffer(rs.content, dtype=np.uint8)
@@ -1174,7 +1191,7 @@ cv2.destroyAllWindows()</pre>
     メニューとボタンを追加してGUIアプリらしくします。
     
 [Library install]
-    I think it will probably only work with built-in modules in Python.
+    PIL :   pip install pillow
 '''
 
 <span class="auto-style1">import tkinter as tk</span>
