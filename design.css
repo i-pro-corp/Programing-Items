@@ -147,12 +147,20 @@ img.border_with_drop-shadow{
 
 
 /* 目次 */
-table.mokuji,
 div.mokuji{
   border: 1px solid #808080;
   width: 800px;
   max-width:100%;
   background-color: #F0F0F0;
+  padding: 7px 14px;
+}
+
+/* ライセンス */
+div.license{
+  width: 600px;
+  background-color: #F0F0F0;
+	border: thin silver solid;
+  word-break: break-word;
   padding: 7px 14px;
 }
 
