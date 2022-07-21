@@ -146,6 +146,15 @@ img.border_with_drop-shadow{
 }
 
 
+/* 目次 */
+table.mokuji{
+  border: 1px solid #808080;
+  width: 800px;
+  max-width:100%;
+  background-color: #F0F0F0;
+}
+
+
 /*
 ===
 MessageBox っぽいやつ
