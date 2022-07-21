@@ -147,11 +147,13 @@ img.border_with_drop-shadow{
 
 
 /* 目次 */
-table.mokuji{
+table.mokuji,
+div.mokuji{
   border: 1px solid #808080;
-  width: 600px;
+  width: 800px;
   max-width:100%;
   background-color: #F0F0F0;
+  padding: 7px 14px;
 }
 
 
