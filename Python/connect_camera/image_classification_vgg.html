@@ -243,11 +243,14 @@ Group) チームが作成した16層から構成されるネットワークモ�
     <pre class="prettyprint linenums lang-py">import os
 import urllib.request
 
+# Create the folder "data" when the folder "data" does not exist. 
 # フォルダ「data」が存在しない場合はフォルダ data を作成します。
 data_dir = "./data/"
 if not os.path.exists(data_dir):
     os.mkdir(data_dir)
 
+# Download class_index for ImageNet.
+# It is prepared for Keras. This is the JSON file used by the following open source.
 # ImageNetのclass_indexをダウンロードします。
 # Kerasで用意されているものです。下記オープンソースで使用している JSON ファイルです。
 # https://github.com/fchollet/deep-learning-models/blob/master/imagenet_utils.py
@@ -565,7 +568,28 @@ class BaseTransform():
 
   <p> &nbsp;</p>
   <p>[全ソースコード &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/image_classification_vgg/classification_vgg.py" target="_blank">classsification_vgg.py</a>&quot;]</p>
-  <pre class="prettyprint linenums lang-py">import numpy as np
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    Image classification.
+    画像分類を行います。
+
+[Details]
+    This program classifies still images (JPEG files).
+    静止画(JPEG files)の画像分類を行います。
+
+[Library install]
+    torch, torchvision : see https://pytorch.org/get-started/locally/
+    matplotlib :    pip install matplotlib
+    numpy :         pip install numpy
+    PIL :           pip install pillow
+    json :          json is a built-in module in Python, you don’t need to install it with pip.
+
+[Note]
+    Download the JPEG file yourself and save it in the data folder. See main function.
+    JPEGファイルはご自身でダウンロードして data フォルダに保存を行ってください。main 関数内の記載をご確認ください。
+'''
+
+import numpy as np
 import json
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -694,7 +718,7 @@ class ImagenetClassificationVgg():
         # Added batch size dimension.
         inputs = img_transformed.unsqueeze_(0)  # torch.Size([1, 3, 224, 224])
 
-        # ネットワークモデルへ画像を入力し、出力をラベルに変換
+        # Input images to the network model and convert the output to labels.
         out = self.net(inputs)      # torch.Size([1, 1000])
         result = self.predictor.predict_max(out)
 
@@ -710,6 +734,7 @@ if __name__ == "__main__":
     # Open image file.
     # https://pixabay.com/ja/photos/%e3%81%a6%e3%82%93%e3%81%a8%e3%81%86%e8%99%ab-%e7%94%b2%e8%99%ab-%e3%83%86%e3%83%b3%e3%83%88%e3%82%a6%e3%83%a0%e3%82%b7-1480102/
     # https://pixabay.com/ja/service/license/
+    # Free for commercial use, no attribution required, 1280x855
     # 商用利用無料、帰属表示必要なし、1280x855
     img = Image.open('./data/ladybug-g7744c038e_1280.jpg')
     result = imagenetClassifigationVgg.do_classification(img)
@@ -717,6 +742,7 @@ if __name__ == "__main__":
 
     # https://pixabay.com/ja/photos/goldenretriever-%E7%8A%AC-3724972/
     # https://pixabay.com/ja/service/license/
+    # Free for commercial use, no attribution required, 640x426
     # 商用利用無料、帰属表示必要なし、640x426
     img = Image.open('./data/goldenretriever-3724972_640.jpg')
     result = imagenetClassifigationVgg.do_classification(img)
@@ -724,6 +750,7 @@ if __name__ == "__main__":
 
     # https://pixabay.com/ja/photos/%e8%bb%8a-%e7%94%b2%e8%99%ab-%e3%83%95%e3%82%a9%e3%83%ab%e3%82%af%e3%82%b9%e3%83%af%e3%83%bc%e3%82%b2%e3%83%b3-1283947/
     # https://pixabay.com/ja/service/license/
+    # Free for commercial use, no attribution required, 1920x1280
     # 商用利用無料、帰属表示必要なし、1920x1280
     img = Image.open('./data/car-g955f2640f_1920.jpg')
     result = imagenetClassifigationVgg.do_classification(img)
@@ -731,10 +758,12 @@ if __name__ == "__main__":
 
     # https://pixabay.com/ja/photos/%e3%83%9e%e3%83%bc%e3%82%ac%e3%83%ac%e3%83%83%e3%83%88-%e3%83%87%e3%82%a4%e3%82%b8%e3%83%bc-%e8%8a%b1-729510/
     # https://pixabay.com/ja/service/license/
+    # Free for commercial use, no attribution required, 1920x1249
     # 商用利用無料、帰属表示必要なし、1920x1249
     img = Image.open('./data/marguerite-gfad1f1cea_1920.jpg')
     result = imagenetClassifigationVgg.do_classification(img)
     print("Result: ", result)</pre>
+  <p>&nbsp;</p>
   <p>&nbsp;</p>
   <p>実行結果です。コンソールへ出力された内容です。</p>
   <pre>PyTorch Version:  1.11.0+cpu
@@ -852,9 +881,9 @@ VGG(
       </div>
     </div>
     <p>&nbsp;</p>
-  <p>["classification_main.py"]</p>
+  <p>["<a href="https://github.com/i-pro-corp/python-examples/blob/main/image_classification_vgg/classification_main.py" target="_blank">classification_main.py</a>"]</p>
   <pre class="prettyprint linenums lang-py">from PIL import Image
-<span class="auto-style3">from classification_vgg import ImagenetClassificationVgg</span>
+<span class="auto-style3">from classification_vgg import ImagenetClassificationVgg</span>    # Local module. See 'classification_vgg.py'.
 
 if __name__ == "__main__":
     '''
@@ -865,9 +894,10 @@ if __name__ == "__main__":
     # Open image file.
     # https://pixabay.com/ja/photos/%e3%81%a6%e3%82%93%e3%81%a8%e3%81%86%e8%99%ab-%e7%94%b2%e8%99%ab-%e3%83%86%e3%83%b3%e3%83%88%e3%82%a6%e3%83%a0%e3%82%b7-1480102/
     # https://pixabay.com/ja/service/license/
+    # Free for commercial use, no attribution required, 1280x855
     # 商用利用無料、帰属表示必要なし、1280x855
     img = Image.open('./data/ladybug-g7744c038e_1280.jpg')
-    result = imagenetClassifigationVgg.imagenet_classification_vgg(img)
+    result = imagenetClassifigationVgg.do_classification(img)
     print("Result: ", result)</pre>
   <p>&nbsp;</p>
   <p>こんな方針でプログラム作成を行っていきます。</p>
@@ -877,7 +907,7 @@ if __name__ == "__main__":
   で画像を取得する</a>」中で作成したプログラム "connect_with_rtsp_3_1.py" 
   を元に改造することで、RTSP接続して受信したカメラ映像をリアルタイムに画像分類するプログラムを作成してみます。VGG の処理負荷はとても高そうなのでちょっと心配ですが、必要に応じてカメラ側の設定でフレームレートや解像度を下げて使用する、という方針で進めます。</p>
   <p>&nbsp;</p>
-  <p>[プログラムソース "classification_with_camera_1.py"]</p>
+  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/image_classification_vgg/classification_with_camera_1.py" target="_blank">classification_with_camera_1.py</a>"]</p>
   <pre class="prettyprint linenums lang-py">'''
 [Abstract]
     Image classification.
@@ -907,7 +937,7 @@ host        = "192.168.0.10"    # Change to match your camera setting
 winname     = "VIDEO"           # Window title
 
 
-# Exception 定義
+# Exception definition.
 BackendError = type('BackendError', (Exception,), {})
 
 def IsWindowVisible(winname):
@@ -943,11 +973,11 @@ def IsWindowVisible(winname):
 <span class="auto-style3">        PIL.Image format image.    </span>
 <span class="auto-style3">    '''</span>
 <span class="auto-style3">    new_image = image.copy()</span>
-<span class="auto-style3">    if new_image.ndim == 2:  # モノクロ</span>
+<span class="auto-style3">    if new_image.ndim == 2:         # Grayscale</span>
 <span class="auto-style3">        pass</span>
-<span class="auto-style3">    elif new_image.shape[2] == 3:  # カラー</span>
+<span class="auto-style3">    elif new_image.shape[2] == 3:   # Color</span>
 <span class="auto-style3">        new_image = cv2.cvtColor(new_image, cv2.COLOR_BGR2RGB)</span>
-<span class="auto-style3">    elif new_image.shape[2] == 4:  # 透過</span>
+<span class="auto-style3">    elif new_image.shape[2] == 4:   # Color with alpha channel</span>
 <span class="auto-style3">        new_image = cv2.cvtColor(new_image, cv2.COLOR_BGRA2RGBA)</span>
 <span class="auto-style3">    new_image = Image.fromarray(new_image)</span>
 <span class="auto-style3">    return new_image</span>
@@ -1011,7 +1041,7 @@ if __name__ == '__main__':
                 break
 
         except KeyboardInterrupt:
-            # Press ctrl -c on the console to exit the program.
+            # Press '[ctrl] + [c]' on the console to exit the program.
             print("KeyboardInterrupt")
             break
 
@@ -1034,34 +1064,40 @@ if __name__ == '__main__':
   <p class="auto-style6">multiprocessing, queue というライブラリを使用して実現してみます。</p>
   <p>こちらが新規に作成したプログラムです。"connect_with_rtsp_3_2.py" を元に作成しています。</p>
   <p>&nbsp;</p>
-  <p>[プログラムソース "classification_with_camera_2.py"]</p>
+  <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/image_classification_vgg/classification_with_camera_2.py" target="_blank">classification_with_camera_2.py</a>"]</p>
   <pre class="prettyprint linenums lang-py">'''
 [Abstract]
-    Try connecting to an i-PRO camera with RTSP.
-    RTSP で i-PRO カメラと接続してみる
+    Image classification.
+    画像分類を行います。
 
 [Details]
-    image classification.
-
-[Author]
-    kinoshita hidetoshi (木下英俊)
+    This program connects to an i-PRO camera and classifies live images with multitasking.
+    このプログラムは、i-PRO カメラと接続してライブ映像に対してマルチタスク処理で画像分類を行います。
 
 [Library install]
-    pip install opencv-python
+    torch, torchvision : see https://pytorch.org/get-started/locally/
+    cv2 :           pip install opencv-python
+    matplotlib :    pip install matplotlib
+    numpy :         pip install numpy
+    PIL :           pip install pillow
+    json, multiprocessing, queue :
+                    Built-in module in Python, you don’t need to install it with pip.
 '''
 
 import cv2
 <span class="auto-style3">import multiprocessing as mp</span>
 <span class="auto-style3">from queue import Empty</span>
-from classification_vgg import ImagenetClassificationVgg
 from PIL import Image
+from classification_vgg import ImagenetClassificationVgg    # Local module. See 'classification_vgg.py'.
+
 
 user_id     = "user-id"         # Change to match your camera setting
 user_pw     = "password"        # Change to match your camera setting
 host        = "192.168.0.10"    # Change to match your camera setting
 winname     = "VIDEO"           # Window title
 
-# Exception 定義
+
+# Exception definition.
 BackendError = type('BackendError', (Exception,), {})
 
 def IsWindowVisible(winname):
@@ -1097,11 +1133,11 @@ def CV2Pil(image):
         PIL.Image format image.    
     '''
     new_image = image.copy()
-    if new_image.ndim == 2:  # モノクロ
+    if new_image.ndim == 2:         # Grayscale
         pass
-    elif new_image.shape[2] == 3:  # カラー
+    elif new_image.shape[2] == 3:   # Color
         new_image = cv2.cvtColor(new_image, cv2.COLOR_BGR2RGB)
-    elif new_image.shape[2] == 4:  # 透過
+    elif new_image.shape[2] == 4:   # Color with alpha channel
         new_image = cv2.cvtColor(new_image, cv2.COLOR_BGRA2RGBA)
     new_image = Image.fromarray(new_image)
     return new_image
@@ -1112,18 +1148,19 @@ def CV2Pil(image):
 <span class="auto-style3">    Image classification process.</span>
 
 <span class="auto-style3">    Args:</span>
-<span class="auto-style3">        q1 :        [i] 顔検知する画像を保存する Queue</span>
-<span class="auto-style3">        q2 :        [o] 顔検知した結果を保存する Queue</span>
+<span class="auto-style3">        q1 :        [i] Queue that stores images for face detection.</span>
+<span class="auto-style3">        q2 :        [o] Queue that stores face detection results.</span>
 <span class="auto-style3">    Returns:</span>
 <span class="auto-style3">        None</span>
 <span class="auto-style3">    '''</span>
+<span class="auto-style3">    # Create an instance of class ImagenetClassificationVgg.</span>
 <span class="auto-style3">    imagenetClassifigationVgg = ImagenetClassificationVgg('./data/imagenet_class_index.json')</span>
 
 <span class="auto-style3">    while True:</span>
 <span class="auto-style3">        try:</span>
 <span class="auto-style3">            image = q.get(True, 10)</span>
 
-<span class="auto-style3">            # 終了処理： q1.get から取得したものが int で -1 なら終了</span>
+<span class="auto-style3">            # Terminate process</span>
 <span class="auto-style3">            if type(image) == int:</span>
 <span class="auto-style3">                if image == -1:</span>
 <span class="auto-style3">                    break</span>
@@ -1145,10 +1182,10 @@ def CV2Pil(image):
 
 '''
 [Abstract]
-    main 関数
+    __main__
 '''
 if __name__ == '__main__':
-
+    # Create an instance of class cv2.VideoCapture
     cap = cv2.VideoCapture(f"rtsp://{user_id}:{user_pw}@{host}/MediaInput/stream_1")
 
     #
@@ -1198,7 +1235,7 @@ if __name__ == '__main__':
                 break
 
         except KeyboardInterrupt:
-            # Press ctrl -c on the console to exit the program.
+            # Press '[ctrl] + [c]' on the console to exit the program.
             print("KeyboardInterrupt")
             break
 
@@ -1286,14 +1323,12 @@ if __name__ == '__main__':
     画像分類を行います。
 
 [Details]
-    Create an application in the GUI using tkinter.
+    Create a GUI application using tkinter.
     tkinter を使って GUI アプリケーションを作成します。
-    
-[Author]
-    kinoshita hidetoshi (木下英俊)
 
 [Library install]
-    pip install opencv-python
+    cv2 :   pip install opencv-python
+    PIL :   pip install pillow
 '''
 
 import cv2

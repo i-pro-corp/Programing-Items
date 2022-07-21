@@ -255,40 +255,47 @@
     <p>&nbsp;</p>
   <p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_mjpeg/connect_with_mjpeg_1_1.py" target="_blank">connect_with_mjpeg_1_1.py</a>&quot;]</p>
   
-	<pre class="prettyprint linenums lang-py">
-'''
-[abstract]
-    i-PRO mini (WV-S7130W) と接続して映像を表示してみる 
+	<pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    Try connecting to an i-PRO camera with MJPEG(Motion JPEG).
+    MJPEG(Motion JPEG) で i-PRO カメラと接続します
+
+[Details]
+    Let's try first. (Method 1)
+    まずはやってみる (方式１)
+
 [library install]
- &nbsp; &nbsp;pip install opencv-python 
+    cv2:    pip install opencv-python
 '''
 
 import cv2
 
-user_id     = "user-id"         # ご使用のカメラ設定に合わせて変更
-user_pw     = "password"        # ご使用のカメラ設定に合わせて変更
-host        = "192.168.0.10"    # ご使用のカメラ設定に合わせて変更
-winname     = "VIDEO"           # ウィンドウタイトル
-resolution  = "1920x1080"       # 解像度
-framerate   =  15               # フレームレート
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+resolution  = "1920x1080"       # Resolution
+framerate   =  15               # Frame rate
 
 # URL
 url = f"http://{user_id}:{user_pw}@{host}/cgi-bin/nphMotionJpeg?Resolution={resolution}&amp;Quality=Standard&amp;Framerate={framerate}"
-cap = cv2.VideoCapture(url) 
+cap = cv2.VideoCapture(url)
+
 
 while True:
     try:
         ret, frame = cap.read()
         if ret == True:
-            # 使っているPC画面に適当に収まる表示大きさへリサイズ
+            # Please modify the value to fit your PC screen size.
             frame2 = cv2.resize(frame, (1280, 720))
+            
+            # Display video.
             cv2.imshow(winname, frame2)
 
-        cv2.waitKey(1)    # 注意： imshow() 関数は、この cv2.waitkey() が無いと画面表示してくれない！
+        cv2.waitKey(1)      # necessary to display the video by imshow ()
 
     except KeyboardInterrupt:
-        # コンソール上で ctrl-c を押すとプログラムを終了する。
-        # GUI 上で ctrl-c してもプログラムを終了できない。
+        # Press '[ctrl] + [c]' on the console to exit the program.
         print("KeyboardInterrupt")
         break
 
@@ -321,23 +328,23 @@ cv2.destroyAllWindows()</pre>
   <h4>[プログラム]</h4>
   <p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_mjpeg/connect_with_mjpeg_1_2.py" target="_blank">connect_with_mjpeg_1_2.py</a>&quot;]</p>
   
-	  <pre class="prettyprint linenums lang-py">
-'''
+    <pre class="prettyprint linenums lang-py">'''
 [Abstract]
     Try connecting to an i-PRO camera with MJPEG(Motion JPEG).
     MJPEG(Motion JPEG) で i-PRO カメラと接続します
 
 [Details]
-    Let's try first.
-    まずはやってみる
+    Let's try first. (Method 2)
+    まずはやってみる（方式２）
 
 [library install]
-    pip install opencv-python
+    cv2:    pip install opencv-python
 '''
 
 import cv2
 import numpy as np
 import urllib.request as rq
+
 
 user_id     = "user-id"         # Change to match your camera setting
 user_pw     = "password"        # Change to match your camera setting
@@ -347,18 +354,19 @@ resolution  = "1920x1080"       # Resolution
 framerate   =  15               # Frame rate
 
 # URL
-url = f"http://{host}/cgi-bin/nphMotionJpeg?Resolution={resolution}&Quality=Standard&Framerate={framerate}"
+url = f"http://{host}/cgi-bin/nphMotionJpeg?Resolution={resolution}&amp;Quality=Standard&amp;Framerate={framerate}"
 
-'''
-[abstract]
-    IP カメラと認証処理を行います。
 
-[params]
-    uri:      mjpeg 開始 CGI コマンド
-    user:     IPカメラの user-id
-    passwd:   IPカメラの user-password
-'''
 def set_digest_auth(uri, user, passwd):
+    '''
+    [abstract]
+        Authenticate with the IP camera.
+
+    [params]
+        uri:      CGI command for start mjpeg stream.
+        user:     user-id for camera.
+        passwd:   user-password for camera.
+    '''
     pass_mgr = rq.HTTPPasswordMgrWithDefaultRealm()
     pass_mgr.add_password(realm=None, uri=uri, user=user, passwd=passwd)
     auth_handler = rq.HTTPDigestAuthHandler(pass_mgr)
@@ -373,33 +381,31 @@ bytes = bytes()
 while True:
     try:
         bytes += stream.read(1024)
-        a = bytes.find(b'\xff\xd8')     # SOI スタートマーカ (Start of Image)  0xFFD8
-        b = bytes.find(b'\xff\xd9')     # EOI エンドマーカ   (End   of Image)  0xFFD9
+        a = bytes.find(b'\xff\xd8')     # SOI  (Start of Image)  0xFFD8
+        b = bytes.find(b'\xff\xd9')     # EOI  (End   of Image)  0xFFD9
         if a != -1 and b != -1:
             jpg = bytes[a:b+2]
             bytes = bytes[b+2:]
 
-            # binary データを ndarray 型へ変換
+            # Convert binary data to ndarray type.
             img_buf = np.frombuffer(jpg, dtype=np.uint8)
 
-            # バイナリデータをデコードして画像データにする
+            # Decode ndarray data to OpenCV format image data.
             frame = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
 
-            # 使っているPC画面に適当に収まる表示大きさへリサイズ
+            # Please modify the value to fit your PC screen size.
             frame2 = cv2.resize(frame, (1280, 720))
 
-            # 映像表示
+            # Display video.
             cv2.imshow(winname, frame2)
-            cv2.waitKey(1)    # 注意： imshow() 関数は、この cv2.waitkey() が無いと画面表示してくれない！
+            cv2.waitKey(1)      # necessary to display the video by imshow ()
 
     except KeyboardInterrupt:
-        # コンソール上で ctrl-c を押すとプログラムを終了する。
-        # GUI 上で ctrl-c してもプログラムを終了できない。
+        # Press '[ctrl] + [c]' on the console to exit the program.
         print("KeyboardInterrupt")
         break
 
-cv2.destroyAllWindows()
-</pre>
+cv2.destroyAllWindows()</pre>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
@@ -493,8 +499,7 @@ cv2.destroyAllWindows()
   <p>&nbsp;</p>
   
   <p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_mjpeg/connect_with_mjpeg_2.py" target="_blank">connect_with_mjpeg_2.py</a>&quot;]</p>
-	<pre class="prettyprint linenums lang-py">
-'''
+  <pre class="prettyprint linenums lang-py">'''
 [Abstract]
     Try connecting to an i-PRO camera with MJPEG(Motion JPEG).
     MJPEG(Motion JPEG) で i-PRO カメラと接続します
@@ -513,42 +518,44 @@ cv2.destroyAllWindows()
     Modify the program so that you can exit the program by pressing the [q] key.
     "q" キー押下でプログラムを終了できるようにします。
 
-[library install]
-    pip install opencv-python
+[Library install]
+    cv2:    pip install opencv-python
 '''
 
 import cv2
 
-user_id     = "user-id"         # ご使用のカメラ設定に合わせて変更
-user_pw     = "password"        # ご使用のカメラ設定に合わせて変更
-host        = "192.168.0.10"    # ご使用のカメラ設定に合わせて変更
-winname     = "VIDEO"           # ウィンドウタイトル
-resolution  = "1920x1080"       # 解像度
-framerate   =  15               # フレームレート
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+resolution  = "1920x1080"       # Resolution
+framerate   =  15               # Frame rate
 
 # URL
-url = f"http://{user_id}:{user_pw}@{host}/cgi-bin/nphMotionJpeg?Resolution={resolution}&amp;Quality=Standard&amp;Framerate={framerate}" 
+url = f"http://{user_id}:{user_pw}@{host}/cgi-bin/nphMotionJpeg?Resolution={resolution}&amp;Quality=Standard&amp;Framerate={framerate}"
 cap = cv2.VideoCapture(url)
 
-<span class="auto-style2">
-#</span>
+<span class="auto-style2">#</span>
 <span class="auto-style2">windowInitialized = False</span>
 
-<span class="auto-style2"># Exception 定義</span>
+<span class="auto-style2"># Exception definition</span>
 <span class="auto-style2">BackendError = type('BackendError', (Exception,), {})</span>
 
-<span class="auto-style2">'''</span>
-<span class="auto-style2">[Abstract]</span>
-<span class="auto-style2">    対象ウィンドウが存在するかを確認する。</span>
-<span class="auto-style2">[Param]</span>
-<span class="auto-style2">    winname :       ウィンドウタイトル</span>
-<span class="auto-style2">[Return]</span>
-<span class="auto-style2">    True :          対象ウィンドウは存在する</span>
-<span class="auto-style2">    False :         対象ウィンドウは存在しない</span>
-<span class="auto-style2">[Exception]</span>
-<span class="auto-style2">    BackendError :  バックエンドで使用している Qt でエラー発生</span>
-<span class="auto-style2">'''</span>
 <span class="auto-style2">def IsWindowVisible(winname):</span>
+<span class="auto-style2">    '''</span>
+<span class="auto-style2">    [Abstract]</span>
+<span class="auto-style2">        Check if the target window exists.</span>
+<span class="auto-style2">        対象ウィンドウが存在するかを確認する。</span>
+<span class="auto-style2">    [Param]</span>
+<span class="auto-style2">        winname :       Window title</span>
+<span class="auto-style2">    [Return]</span>
+<span class="auto-style2">        True :          exist</span>
+<span class="auto-style2">                        存在する</span>
+<span class="auto-style2">        False :         not exist</span>
+<span class="auto-style2">                        存在しない</span>
+<span class="auto-style2">    [Exception]</span>
+<span class="auto-style2">        BackendError :</span>
+<span class="auto-style2">    '''</span>
 <span class="auto-style2">    try:</span>
 <span class="auto-style2">        ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)</span>
 <span class="auto-style2">        if ret == -1:</span>
@@ -564,11 +571,14 @@ while True:
     try:
         ret, frame = cap.read()
         if ret == True:
+            # Please modify the value to fit your PC screen size.
             frame2 = cv2.resize(frame, (1280, 720))
+
+            # Display video.
             cv2.imshow(winname, frame2)
 
 <span class="auto-style2">            if windowInitialized==False:</span>
-<span class="auto-style2">                # 最初の起動時のみ表示位置を指定</span>
+<span class="auto-style2">                # Specify window position only once at startup.</span>
 <span class="auto-style2">                cv2.moveWindow(winname, 100, 100)</span>
 <span class="auto-style2">                windowInitialized = True</span>
 
@@ -577,11 +587,12 @@ while True:
 <span class="auto-style2">        if k == ord("q"):</span>
 <span class="auto-style2">            break</span>
 <span class="auto-style2">        </span>
-<span class="auto-style2">        # 指定ウィンドウが無かったら終了</span>
+<span class="auto-style2">        # Exit the program if there is no specified window.</span>
 <span class="auto-style2">        if not IsWindowVisible(winname):</span>
 <span class="auto-style2">            break</span>
 
     except KeyboardInterrupt:
+        # Press '[ctrl] + [c]' on the console to exit the program.
         print("KeyboardInterrupt")
         break
 
@@ -678,41 +689,53 @@ cv2.destroyAllWindows()</pre>
   <p>&nbsp;</p>
   <p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_mjpeg/connect_with_mjpeg_3_1.py" target="_blank">connect_with_mjpeg_3_1.py</a>&quot;]</p>
   <pre class="prettyprint linenums lang-py">'''
-[abstract]
-    i-PRO mini (WV-S7130W) と接続して映像を表示してみる。
-    ここでは opencv を使って顔検知を追加してみます。
+[Abstract]
+    Try connecting to an i-PRO camera with MJPEG(Motion JPEG).
+    MJPEG(Motion JPEG) で i-PRO カメラと接続します
 
-[library install]
-    pip install opencv-python
+[Details]
+    Let's add face detection using OpenCV.
+    OpenCV を使って顔検知を追加してみます
+
+[Library install]
+    cv2:    pip install opencv-python
+
+[OpenCV]
+    Get the file "haarcascade_frontalface_alt2.xml" from the URL below.
+    下記URLからファイル "haarcascade_frontalface_alt2.xml" を入手するしてください。
+    https://github.com/opencv/opencv/tree/master/data/haarcascades
 '''
 
 import cv2
 
-user_id     = "user-id"         # ご使用のカメラ設定に合わせて変更
-user_pw     = "password"        # ご使用のカメラ設定に合わせて変更
-host        = "192.168.0.10"    # ご使用のカメラ設定に合わせて変更
-winname     = "VIDEO"           # ウィンドウタイトル
-resolution  = "1920x1080"       # 解像度
-framerate   =  15               # フレームレート
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+resolution  = "1920x1080"       # Resolution
+framerate   =  15               # Frame rate
 
 # URL
 url = f"http://{user_id}:{user_pw}@{host}/cgi-bin/nphMotionJpeg?Resolution={resolution}&amp;Quality=Standard&amp;Framerate={framerate}"
 
-# Exception 定義
+# Exception definition.
 BackendError = type('BackendError', (Exception,), {})
 
-'''
-[Abstract]
-    対象ウィンドウが存在するかを確認する。
-[Param]
-    winname :       ウィンドウタイトル
-[Return]
-    True :          対象ウィンドウは存在する
-    False :         対象ウィンドウは存在しない
-[Exception]
-    BackendError :  バックエンドで使用している Qt でエラー発生
-'''
 def IsWindowVisible(winname):
+    '''
+    [Abstract]
+        Check if the target window exists.
+        対象ウィンドウが存在するかを確認する。
+    [Param]
+        winname :       Window title
+    [Return]
+        True :          exist
+                        存在する
+        False :         not exist
+                        存在しない
+    [Exception]
+        BackendError :
+    '''
     try:
         ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
         if ret == -1:
@@ -723,37 +746,39 @@ def IsWindowVisible(winname):
     except cv2.error:
         return False
 
-<span class="auto-style2">'''</span>
-<span class="auto-style2">[Abstract]</span>
-<span class="auto-style2">    顔検知して認識結果を返す</span>
-<span class="auto-style2">[Param]</span>
-<span class="auto-style2">    cascade :       OpenCV の CascadeClassifierオブジェクト</span>
-<span class="auto-style2">    image :         OpenCV 形式の画像</span>
-<span class="auto-style2">[Return]</span>
-<span class="auto-style2">    認識結果</span>
-<span class="auto-style2">'''</span>
 <span class="auto-style2">def DetectFaces(cascade, image):</span>
-<span class="auto-style2">    # 顔検出のためにグレイスケール画像に変換</span>
+<span class="auto-style2">    '''</span>
+<span class="auto-style2">    [Abstract]</span>
+<span class="auto-style2">        Detect faces and return recognition result.</span>
+<span class="auto-style2">        顔検知して認識結果を返す</span>
+<span class="auto-style2">    [Param]</span>
+<span class="auto-style2">        cascade :       CascadeClassifier object in OpenCV format.</span>
+<span class="auto-style2">        image :         Image in OpenCV format.</span>
+<span class="auto-style2">    [Return]</span>
+<span class="auto-style2">        Detection result.</span>
+<span class="auto-style2">    '''</span>
+<span class="auto-style2">    # Convert to grayscale image for face detection.</span>
 <span class="auto-style2">    img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)</span>
 
-<span class="auto-style2">    # 顔を画像から検出 </span>
+<span class="auto-style2">    # Detect faces from image.</span>
 <span class="auto-style2">    face_list = cascade.detectMultiScale(img_gray, minSize=(100, 100))</span>
 
-<span class="auto-style2">    # 検出結果を返す</span>
+<span class="auto-style2">    # Return result.</span>
 <span class="auto-style2">    return face_list</span>
 
 
-<span class="auto-style2">'''</span>
-<span class="auto-style2">[Abstract]</span>
-<span class="auto-style2">    検出された顔枠情報リストを使って、image 上に赤枠を描画する。</span>
-<span class="auto-style2">[Param]</span>
-<span class="auto-style2">    image :         OpenCV 形式の画像</span>
-<span class="auto-style2">    face_list :     検出された顔枠情報リスト</span>
-<span class="auto-style2">[Return]</span>
-<span class="auto-style2">    無し</span>
-<span class="auto-style2">'''</span>
 <span class="auto-style2">def DrawFaceRectangles(image, face_list):</span>
-<span class="auto-style2">    # 検出した顔の数だけ赤枠を描画</span>
+<span class="auto-style2">    '''</span>
+<span class="auto-style2">    [Abstract]</span>
+<span class="auto-style2">        Draw red frames on the image according to the detection result face_list.</span>
+<span class="auto-style2">        検出結果 face_list にしたがって、image 上に赤枠を描画する。</span>
+<span class="auto-style2">    [Param]</span>
+<span class="auto-style2">        image :         Image in OpenCV format.</span>
+<span class="auto-style2">        face_list :     List of detected face frames.</span>
+<span class="auto-style2">    [Return]</span>
+<span class="auto-style2">        None</span>
+<span class="auto-style2">    '''</span>
+<span class="auto-style2">    # Draw red frames for the number of detected faces.</span>
 <span class="auto-style2">    if len(face_list) != 0:</span>
 <span class="auto-style2">        for (pos_x, pos_y, w, h) in face_list:</span>
 <span class="auto-style2">            print(f"pos_x = {pos_x}, pos_y = {pos_y}, w = {w}, h = {h}")</span>
@@ -766,33 +791,35 @@ def IsWindowVisible(winname):
 '''
 if __name__ == '__main__':
 
-    cap = cv2.VideoCapture(url) 
+    cap = cv2.VideoCapture(url)
 
     #
     windowInitialized = False
 
-<span class="auto-style2">    # 顔を識別するためのファイル</span>
-<span class="auto-style2">    cascade_file = "haarcascade_frontalface_alt2.xml"       # 顔</span>
-<span class="auto-style2">    #cascade_file = "haarcascade_eye.xml"                   # 目？</span>
-<span class="auto-style2">    #cascade_file = "haarcascade_eye_tree_eyeglasses.xml"   # 目？</span>
+<span class="auto-style2">    # haarcascade file for opencv cascade classification.</span>
+<span class="auto-style2">    cascade_file = "haarcascade_frontalface_alt2.xml"       # face</span>
+<span class="auto-style2">    #cascade_file = "haarcascade_eye.xml"                   # eye ?</span>
+<span class="auto-style2">    #cascade_file = "haarcascade_eye_tree_eyeglasses.xml"   # eye ?</span>
 <span class="auto-style2">    cascade = cv2.CascadeClassifier(cascade_file)</span>
 
     while True:
         try:
             ret, frame = cap.read()
             if ret == True:
-<span class="auto-style2">                # 顔検知</span>
+<span class="auto-style2">                # Face detection.</span>
 <span class="auto-style2">                face_list = DetectFaces(cascade, frame)</span>
 
-<span class="auto-style2">                # 検出した顔枠を描画</span>
+<span class="auto-style2">                # Draw face rectangles.</span>
 <span class="auto-style2">                DrawFaceRectangles(frame, face_list)</span>
 
-                # PC画面サイズに合わせて適当にリサイズ後、表示
+                # Please modify the value to fit your PC screen size.
                 frame2 = cv2.resize(frame, (1280, 720))
+                
+                # Display video.
                 cv2.imshow(winname, frame2)
 
                 if windowInitialized==False:
-                    # 最初の起動時のみ表示位置を指定
+                    # Specify window position only once at startup.
                     cv2.moveWindow(winname, 100, 100)
                     windowInitialized = True
 
@@ -801,12 +828,12 @@ if __name__ == '__main__':
             if k == ord("q"):
                 break
             
-            # 指定ウィンドウが無かったら終了
+            # Exit the program if there is no specified window.
             if not IsWindowVisible(winname):
                 break
 
-
         except KeyboardInterrupt:
+            # Press '[ctrl] + [c]' on the console to exit the program.
             print("KeyboardInterrupt")
             break
 
@@ -829,15 +856,23 @@ if __name__ == '__main__':
   <p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_mjpeg/connect_with_mjpeg_3_2.py" target="_blank">connect_with_mjpeg_3_2.py</a>&quot;]</p>
   <pre class="prettyprint linenums lang-py">'''
 [Abstract]
-    i-PRO mini (WV-S7130W) と接続して映像を表示してみる。
-    ここでは opencv を使って顔検知を追加してみます。
+    Try connecting to an i-PRO camera with MJPEG(Motion JPEG).
+    MJPEG(Motion JPEG) で i-PRO カメラと接続します
+
+[Details]
+    Let's add face detection using OpenCV.
+    Improve performace of "connect_with_mjpeg_3_1.py" by creating a face detection process.
+
+    OpenCV を使って顔検知を追加してみます
+    "connect_with_mjpeg_3_1.py" で確認したパフォーマンス問題を、顔検知処理を別プロセスにすることで改善してみます。
 
 [Library install]
-    pip install opencv-python
+    cv2:    pip install opencv-python
 
 [OpenCV]
-    下記URLからファイル "haarcascade_frontalface_alt2.xml" を入手すること
-    https://github.com/opencv/opencv/tree/master/data/haarcascades 
+    Get the file "haarcascade_frontalface_alt2.xml" from the URL below.
+    下記URLからファイル "haarcascade_frontalface_alt2.xml" を入手するしてください。
+    https://github.com/opencv/opencv/tree/master/data/haarcascades
 '''
 
 import cv2
@@ -845,38 +880,41 @@ import cv2
 <span class="auto-style2">from queue import Empty</span>
 
 
-user_id     = "user-id"         # ご使用のカメラ設定に合わせて変更
-user_pw     = "password"        # ご使用のカメラ設定に合わせて変更
-host        = "192.168.0.10"    # ご使用のカメラ設定に合わせて変更
-winname     = "VIDEO"           # ウィンドウタイトル
-resolution  = "1920x1080"       # 解像度
-framerate   =  30               # フレームレート
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+resolution  = "1920x1080"       # Resolution
+framerate   =  30               # Frame rate
 
 # URL
 url = f"http://{user_id}:{user_pw}@{host}/cgi-bin/nphMotionJpeg?Resolution={resolution}&amp;Quality=Standard&amp;Framerate={framerate}"
 
-<span class="auto-style2"># 顔を識別するためのファイル</span>
-<span class="auto-style2">cascade_file = "haarcascade_frontalface_alt2.xml"       # 顔</span>
-<span class="auto-style2">#cascade_file = "haarcascade_eye.xml"                   # 目？</span>
-<span class="auto-style2">#cascade_file = "haarcascade_eye_tree_eyeglasses.xml"   # 目？</span>
+<span class="auto-style2"># haarcascade file for opencv cascade classification.</span>
+<span class="auto-style2">cascade_file = "haarcascade_frontalface_alt2.xml"       # face</span>
+<span class="auto-style2">#cascade_file = "haarcascade_eye.xml"                   # eye ?</span>
+<span class="auto-style2">#cascade_file = "haarcascade_eye_tree_eyeglasses.xml"   # eye ?</span>
 <span class="auto-style2">cascade = cv2.CascadeClassifier(cascade_file)</span>
 
 
-# Exception 定義
+# Exception definition.
 BackendError = type('BackendError', (Exception,), {})
 
-'''
-[Abstract]
-    対象ウィンドウが存在するかを確認する。
-[Param]
-    winname :       ウィンドウタイトル
-[Return]
-    True :          対象ウィンドウは存在する
-    False :         対象ウィンドウは存在しない
-[Exception]
-    BackendError :  バックエンドで使用している Qt でエラー発生
-'''
 def IsWindowVisible(winname):
+    '''
+    [Abstract]
+        Check if the target window exists.
+        対象ウィンドウが存在するかを確認する。
+    [Param]
+        winname :       Window title
+    [Return]
+        True :          exist
+                        存在する
+        False :         not exist
+                        存在しない
+    [Exception]
+        BackendError :
+    '''
     try:
         ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
         if ret == -1:
@@ -888,79 +926,80 @@ def IsWindowVisible(winname):
         return False
 
 
-'''
-[Abstract]
-    顔検知して認識結果を返す
-[Param]
-    cascade :       OpenCV の CascadeClassifierオブジェクト
-    image :         OpenCV 形式の画像
-[Return]
-    検出結果
-'''
 def DetectFaces(cascade, image):
-    # 顔検出のためにグレイスケール画像に変換
+    '''
+    [Abstract]
+        Detect faces and return recognition result.
+        顔検知して認識結果を返す
+    [Param]
+        cascade :       CascadeClassifier object in OpenCV format.
+        image :         Image in OpenCV format.
+    [Return]
+        Detection result.
+    '''
+    # Convert to grayscale image for face detection.
     img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    # 検出した顔の位置情報を取得
+    # Detect faces from image.
     face_list = cascade.detectMultiScale(img_gray, minSize=(100, 100))
 
+    # Return result.
     return face_list
 
 
-<span class="auto-style2">'''</span>
-<span class="auto-style2">[Abstract]</span>
-<span class="auto-style2">    顔検知タスク</span>
-<span class="auto-style2">[Param]</span>
-<span class="auto-style2">    q1 :        [i] 顔検知する画像を保存する Queue</span>
-<span class="auto-style2">    q2 :        [o] 顔検知した結果を保存する Queue</span>
-<span class="auto-style2">[Return]</span>
-<span class="auto-style2">    無し</span>
-<span class="auto-style2">'''</span>
-<span class="auto-style2"># def DetectFacesProcess(cascade, q1, q2):</span>
 <span class="auto-style2">def DetectFacesProcess(q1, q2):</span>
+<span class="auto-style2">    '''</span>
+<span class="auto-style2">    [Abstract]</span>
+<span class="auto-style2">        Face detection process.</span>
+<span class="auto-style2">    [Param]</span>
+<span class="auto-style2">        q1 :        [i] Queue to save the image to detect the face.</span>
+<span class="auto-style2">        q2 :        [o] Queue to save the result of face detection.</span>
+<span class="auto-style2">    [Return]</span>
+<span class="auto-style2">        無し</span>
+<span class="auto-style2">    '''</span>
 <span class="auto-style2">    while True:</span>
 <span class="auto-style2">        try:</span>
 <span class="auto-style2">            image = q1.get(True, 10)</span>
 
-<span class="auto-style2">            # 終了処理： q1.get から取得したものが int で -1 なら終了</span>
+<span class="auto-style2">            # Termination check: If type(image) is "int" and the value is -1, it ends.</span>
 <span class="auto-style2">            if type(image) == int:</span>
 <span class="auto-style2">                if image == -1:</span>
 <span class="auto-style2">                    break</span>
 
-<span class="auto-style2">            # 顔検知</span>
+<span class="auto-style2">            # Do face detection.</span>
 <span class="auto-style2">            face_list = DetectFaces(cascade, image)</span>
 
 <span class="auto-style2">            q2.put(face_list)</span>
 <span class="auto-style2">        except Empty: # timeout of q1.get()</span>
-<span class="auto-style2">            print("Timeout happen.")</span>
+<span class="auto-style2">            print("Timeout happen.(3)")</span>
 
-<span class="auto-style2">    print("Finish DetectFacesProcess()")    </span>
+<span class="auto-style2">    print("Finish DetectFacesProcess()")   </span> 
 
 
-'''
-[Abstract]
-    検出された顔枠情報リストを使って、image 上に赤枠を描画する。
-[Param]
-    image :         OpenCV 形式の画像
-    face_list :     検出された顔枠情報リスト
-[Return]
-    無し
-'''
 def DrawFaceRectangles(image, face_list):
-    # 検出した顔の数だけ赤枠を描画
+    '''
+    [Abstract]
+        Draw red frames on the image according to the detection result face_list.
+        検出結果 face_list にしたがって、image 上に赤枠を描画する。
+    [Param]
+        image :         Image in OpenCV format.
+        face_list :     List of detected face frames.
+    [Return]
+        None
+    '''
+    # Draw red frames for the number of detected faces.
     if len(face_list) != 0:
         for (pos_x, pos_y, w, h) in face_list:
             print(f"pos_x = {pos_x}, pos_y = {pos_y}, w = {w}, h = {h}")
-            cv2.rectangle(frame, (pos_x, pos_y), (pos_x + w, pos_y + h), (0,0,255), thickness=5)
+            cv2.rectangle(image, (pos_x, pos_y), (pos_x + w, pos_y + h), (0,0,255), thickness=5)
 
 
-'''
-[Abstract]
-    main 関数 
-'''
 if __name__ == '__main__':
-
-    cap = cv2.VideoCapture(url) 
+    '''
+    [Abstract]
+        main function
+    '''
+    cap = cv2.VideoCapture(url)
 
     #
     windowInitialized = False
@@ -968,10 +1007,7 @@ if __name__ == '__main__':
 <span class="auto-style2">    q1 = mp.Queue()</span>
 <span class="auto-style2">    q2 = mp.Queue()</span>
 
-<span class="auto-style2">    # "cannot pickle object" というエラーが出て解決できなかったので、args に cascade を加えるのを断念</span>
-<span class="auto-style2">    # 合わせて cascade をグローバル変数に。</span>
 <span class="auto-style2">    p = mp.Process(target=DetectFacesProcess, args=(q1, q2))</span>
-<span class="auto-style2">    # p = mp.Process(target=DetectFacesProcess, args=(cascade, q1, q2))</span>
 <span class="auto-style2">    p.start()</span>
 
     init = False
@@ -980,24 +1016,27 @@ if __name__ == '__main__':
         try:
             ret, frame = cap.read()
             if ret == True:
-<span class="auto-style2">                # 顔検知</span>
+<span class="auto-style2">                # Pass the image to the face detection process.</span>
 <span class="auto-style2">                if (q1.qsize() &lt;= 1) and (q2.qsize() &lt;= 1):</span>
 <span class="auto-style2">                    q1.put(frame)</span>
 
+<span class="auto-style2">                # Receive results from face detection processing.</span>
 <span class="auto-style2">                if q2.qsize() != 0:</span>
 <span class="auto-style2">                    face_list = q2.get()</span>
 <span class="auto-style2">                    init = True</span>
 
 <span class="auto-style2">                if init == True:</span>
-<span class="auto-style2">                    # 検出した顔枠を描画</span>
+<span class="auto-style2">                    # Draw face rectangles.</span>
 <span class="auto-style2">                    DrawFaceRectangles(frame, face_list)</span>
 
-                # PC画面サイズに合わせて適当にリサイズ後、表示
+                # Please modify the value to fit your PC screen size.
                 frame2 = cv2.resize(frame, (1280, 720))
+                
+                # Display video.
                 cv2.imshow(winname, frame2)
 
                 if windowInitialized==False:
-                    # 最初の起動時のみ表示位置を指定
+                    # Specify window position only once at startup.
                     cv2.moveWindow(winname, 100, 100)
                     windowInitialized = True
 
@@ -1006,12 +1045,12 @@ if __name__ == '__main__':
             if k == ord("q"):
                 break
             
-            # 指定ウィンドウが無かったら終了
+            # Exit the program if there is no specified window.
             if not IsWindowVisible(winname):
                 break
 
-
         except KeyboardInterrupt:
+            # Press '[ctrl] + [c]' on the console to exit the program.
             print("KeyboardInterrupt")
             break
 
@@ -1091,46 +1130,54 @@ if __name__ == '__main__':
   <p>[プログラムソース "<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_mjpeg/connect_with_mjpeg_4.py" target="_blank">connect_with_mjpeg_4.py</a>"]</p>
   <pre class="prettyprint linenums lang-py">'''
 [Abstract]
+    Try connecting to an i-PRO camera with MJPEG(Motion JPEG).
     MJPEG(Motion JPEG) で i-PRO カメラと接続します
 
 [Details]
+    Save the received JPEG image as a file.
+    Add a 6-digit number to the end of the file name and save it as a serial number.
+
     受信した JPEG 画像をファイル保存します。
     ファイル名の末尾に６ケタの番号を付けて連番で保存します。
 
 [Library install]
-    pip install opencv-python
+    cv2:    pip install opencv-python
 '''
+
 import cv2
 import numpy as np
 import os
 import urllib.request as rq
 
-user_id     = "user-id"         # ご使用のカメラ設定に合わせて変更
-user_pw     = "password"        # ご使用のカメラ設定に合わせて変更
-host        = "192.168.0.10"    # ご使用のカメラ設定に合わせて変更
-winname     = "VIDEO"           # ウィンドウタイトル
-resolution  = "1920x1080"       # 解像度
-framerate   =  5                # フレームレート
-pathOut     = 'image'           # 画像ファイル保存フォルダ
+user_id     = "user-id"         # Change to match your camera setting
+user_pw     = "password"        # Change to match your camera setting
+host        = "192.168.0.10"    # Change to match your camera setting
+winname     = "VIDEO"           # Window title
+resolution  = "1920x1080"       # Resolution
+framerate   =  5                # Frame rate
+pathOut     = 'image'           # Image file save folder name
 
 # URL
 url = f"http://{host}/cgi-bin/nphMotionJpeg?Resolution={resolution}&amp;Quality=Standard&amp;Framerate={framerate}"
 
-# Exception 定義
+# Exception definition
 BackendError = type('BackendError', (Exception,), {})
 
-'''
-[Abstract]
-    対象ウィンドウが存在するかを確認する。
-[Param]
-    winname :       ウィンドウタイトル
-[Return]
-    True :          対象ウィンドウは存在する
-    False :         対象ウィンドウは存在しない
-[Exception]
-    BackendError :  バックエンドで使用している Qt でエラー発生
-'''
 def IsWindowVisible(winname):
+    '''
+    [Abstract]
+        Check if the target window exists.
+        対象ウィンドウが存在するかを確認する。
+    [Param]
+        winname :       Window title
+    [Return]
+        True :          exist
+                        存在する
+        False :         not exist
+                        存在しない
+    [Exception]
+        BackendError :
+    '''
     try:
         ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
         if ret == -1:
@@ -1142,16 +1189,16 @@ def IsWindowVisible(winname):
         return False
 
 
-'''
-[abstract]
-    IP カメラと認証処理を行います。
-
-[params]
-    uri:      mjpeg 開始 CGI コマンド
-    user:     IPカメラの user-id
-    passwd:   IPカメラの user-password
-'''
 def set_digest_auth(uri, user, passwd):
+    '''
+    [abstract]
+        Authenticate with the IP camera.
+
+    [params]
+        uri:      CGI command for start mjpeg stream.
+        user:     user-id for camera.
+        passwd:   user-password for camera.
+    '''
     pass_mgr = rq.HTTPPasswordMgrWithDefaultRealm()
     pass_mgr.add_password(realm=None, uri=uri, user=user, passwd=passwd)
     auth_handler = rq.HTTPDigestAuthHandler(pass_mgr)
@@ -1159,25 +1206,24 @@ def set_digest_auth(uri, user, passwd):
     rq.install_opener(opener)
 
 
-<span class="auto-style2">'''</span>
-<span class="auto-style2">[Abstract]</span>
-<span class="auto-style2">    バイナリデータを指定ファイル名で保存する</span>
-<span class="auto-style2">[Param]</span>
-<span class="auto-style2">    data :      保存するバイナリデータ</span>
-<span class="auto-style2">    filename :  ファイル名</span>
-<span class="auto-style2">'''</span>
 <span class="auto-style2">def SaveBinaryData(data, filename):</span>
+<span class="auto-style2">    '''</span>
+<span class="auto-style2">    [Abstract]</span>
+<span class="auto-style2">        Save the binary data with the specified file name.</span>
+<span class="auto-style2">    [Param]</span>
+<span class="auto-style2">        data :      binary data.</span>
+<span class="auto-style2">        filename :  filename.</span>
+<span class="auto-style2">    '''</span>
 <span class="auto-style2">    fout = open(filename, 'wb')</span>
 <span class="auto-style2">    fout.write(data)</span>
 <span class="auto-style2">    fout.close()</span>
 
 
-'''
-[Abstract]
-    main 関数
-'''
 if __name__ == '__main__':
-
+    '''
+    [Abstract]
+        main function.
+    '''
     windowInitialized = False
 <span class="auto-style2">    count = 0</span>
 <span class="auto-style2">    if not os.path.exists(pathOut):</span>
@@ -1188,43 +1234,50 @@ if __name__ == '__main__':
 
     bytes = bytes()
     while True:
-        bytes += stream.read(1024)
-        a = bytes.find(b'\xff\xd8')     # SOI スタートマーカ (Start of Image)  0xFFD8
-        b = bytes.find(b'\xff\xd9')     # EOI エンドマーカ   (End   of Image)  0xFFD9
-        if a != -1 and b != -1:
-            jpg = bytes[a:b+2]
-            bytes = bytes[b+2:]
+        try:
+            bytes += stream.read(1024)
+            a = bytes.find(b'\xff\xd8')     # SOI (Start of Image)  0xFFD8
+            b = bytes.find(b'\xff\xd9')     # EOI (End   of Image)  0xFFD9
+            if a != -1 and b != -1:
+                jpg = bytes[a:b+2]
+                bytes = bytes[b+2:]
 
-<span class="auto-style2">            # ファイル保存</span>
-<span class="auto-style2">            count += 1</span>
-<span class="auto-style2">            filename = os.path.join(pathOut, 'image_{:06d}.jpg'.format(count))</span>
-<span class="auto-style2">            SaveBinaryData(jpg, filename)</span>
+<span class="auto-style2">                # Save jpeg file.</span>
+<span class="auto-style2">                count += 1</span>
+<span class="auto-style2">                filename = os.path.join(pathOut, 'image_{:06d}.jpg'.format(count))</span>
+<span class="auto-style2">                SaveBinaryData(jpg, filename)</span>
 
-            # binary データを ndarray 型へ変換
-            img_buf = np.frombuffer(jpg, dtype=np.uint8)
+                # Convert binary data to ndarray type.
+                img_buf = np.frombuffer(jpg, dtype=np.uint8)
 
-            # バイナリデータをデコードして画像データ(OpenCV形式)にする
-            frame = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
+                # Decode ndarray data to OpenCV format image data.
+                frame = cv2.imdecode(img_buf, cv2.IMREAD_UNCHANGED)
 
-            # リサイズ
-            frame2 = cv2.resize(frame, (1280, 720))
+                # Please modify the value to fit your PC screen size.
+                frame2 = cv2.resize(frame, (1280, 720))
 
-            # 映像表示
-            cv2.imshow(winname, frame2)
+                # Display video.
+                cv2.imshow(winname, frame2)
 
-            if windowInitialized==False:
-                # 最初の起動時のみ表示位置を指定
-                cv2.moveWindow(winname, 100, 100)
-                windowInitialized = True
+                if windowInitialized==False:
+                    # Specify window position only once at startup.
+                    cv2.moveWindow(winname, 100, 100)
+                    windowInitialized = True
 
-            # "z" キーを押されていたら終了
-            if cv2.waitKey(1) &amp; 0xFF == ord('z'):
-                break
+                # Press the "q" key to finish.
+                k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
+                if k == ord("q"):
+                    break
 
-            # 指定ウィンドウが無かったら終了
-            if not IsWindowVisible(winname):
-                break
+                # Exit the program if there is no specified window.
+                if not IsWindowVisible(winname):
+                    break
 
+        except KeyboardInterrupt:
+            # Press '[ctrl] + [c]' on the console to exit the program.
+            print("KeyboardInterrupt")
+            break
+    
     cv2.destroyAllWindows()</pre>
   <p>&nbsp;</p>
   <p>&nbsp;</p>
@@ -1304,7 +1357,7 @@ if __name__ == '__main__':
     映像切断時の再接続処理を"connect_with_mjpeg_2.py"へ追加する。
 
 [Library install]
-    pip install opencv-python
+    cv2:    pip install opencv-python
 '''
 
 from nturl2path import url2pathname
@@ -1324,21 +1377,21 @@ windowInitialized = False
 # Exception definition.
 BackendError = type('BackendError', (Exception,), {})
 
-'''
-[Abstract]
-    Check if the target window exists.
-    対象ウィンドウが存在するかを確認する。
-[Param]
-    winname :       Window title
-[Return]
-    True :          exist
-                    存在する
-    False :         not exist
-                    存在しない
-[Exception]
-    BackendError :
-'''
 def IsWindowVisible(winname):
+    '''
+    [Abstract]
+        Check if the target window exists.
+        対象ウィンドウが存在するかを確認する。
+    [Param]
+        winname :       Window title
+    [Return]
+        True :          exist
+                        存在する
+        False :         not exist
+                        存在しない
+    [Exception]
+        BackendError :
+    '''
     try:
         ret = cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE)
         if ret == -1:
@@ -1350,12 +1403,11 @@ def IsWindowVisible(winname):
         return False
 
 
-'''
-[Abstract]
-    main function.
-'''
 if __name__ == '__main__':
-
+    '''
+    [Abstract]
+        main function.
+    '''
     cap = cv2.VideoCapture(url)
 
     while True:
@@ -1380,9 +1432,9 @@ if __name__ == '__main__':
 <span class="auto-style2">                cap.release()</span>
 <span class="auto-style2">                cap = cv2.VideoCapture(url)</span>
 
-            # Press the "z" key to finish.
-            k = cv2.waitKey(1)
-            if k == ord("z"):
+            # Press the "q" key to finish.
+            k = cv2.waitKey(1) &amp; 0xff   # necessary to display the video by imshow ()
+            if k == ord("q"):
                 break
             
             # Exit the program if there is no specified window.
@@ -1484,7 +1536,8 @@ if __name__ == '__main__':
     (3) PIL.Image → ImageTk.PhotoImage
 
 [Library install]
-    pip install opencv-python
+    cv2:    pip install opencv-python
+    PIL :   pip install pillow
 '''
 
 import cv2
