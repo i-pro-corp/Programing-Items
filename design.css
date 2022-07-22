@@ -6,7 +6,7 @@ html{
   width: 100%;
   height: 100%;
   word-break: break-all;
-  scroll-behavior: smooth;
+  /*scroll-behavior: smooth;*/
 }
 
 body{
@@ -143,6 +143,25 @@ img.border{
 img.border_with_drop-shadow{
 	border:1px silver solid;
 	box-shadow: 4px 4px 8px gray;
+}
+
+
+/* 目次 */
+div.mokuji{
+  border: 1px solid #808080;
+  width: 800px;
+  max-width:100%;
+  background-color: #F0F0F0;
+  padding: 7px 14px;
+}
+
+/* ライセンス */
+div.license{
+  width: 600px;
+  background-color: #F0F0F0;
+	border: thin silver solid;
+  word-break: break-word;
+  padding: 7px 14px;
 }
 
 

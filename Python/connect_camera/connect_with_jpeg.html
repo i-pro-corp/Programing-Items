@@ -62,28 +62,25 @@
       </div>
     </div>
 <p> &nbsp;</p>
-<table style="border: 1px solid #808080; width: 800px; max-width:100%; background-color: #F0F0F0;">
-  <tr>
-    <td>
-      <nav>
-        <h2> 目次</h2>
-        <p>
-        <a href="#1._CGI_表記仕様">1. CGI 表記仕様</a><br>
-        <a href="#2. i-PRO カメラと JPEG 接続して映像を表示してみる">2. i-PRO カメラと JPEG 接続して映像を表示してみる</a><br>
-        <a href="#3.プログラムを改善する">3. プログラムを改善する</a><br>
-        <a href="#4. OpenCV で顔検知を加えてみる">4. OpenCV で顔検知を加えてみる</a><br>
-        <a href="#5._連番の_JPEG_ファイルで保存する">5. 連番の JPEG ファイルで保存する</a><br>
-        <a href="#6._映像切断時の再接続処理を追加">6. 映像切断時の再接続処理を追加</a><br>
-        <a href="#7._GUIで映像表示してみる（tkinter）">7. GUIで映像表示してみる（tkinter）</a><br>
-        <br>
-        <a href="#ソースコード所在">ソースコード所在</a><br>
-        <a href="#ライセンス">ライセンス</a><br>
-        <a href="#参考">参考</a><br>
-        </p>
-      </nav>
-    </td>
-  </tr>
-</table>
+
+<div class="mokuji">
+  <nav>
+    <h2>目次</h2>
+    <p><a href="#1._CGI_表記仕様">1. CGI 表記仕様</a></p>
+    <p><a href="#2. i-PRO カメラと JPEG 接続して映像を表示してみる">2. i-PRO カメラと JPEG 接続して映像を表示してみる</a></p>
+    <p><a href="#3.プログラムを改善する">3. プログラムを改善する</a></p>
+    <p><a href="#4. OpenCV で顔検知を加えてみる">4. OpenCV で顔検知を加えてみる</a></p>
+    <p><a href="#5._連番の_JPEG_ファイルで保存する">5. 連番の JPEG ファイルで保存する</a></p>
+    <p><a href="#6._映像切断時の再接続処理を追加">6. 映像切断時の再接続処理を追加</a></p>
+    <p><a href="#7._GUIで映像表示してみる（tkinter）">7. GUIで映像表示してみる（tkinter）</a></p>
+    <br>
+    <p><a href="#ソースコード所在">ソースコード所在</a></p>
+    <p><a href="#ライセンス">ライセンス</a></p>
+    <p><a href="#参考">参考</a></p>
+  </nav>
+</div>
+
+
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
@@ -144,7 +141,7 @@
 <p>&nbsp;</p>
 
 <section>
- <h2><a name="1._CGI_表記仕様">1. CGI 表記仕様</a></h2>
+ <h2><a id="1._CGI_表記仕様">1. CGI 表記仕様</a></h2>
  <h4>[概要]</h4>
  <p>JPEG(1shot要求)で接続するための表記を以下に記載します。</p>
  <p>「ネットワークカメラCGIコマンドインターフェース仕様書 統合版」<span class="super">[1]</span> 
@@ -166,7 +163,7 @@
 <p>&nbsp;</p>
 
 <section>
-  <h2> <a name="2. i-PRO カメラと JPEG 接続して映像を表示してみる">2. i-PRO カメラと JPEG 接続して映像を表示してみる</a></h2>
+  <h2> <a id="2. i-PRO カメラと JPEG 接続して映像を表示してみる">2. i-PRO カメラと JPEG 接続して映像を表示してみる</a></h2>
 	<h4>[概要]</h4>
 	<p> とりあえず映像を取得してPC画面に表示するまでをやってみます。</p>
     <p> &nbsp;</p>
@@ -323,7 +320,7 @@ cv2.destroyAllWindows()</pre>
 
 
 <section>
-  <h2><a name="3.プログラムを改善する">3.プログラムを改善する</a></h2>
+  <h2><a id="3.プログラムを改善する">3.プログラムを改善する</a></h2>
 	<h4>[概要]</h4>
   <p>前章で作成したプログラムはとても簡単に作成できましたが、いろいろと課題がありました。<br>とりあえず下記３つの課題を解決してみます。</p>
   <p>&nbsp;</p>
@@ -524,7 +521,7 @@ cv2.destroyAllWindows()</pre>
 
 
 <section>
-<h2><a name="4. OpenCV で顔検知を加えてみる">4. OpenCV で顔検知を加えてみる</a></h2>
+<h2><a id="4. OpenCV で顔検知を加えてみる">4. OpenCV で顔検知を加えてみる</a></h2>
 	<h4>[概要]</h4>
 	<p>OpenCV を使って顔検知を行って、見つけた顔部分に赤枠を描画してみます。&nbsp;</p>
  <p>&nbsp;</p>
@@ -752,7 +749,7 @@ if __name__ == '__main__':
 <br>
 
 <section>
-  <h2><a name="5._連番の_JPEG_ファイルで保存する">5. 連番の JPEG ファイルで保存する</a></h2>
+  <h2><a id="5._連番の_JPEG_ファイルで保存する">5. 連番の JPEG ファイルで保存する</a></h2>
   <p>受信した画像を 1 から始まる連番のファイル名 (image_NNNNNN.jpg) で JPEG ファイルとして保存してみます。</p>
   <p>&nbsp;</p>
   <ul>
@@ -934,7 +931,7 @@ if __name__ == '__main__':
 <p>&nbsp;</p>
 
 <section>
-  <h2><a name="6._映像切断時の再接続処理を追加">6. 映像切断時の再接続処理を追加</a></h2>
+  <h2><a id="6._映像切断時の再接続処理を追加">6. 映像切断時の再接続処理を追加</a></h2>
   <p>ここまでのプログラムは、カメラとの接続を切断すると接続が復活しませんでした。<br>
   例えばカメラを再起動するなどしても自動的に再接続を行って映像表示できるようにプログラムを修正してみます。</p>
   <p>"connect_with_jpeg_2.py" を元に再接続処理を追加してこの問題を解決してみたいと思います。</p>
@@ -1116,7 +1113,7 @@ cv2.destroyAllWindows()</pre>
 <p>&nbsp;</p>
 
 <section>
-  <h2><a name="7._GUIで映像表示してみる（tkinter）">7. GUIで映像表示してみる（tkinter）</a></h2>
+  <h2><a id="7._GUIで映像表示してみる（tkinter）">7. GUIで映像表示してみる（tkinter）</a></h2>
   <p>ここまでのプログラムは全てOpenCVが作成するウィンドウ表示でした。<br>ここでは独自の GUI を作成してここに映像表示する例を示します。</p>
   <p>GUI 表示の実現方法もいろいろありますが、ここでは Python 標準の tkinter を使用してみます。</p>
   <p>&nbsp;</p>
@@ -1392,7 +1389,7 @@ if __name__ == "__main__":
 <p>&nbsp;</p>
 
 <section>
-  <h2><a name="ソースコード所在">ソースコード所在</a></h2>
+  <h2><a id="ソースコード所在">ソースコード所在</a></h2>
   <p>本ページで紹介のソースコードは、下記 github より取得できます。</p>
   <p>下記 github のソースコードと本ページの内容は差異がある場合があります。</p>
   <p><a href="https://github.com/i-pro-corp/python-examples" target="_blank">i-pro-corp/python-examples: Examples for i-PRO cameras. (github.com)</a></p>
@@ -1401,11 +1398,9 @@ if __name__ == "__main__":
 <p>&nbsp;</p>
 
 <section>
-  <h2><a name="ライセンス">ライセンス</a></h2>
+  <h2><a id="ライセンス">ライセンス</a></h2>
 <p>本ページの情報は、特記無い限り下記ライセンスで提供されます。</p>
-<table class="border-collapse" style="width: 600px; background-color: #F0F0F0; word-break: break-word;">
-  <tr>
-    <td>
+<div class="license">
     <br>Copyright 2022 i-PRO Co., Ltd.<br><br>Licensed under the Apache License, Version 
     2.0 (the "License");<br>you may not use this file except in compliance with 
     the License.<br>You may obtain a copy of the License at <br><br>&nbsp;&nbsp;&nbsp;
@@ -1416,16 +1411,15 @@ if __name__ == "__main__":
     CONDITIONS OF ANY KIND, either express or implied. <br>See the License for 
     the specific language governing permissions and<br>limitations under the 
     License. <br> <br>
-    </td>
-  </tr>
-</table>
+</div>
   <p>&nbsp;</p>
   <p>&nbsp;</p>
 </section>
 
 
 <section>
-  <h2><a name="参考">参考</a></h2>
+  <div id="参考"></div>
+  <h2>参考</h2>
 	<ul>
 		<li>[1] ネットワークカメラCGIコマンドインターフェース仕様書　統合版<br>
       <a href="https://connect.panasonic.com/jp-ja/products-services_security_support_specifications-manuals-firms-dvlp_2012100910461872" target="_blank">
