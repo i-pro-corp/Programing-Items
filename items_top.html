@@ -14,6 +14,7 @@
   <base target="contents">
 	
   <!-- CSS -->
+	<link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
   <link href="./design_items.css" rel="stylesheet">
 
   <script type="text/javascript">
@@ -47,12 +48,10 @@
           // アイコン更新
           $(this).toggleClass("active-tab").find(".menu-link").toggleClass("active");
 
-          /*
           // クリックしたメニュー以外のコンテントを閉じる
           $(".menu-list .accordion-content").not($(this).next()).slideUp("fast").removeClass("open");
           // クリックしたメニュー以外のアイコンを '+' にする
           $(".menu-list .accordion-toggle").not(jQuery(this)).removeClass("active-tab").find(".menu-link").removeClass("active");
-          */
         }
       );
     }); // jQuery load
@@ -62,28 +61,46 @@
 
 <body>
 
-  <div id="menu-container">
-    <ul class="menu-list">
-      <li><a href="whats_new.html" onclick="checkedOff();">What's New</a></li>
-      <li class="accordion-toggle" style="list-style-type:none;">
-        <a class="menu-link">Python</a>
-      </li>
+<!-- Bing Mebmaster Tools 指摘対応 -->
+<h1 class="display-none">top メニュー</h1>
+
+<div class="menu-container">
+  <ul class="menu-list">
+    <li style="list-style-type:none;"><a href="whats_new.html" onclick="checkedOff();">What's New</a></li>
+  </ul>
+</div>
+
+<div class="menu-container">
+  <ul class="menu-list">
+    <li class="accordion-toggle" style="list-style-type:none;">
+      <a class="menu-link">Python</a>
+    </li>
+    <ul class="menu-submenu accordion-content">
+      <li><a href="Python/install_python.html" onclick="checkedOff();">Python をインストールする</a></li>
+      <li>i-PRO カメラとPCをつないでみる</li>
       <ul>
-        <li><a href="Python/install_python.html" onclick="checkedOff();">Python をインストールする</a></li>
-        <li class="accordion-toggle">
-          <a class="menu-link">i-PRO カメラとPCをつないでみる</a>
-        </li>
-        <ul>
-          <li><a href="Python/connect_camera/connect_with_rtsp.html" onclick="checkedOff();">RTSP で画像を取得する</a></li>
-          <li><a href="Python/connect_camera/connect_with_jpeg.html" onclick="checkedOff();">JPEG で画像を取得する</a></li>
-          <li><a href="Python/connect_camera/connect_with_mjpeg.html" onclick="checkedOff();">MJPEG で画像を取得する</a></li>
-          <li><a href="Python/connect_camera/connect_to_wv-xae200w.html" onclick="checkedOff();">機能拡張ソフトウェア(WV-XAE200WUX)と接続する</a></li>
-          <li><a href="Python/connect_camera/image_classification_vgg.html" onclick="checkedOff();">画像分類 - VGG16</a></li>
-          <li>物体検知 - MobileNet-SSD (近日公開予定)</li>
-        </ul>
+        <li><a href="Python/connect_camera/connect_with_rtsp.html" onclick="checkedOff();">RTSP で画像を取得する</a></li>
+        <li><a href="Python/connect_camera/connect_with_jpeg.html" onclick="checkedOff();">JPEG で画像を取得する</a></li>
+        <li><a href="Python/connect_camera/connect_with_mjpeg.html" onclick="checkedOff();">MJPEG で画像を取得する</a></li>
+        <li><a href="Python/connect_camera/connect_to_wv-xae200w.html" onclick="checkedOff();">機能拡張ソフトウェア(WV-XAE200WUX)と接続する</a></li>
+        <li><a href="Python/connect_camera/image_classification_vgg.html" onclick="checkedOff();">画像分類 - VGG16</a></li>
+        <li><a href="Python/connect_camera/mobilenet-ssd.html" onclick="checkedOff();">物体検知 - MobileNet-SSD</a></li>
       </ul>
     </ul>
-  </div>
+  </ul>
+</div>
+
+<div class="menu-container">
+  <ul class="menu-list">
+    <li class="accordion-toggle" style="list-style-type:none;">
+      <a class="menu-link">AIカメラ機能拡張ソフトウェアを作る</a>
+    </li>
+    <ul class="menu-submenu accordion-content">
+      <li><a href="make_ai_extension_software/load_to_the_ai_camera_engineer.html" >カメラエンジニアへの道！</a></li>
+    </ul>
+  </ul>
+</div>
+
   
   <hr>
   
