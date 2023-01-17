@@ -1,0 +1,376 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="kinoshita hidetosi (木下英俊)">
+  <meta name="description" content="Introducing programming for i-PRO cameras.">
+  <meta name="keywords" content="i-PRO">
+  
+  <!-- キャッシュ無効化 -->
+  <meta http-equiv="Cache-Control" content="no-cache">
+	
+  <!-- タイトル -->
+  <title>OpenCV をインストールする | i-PRO - Programming Items</title>
+
+  <!-- ファビコン -->
+  <link rel="shortcut icon" href="../favicon.ico">
+	
+  <!-- CSS -->
+  <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="../design.css" type="text/css">
+  
+	<!-- Start for 'google-code-prettify' -->
+	<link href="../prettify/styles/desert.css" rel="stylesheet" type="text/css">
+	<script src="../prettify/prettify.js" type="text/javascript"></script>
+	<!-- End for 'google-code-prettify' -->	
+	
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5DFRG3H0KB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-5DFRG3H0KB');
+  </script>  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+</head>
+
+<body onload="prettyPrint();">
+	
+<h1>OpenCV をインストールする</h1>
+
+<p>&nbsp;</p>
+
+<div class="status_information">
+  <div>
+  </div>
+  <div>
+    <p>本ページは i-PRO株式会社 の有志メンバーにより記載されたものです。<br>本ページの情報は <a href="#ライセンス">ライセンス</a> に記載の条件で提供されます。</p>
+  </div>
+</div>
+<p> &nbsp;</p>
+
+<div class="mokuji">
+  <nav>
+    <h2>目次</h2>
+    <p><a href="#1._インストーラをダウンロードする">1. インストーラをダウンロードする</a></p>
+    <p><a href="#2._インストーラを実行する">2. インストーラを実行する</a></p>
+    <p><a href="#3._フォルダ名を変更">3. フォルダ名を変更</a></p>
+  	<p><a href="#4._環境変数_Path_を設定する">4. 環境変数 Path を設定する</a></p>
+  	<p><a href="#5._Visual_Studio_で新しいプロジェクトを作成する">5. Visual Studio で新しいプロジェクトを作成する</a></p>
+  	<p><a href="#6._追加のインクルードディレクトリを設定する">6. 追加のインクルードディレクトリを設定する</a></p>
+  	<p><a href="#7._追加のライブラリディレクトリを設定する">7. 追加のライブラリディレクトリを設定する</a></p>
+  	<p><a href="#8._追加の依存ファイルを設定する">8. 追加の依存ファイルを設定する</a></p>
+  	<p><a href="#9._動作確認用プログラムを作成して確認する">9. 動作確認用プログラムを作成して確認する</a></p>
+  	<p><a href="#うまく動作できない場合の対応例">うまく動作できない場合の対応例</a></p>
+    <br>
+    <p><a href="#ライセンス">ライセンス</a></p>
+    <p><a href="#参考">参考</a></p>
+  </nav>
+</div>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<section>
+	<h4>[概要]</h4>
+	<p> OpenCV ホームページからインストーラを入手してインストールし、Visual Studio で必要な設定を行って使用できるようにするまでの手順を記載します。</p>
+	<ul>
+	  <li>OpenCV のバージョン番号は本ページ記載時点の内容です。適宜読み替えて実施してください。</li>
+	  <li>他の Visual Studio（例： 2019）でも同様の手順で設定できるはずですが、確認と下記説明は 2022 で行っています。</li>
+	</ul>
+	<p> &nbsp;</p>
+	
+	<h4>[環境]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>コンパイラ :</td>
+	      <td>Visual Studio 2022 pro.,</td>
+	      <td>Version 17.4.3 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>ライブラリ :</td>
+	      <td>OpenCV,</td>
+	      <td>4.6.0 </td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>Windows11 home,</td>
+	    <td>22H2</td>
+	  </tr>
+	  
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+	<p> &nbsp;</p>
+	<p> &nbsp;</p>
+	
+<section>
+	<h2> <a name="1._インストーラをダウンロードする">1. インストーラをダウンロードする</a></h2>
+	<p> ブラウザで <a href="https://opencv.org/releases" target="_blank">
+	https://opencv.org/releases</a> を開き、OpenCV-4.6.0 の Windows 
+	をクリックしてインストーラをダウンロードします。</p>
+	<p> <img alt="OpenCV をダウンロード" src="install_opencv/img1E.jpg" width="800"></p>
+	<p> &nbsp;</p>
+</section>
+
+<p> &nbsp;</p>
+	
+<section>
+	<h2> <a name="2._インストーラを実行する">2. インストーラを実行する</a></h2>
+	<p> ダウンロードしたファイル（ここでは 
+	"opencv-4.6.0-vc14_vc15.exe"）をダブルクリックしてインストーラを起動します。"Extract to:" に "C:\" 
+	を入力して [Exctract] ボタンをクリックします。</p>
+	<p> <img alt="インストーラを起動" src="install_opencv/img20.jpg"></p>
+	<p> &nbsp;</p>
+	<p> 下図はインストール中の様子です。</p>
+	<p> <img alt="インストール中の様子" src="install_opencv/img22.jpg" width="800"></p>
+	<p> &nbsp;</p>
+</section>
+
+<p> &nbsp;</p>
+
+<section>
+	<h2> <a name="3._フォルダ名を変更">3. フォルダ名を変更</a></h2>
+	<p> "C:\opencv" フォルダができているので、このフォルダ名を "opencv4.6.0" へ変更します。</p>
+	<p> &nbsp;</p>
+    <div class="status_information">
+      <div>
+      </div>
+      <div>
+        <p><strong>NOTE</strong></p>
+        <p>このフォルダ名変更は必須ではありませんが、今後の新しい OpenCV 
+		バージョンを追加でインストールしていく場合にいろいろ都合が良いので実施を推奨します。</p>
+      </div>
+    </div>
+    <p> &nbsp;</p>
+</section>
+
+<p> &nbsp;</p>
+
+<section>
+	<h2> <a name="4._環境変数_Path_を設定する">4. 環境変数 Path を設定する</a></h2>
+	<p> 環境変数 Path へインストールした OpenCV へのパスを設定します。</p>
+	<p> スタートボタンを右クリック &gt; "設定" &gt; "システム" &gt; "バージョン情報" &gt; "デバイスの仕様" &gt; "システムの詳細設定" 
+	をクリックすると、"システムのプロパティ"（下図） を表示します。</p>
+	<p> <img alt="システムのプロパティ" src="install_opencv/img24.jpg" width="500"></p>
+	<p> &nbsp;</p>
+	<p> [環境変数(N)...] ボタンをクリックすると下図画面を表示します。</p>
+	<p> 下段の「システム環境変数(S)」にある Path を選択して、［編集(I)...］ボタンをクリックします。</p>
+	<p> <img alt="環境変数" src="install_opencv/img25.jpg" width="600"></p>
+	<p> &nbsp;</p>
+	<p> ［新規］ボタンをクリックして "C:\opencv4.6.0\build\x64\vc15\bin" を入力し、［OK］をクリックします。</p>
+	<p> <img alt="システム環境変数 Path の設定" src="install_opencv/img27.jpg" width="600"></p>
+	<p> &nbsp;</p>
+	<p> 全てのウィンドウを閉じてから、Windows を再起動します。</p>
+	<p> 以上で OpenCV のインストールを完了です。</p>
+	<p> &nbsp;</p>
+	<p> 以降は "Visual Studio" で新しいプロジェクトを作成するたびに行う設定手順の説明です。</p>
+	<p> &nbsp;</p>
+</section>
+
+<p> &nbsp;</p>
+
+<section>
+	<h2> <a name="5._Visual_Studio_で新しいプロジェクトを作成する">5. Visual Studio で新しいプロジェクトを作成する</a></h2>
+    <div class="status_information">
+      <div>
+      </div>
+      <div>
+        <p>以降は "Visual Studio" で行う設定についての説明です。新しいプロジェクトを作成するたびにこれら設定を行う必要があります。</p>
+      </div>
+    </div>
+	<p> &nbsp;</p>
+	<p> Visual Studio を起動して「新しいプロジェクトの作成(N)」をクリックします。</p>
+	<p> 
+	<img alt="Visual Studio を起動" class="border_with_drop-shadow" src="install_opencv/img4.jpg" width="800"></p>
+	<p> &nbsp;</p>
+	<p> ここでは説明として「コンソール アプリ」のプロジェクトを選択しますが、あなたが作成するアプリの適切なプロジェクトを選択します。</p>
+	<p> 選択後［次へ(N)］ボタンをクリックします。</p>
+	<p> 
+	<img alt="&quot;コンソール アプリ&quot; を作成する" class="border_with_drop-shadow" src="install_opencv/imgA.jpg" width="800"></p>
+	<p> &nbsp;</p>
+	<p> "プロジェクト名"、"場所"、"ソリューション名" を設定します。</p>
+	<p> ここでは "OpenCV_sample" という名称を設定しました。</p>
+	<p> 設定後［作成(C)］ボタンをクリックします。</p>
+	<p> 
+	<img alt="&quot;新しいプロジェクトを構成します&quot;" class="border_with_drop-shadow" src="install_opencv/imgC.jpg" width="800"></p>
+	<p> &nbsp;</p>
+	<p> 以上の設定を完了した直後の画面です。</p>
+	<p> <a href="install_opencv/vs_initial_state.jpg" target="_blank">
+	<img alt="プロジェクト作成直後の画面" class="border_with_drop-shadow" src="install_opencv/vs_initial_state.jpg" width="800"></a></p>
+	<p> &nbsp;</p>
+</section>
+
+<p> &nbsp;</p>
+
+<section>
+	<h2> <a name="6._追加のインクルードディレクトリを設定する">6. 追加のインクルードディレクトリを設定する</a></h2>
+	<p> ソリューションエクスプローラーのプロジェクト名（ここでは OpenCV_sample）を右クリックして、<br>"プロパティ" &gt; 
+	"構成プロパティ" を開きます。</p>
+	<p> "構成" を "全ての構成" にします、</p>
+	<p> 続いて "C/C++" &gt; "全般" &gt; "追加のインクルードディレクトリ" に "<strong>C:\opencv4.6.0\build\include</strong>" 
+	を入力します。</p>
+	<p> <img alt="追加のインクルードディレクトリ" src="install_opencv/img1C.jpg" width="800">&nbsp;</p>
+	<p> &nbsp;</p>
+</section>
+
+<p> &nbsp;</p>
+
+<section>
+	<h2> <a name="7._追加のライブラリディレクトリを設定する">7. 追加のライブラリディレクトリを設定する</a></h2>
+	<p> "リンカー" &gt; "全般" &gt; "追加のライブラリディレクトリ" に "<strong>C:\opencv4.6.0\build\x64\vc15\lib</strong>" 
+	を入力します。</p>
+	<p> 
+	<img alt="追加のライブラリディレクトリの設定" src="install_opencv/img1E1.jpg" width="800"></p>
+	<p> &nbsp;</p>
+</section>
+
+<p> &nbsp;</p>
+
+<section>
+	<h2> <a name="8._追加の依存ファイルを設定する">8. 追加の依存ファイルを設定する</a></h2>
+	<p> "構成" を "Release" にします。</p>
+	<p> "リンカー" &gt; "入力" &gt; "追加の依存ファイル" に "<strong>opencv_world460.lib</strong>" 
+	を追加します。</p>
+	<p> 
+	<img alt="追加の依存ファイルの設定(Release)" src="install_opencv/img21.jpg" width="800"></p>
+	<p> &nbsp;</p>
+	<p> "構成" を "Debug" にします。</p>
+	<p> "リンカー" &gt; "入力" &gt; "追加の依存ファイル" に "<strong>opencv_world460d.lib</strong>" 
+	を追加します。</p>
+	<p> 
+	<img alt="追加の依存ファイルの設定（Debug）" src="install_opencv/img23.jpg" width="800"></p>
+	<p> &nbsp;</p>
+</section>
+
+<p> &nbsp;</p>
+
+<section>
+	<h2> <a name="9._動作確認用プログラムを作成して確認する">9. 動作確認用プログラムを作成して確認する</a></h2>
+	<p> 以上の設定が正しくできていることを簡単なテストプログラムを作成することで確認します。</p>
+	<p> "OpenCV_sample.cpp" に以下の動作確認用プログラムを入力します。</p>
+	<pre class="prettyprint linenums lang-cpp" style="width: 800px">
+#include &lt;iostream&gt;
+#include &lt;opencv2/opencv.hpp&gt;
+
+using namespace cv;
+
+int main()
+{
+    Mat img_src = Mat::zeros(Size(640, 480), CV_8UC3);
+    imshow("src", img_src);
+    waitKey(0);
+    return EXIT_SUCCESS;
+}</pre>
+	<p> &nbsp;</p>
+	<p> 
+	<img alt="Visual Studio 画面の様子" src="install_opencv/visual_studio_view.jpg" width="800"></p>
+	<p> &nbsp;</p>
+	<p> メニューバーの "ビルド" &gt; "OpenCV_sample のビルド" をクリックします。</p>
+	<p> 出力の最後に「失敗 0」を表示すればビルド成功です。</p>
+	<p> "デバッグ" &gt; "デバッグなしで開始" をクリック、でプログラムを実行します。</p>
+	<p> タイトルバーに "src" と書かれた黒いウィンドウを表示すれば成功です。</p>
+	<p> &nbsp;</p>
+	<p> <img alt="実行画面" src="install_opencv/img2E.gif" width="600"></p>
+	<p> &nbsp;</p>
+</section>
+
+<p> &nbsp;</p>
+<hr>
+<p> &nbsp;</p>
+
+<section>
+	<h2> <a name="うまく動作できない場合の対応例">うまく動作できない場合の対応例</a></h2>
+	<p> &nbsp;</p>
+	<h4> (例1) "opencv_world460.dll" が見つからない</h4>
+	<p> このエラーが出る場合、<a href="#4._環境変数_Path_を設定する">環境変数 Path を設定する</a> を再確認してください。また Path で設定したフォルダに 
+	"opencv_world460.dll" が存在することを確認してください。</p>
+	<p> <img alt="システムエラー" src="install_opencv/img3.jpg" width="500"></p>
+</section>
+	
+<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>
+
+<section>
+  <h2><a name="ライセンス">ライセンス</a></h2>
+<p>本ページの情報は、特記無い限り下記ライセンスで提供されます。</p>
+<div class="license">
+    <br>Copyright 2023 i-PRO Co., Ltd.<br><br>Licensed under the Apache License, Version 
+    2.0 (the "License");<br>you may not use this file except in compliance with 
+    the License.<br>You may obtain a copy of the License at <br><br>&nbsp;&nbsp;&nbsp;
+    <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">http://www.apache.org/licenses/LICENSE-2.0</a><br><br>
+    Unless required by 
+    applicable law or agreed to in writing, software <br>distributed under the 
+    License is distributed on an "AS IS" BASIS, <br>WITHOUT WARRANTIES OR 
+    CONDITIONS OF ANY KIND, either express or implied. <br>See the License for 
+    the specific language governing permissions and<br>limitations under the 
+    License. <br> <br>
+</div>
+  <p>&nbsp;</p>
+</section>
+
+<p>&nbsp;</p>
+
+<section>
+	<h2><a name="参考">参考</a></h2>
+	<ul>
+		<li>Home - OpenCV<br><a href="https://opencv.org/" target="_blank">
+		https://opencv.org/</a></li>
+		<li>Releases - OpenCV<br>
+		<a href="https://opencv.org/releases/" target="_blank">
+		https://opencv.org/releases/</a></li>
+	</ul>
+</section>
+
+<p>&nbsp;</p>
+
+<hr>
+
+<p>&nbsp;</p>
+
+<section>
+	<h2 style="margin-bottom:5px">変更履歴</h2>
+	<table>
+	  <tr>
+	    <td class="td_history_date">2023/1/18</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">新規作成,</td>
+			<td class="td_history">木下英俊</td>
+		</tr>
+	</table>
+</section>
+
+<p>&nbsp;</p>
+<p><a href="../index.html" target="_parent">i-PRO - Programming Items トップページ</a></p>
+<p><a href="../privacy_policy.html">プライバシーポリシー</a></p>
+<p>&nbsp;</p>
+
+<footer>
+	<p><small>&copy; 2023  i-PRO Co., Ltd.</small></p>
+</footer>
+
+</body>
+</html>
