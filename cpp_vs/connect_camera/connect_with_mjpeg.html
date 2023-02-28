@@ -76,16 +76,18 @@
 <p> &nbsp;</p>
 <p>&nbsp;</p>
 
-<p> 本ページでは、i-PRO カメラとPCを MJPEG(Motion JPEG) 
-で接続して映像を画面へ表示するプログラムを&nbsp;c++ (Visual Studio) で作成します。</p>
-<p> Python の記事は <a href="../../Python/connect_camera/connect_with_mjpeg.html">
+<p>本ページでは、<strong>i-PRO</strong> カメラとPCを <strong>MJPEG</strong> により接続してPC画面へ表示するプログラムを 
+c++ (Visual Studio) 
+で作成する例を紹介します。とても短いプログラムで i-PRO カメラの映像を見ることができます。動作確認は i-PRO mini (WV-S7130)、モジュールカメラ（AIスターターキット）を使って行いましたが、ほとんどの i-PRO 
+カメラでそのまま利用できるはずです。ぜひお試しください。</p>
+<p>Python の記事は <a href="../../Python/connect_camera/connect_with_mjpeg.html">
 <strong>こちら</strong></a> を参照ください。</p>
     
 <video controls muted autoplay="y" loop="y" width="800">
   <source src="connect_with_mjpeg/mjpeg_first.mp4" type="video/mp4">
   動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
 </video>
-<p>[動画] MJPEG でカメラと接続して映像表示してみた様子 （注意：ストリーム1～4 を全て Off に設定しています）</p>
+<p>[動画] MJPEG でカメラと接続して映像表示してみた様子</p>
     
 <p> &nbsp;</p>
 <hr>
@@ -107,7 +109,7 @@
 </ul>
 
 <p>
-<a href="../../Python/connect_camera/images/i-PRO_mini.jpg" target="_blank">
+<a href="images/i-PRO_mini.jpg" target="_blank">
 <img alt="i-PRO mini 画像" src="images/i-PRO_mini.jpg" class="border_with_drop-shadow" width="348"></a></p>
 
 <p>&nbsp;</p>
@@ -123,8 +125,8 @@
 <p> 
 <a href="images/ai_starter_kit_1.png" target="_blank">
 <img alt="AI スターターキット 画像(1)" class="border_with_drop-shadow" src="images/ai_starter_kit_1.png" width="404"></a>
-<a href="../../Python/connect_camera/images/ai_starter_kit_2.png" target="_blank">
-<img alt="AI スターターキット 画像(2)" class="border_with_drop-shadow" src="../../Python/connect_camera/images/ai_starter_kit_2.png" width="444"></a></p>
+<a href="images/ai_starter_kit_2.png" target="_blank">
+<img alt="AI スターターキット 画像(2)" class="border_with_drop-shadow" src="images/ai_starter_kit_2.png" width="444"></a></p>
 <p> 
 &nbsp;</p>
 <p> 
@@ -356,6 +358,12 @@ int main(int argc, const char* argv[])
 <section>
 	<h2 style="margin-bottom:5px">変更履歴</h2>
 	<table>
+	  <tr>
+	    <td class="td_history_date">2023/3/1</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">説明および表現を一部更新,</td>
+	    <td class="td_history">木下英俊</td>
+	  </tr>
 	  <tr>
 	    <td class="td_history_date">2023/2/15</td>
 	    <td class="td_history_separator">-</td>

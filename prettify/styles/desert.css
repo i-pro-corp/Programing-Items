@@ -1,6 +1,6 @@
 ﻿/* desert scheme ported from vim to google prettify */
-/* 水平スクロールバーを表示させるためoverflow-x: scrollを追加 */
-pre.prettyprint { display: block; background-color: #333; color:white; overflow-x: scroll; }
+/* 水平スクロールバー表示について "overflow-x: auto" を追加 */
+pre.prettyprint { display: block; background-color: #333; color:white; overflow-x: auto; }
 pre .nocode { background-color: none; color: #000 }
 pre .str { color: #ffa0a0 } /* string  - pink */
 pre .kwd { color: #f0e68c; font-weight: bold }

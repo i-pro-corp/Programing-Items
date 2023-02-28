@@ -52,7 +52,7 @@
 
 <body onload="prettyPrint();">
 
-<h1>MJPEG で画像を取得する</h1>
+<h1>MJPEG で画像を取得する (Python)</h1>
 
 <p> &nbsp;</p>
     <div class="status_information">
@@ -88,7 +88,17 @@
 <p> &nbsp;</p>
 <p>&nbsp;</p>
 
-<p> i-PRO のカメラ i-PRO mini (WV-S7130)、モジュールカメラ（AIスターターキット）を入手したので、カメラとPCを接続して動作するプログラムを作成してみました。こちらで紹介します。ここで記載の内容は、ほとんどの i-PRO カメラでそのまま利用できると思いますが未確認です。</p>
+<p>本ページでは、<strong>i-PRO</strong> カメラとPCを <strong>MJPEG</strong> により接続してPC画面へ表示するプログラムを Python 
+で作成する例を紹介します。とても短いプログラムで i-PRO カメラの映像を見ることができます。動作確認は i-PRO mini (WV-S7130)、モジュールカメラ（AIスターターキット）を使って行いましたが、ほとんどの i-PRO 
+カメラでそのまま利用できるはずです。ぜひお試しください。</p>
+<p>&nbsp;</p>
+  
+<video controls muted autoplay="y" loop="y" width="800">
+  <source src="connect_with_mjpeg/mjpeg_first_30fps.mp4" type="video/mp4">
+  動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+</video>
+<p>[動画] MJPEG でカメラと接続して映像表示した様子</p>
+
 <p> &nbsp;</p>
 <hr>
 <p>&nbsp;</p>
@@ -155,9 +165,11 @@
     <p>&nbsp;</p>
     <p><span class="cpp-source">http://&lt;user-id&gt;:&lt;user-password&gt;@&lt;カメラのIPアドレス&gt;/nphMotionJpeg?Resolution=&lt;解像度&gt;&amp;Quality=&lt;品質&gt;&amp;Framerate=&lt;フレームレート&gt;</span></p>
     <p>&nbsp;</p>
-    <p>(例) <span class="cpp-source">
-    http://admin:password@192.168.0.10/nphMotionJpeg?Resolution=1920x1080&amp;Quality=Standard&amp;Framerate=15</span></p>
-    <p>&nbsp;</p>
+    <p>(具体例)</p>
+    
+    <blockquote>
+      http://admin:password@192.168.0.10/nphMotionJpeg?Resolution=1920x1080&amp;Quality=Standard&amp;Framerate=15</blockquote>
+    
     <p>&nbsp;</p>
     <p class="auto-style3"><strong>注意事項：</strong></p>
     <ul>
@@ -298,37 +310,41 @@ while True:
 cap.release()
 cv2.destroyAllWindows()</pre>
 
-    <p>&nbsp;</p>
-    <p>上記プログラムを動かしてみます。</p>
-  	<p>Windows での実行はこんな感じで行います。</p>
-    <p><span class="cpp-source"><strong>python</strong> connect_with_mjpeg_1_1.py</span></p>
-    <p>&nbsp;</p>
-    <p>Linux での実行はこんな感じで行います。</p>
-    <p><span class="cpp-source"><strong>python3</strong> connect_with_mjpeg_1_1.py</span></p>
-    <p>&nbsp;</p>
-    <p>Windows環境で複数の Python バージョンをインストールしている場合、下図のような感じで実行バージョンを指定することもできます。<br>
-    こちらはバージョン 3.10 の Python で実行を指示する例です。</p>
-    <p><span class="cpp-source"><strong>py</strong> -3.10 connect_with_mjpeg_1_1.py</span></p>
-    <p>&nbsp;</p>
-    <p>上記プログラムを動かした様子を動画で示します。</p>
-    <p>こんなに簡単なプログラムでとても快適な映像表示を実現することができました。</p>
-    <p>[注意] 上記でも記載しましたが、カメラ側の設定でストリーム(1)～(4)を Off にすることで滑らかな映像表示を実現できました。On 
-    のままでもプログラム自体は動作しますが、5fps 程度の映像となりました。</p>
-    
-<video controls muted autoplay="y" loop="y" src="connect_with_mjpeg/mjpeg_first_30fps.mp4" width="800px">
-  <p>動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。</p>
-</video>
+  <p>&nbsp;</p>
+  <p>上記プログラムを動かしてみます。</p>
+  <p>Windows ではこんな感じで実行します。</p>
+  <pre style="width: 500px; color: #FFFFFF; background-color: #000000">$ <strong>python</strong> connect_with_mjpeg_1.py</pre>
+  <p>&nbsp;</p>
+  <p>Linux はこんな感じで実行します。</p>
+  <pre style="width: 500px; color: #FFFFFF; background-color: #000000">$ <strong>python3</strong> connect_with_mjpeg_1.py</pre>
+  <p>&nbsp;</p>
+  <p>Windows環境で複数の Python バージョンをインストールしている場合、下図のような感じで実行バージョンを指定することもできます。<br>
+  こちらはバージョン 3.10 の Python で実行する例です。</p>
+  <pre style="width: 500px; color: #FFFFFF; background-color: #000000;">$ <strong style="box-sizing: inherit">py -3.10</strong> connect_with_mjpeg_1.py</pre>
+  <p>&nbsp;</p>
 
-  <p>[動画] MJPEG でカメラと接続して映像表示してみた様子 (30fps) （注意：ストリーム1～4 を全て Off に設定しています）</p>
+  <p>上記プログラムを動かした様子を動画で示します。</p>
+  <p>こんなに簡単なプログラムでとても快適な映像表示を実現することができました。</p>
+  <p>[注意] 上記でも記載しましたが、カメラ側の設定でストリーム(1)～(4)を Off にすることで滑らかな映像表示を実現できました。On 
+  のままでもプログラム自体は動作しますが、5fps 程度の映像となりました。</p>
+  
+  <video controls muted autoplay="y" loop="y" width="800">
+    <source src="connect_with_mjpeg/mjpeg_first_30fps.mp4" type="video/mp4">
+    動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+  </video>
+  <p>[動画] MJPEG でカメラと接続して映像表示した様子 (30fps) （注意：ストリーム1～4 を全て Off に設定しています）</p>
+  
   <p>&nbsp;</p>
   <p>&nbsp;</p>
+  
   <h3><a name="2-2._方法2">2-2. 方法2</a></h3>
-    <p>下記方法でも MJPEG で接続して映像表示できます。記事[2]を参考に作成してみました。</p>
+  <p>下記方法でも MJPEG で接続して映像表示できます。記事[2]を参考に作成してみました。</p>
   <p>&nbsp;</p>
+  
   <h4>[プログラム]</h4>
   <p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/python-examples/blob/main/connect_with_mjpeg/connect_with_mjpeg_1_2.py" target="_blank">connect_with_mjpeg_1_2.py</a>&quot;]</p>
   
-    <pre class="prettyprint linenums lang-py">'''
+  <pre class="prettyprint linenums lang-py">'''
 [Abstract]
     Try connecting to an i-PRO camera with MJPEG(Motion JPEG).
     MJPEG(Motion JPEG) で i-PRO カメラと接続します
@@ -1819,6 +1835,12 @@ if __name__ == "__main__":
 <section>
 	<h2 style="margin-bottom:5px">変更履歴</h2>
 	<table>
+	  <tr>
+	    <td class="td_history_date">2023/3/1</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">説明および表現を一部更新,</td>
+	    <td class="td_history">木下英俊</td>
+	  </tr>
 	  <tr>
 	    <td class="td_history_date">2022/7/20</td>
 	    <td class="td_history_separator">-</td>

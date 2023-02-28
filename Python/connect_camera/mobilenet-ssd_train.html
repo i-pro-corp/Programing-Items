@@ -1,0 +1,2238 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="kinoshita hidetosi (木下英俊)">
+  <meta name="description" content="Introducing programming for i-PRO cameras.">
+  <meta name="keywords" content="i-PRO">
+  
+  <!-- キャッシュ無効化 -->
+  <meta http-equiv="Cache-Control" content="no-cache">
+	
+  <!-- タイトル -->
+  <title>物体検知 － MobileNet-SSD (学習編) | i-PRO - Programming Items</title>
+	
+  <!-- ファビコン -->
+  <link rel="shortcut icon" href="../../favicon.ico">
+  
+  <!-- CSS -->
+  <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="../../design.css" type="text/css">
+  
+	<!-- Start for 'google-code-prettify' -->
+	<link href="../../prettify/styles/desert.css" rel="stylesheet" type="text/css">
+	<script src="../../prettify/prettify.js" type="text/javascript"></script>
+	<!-- End for 'google-code-prettify' -->	
+	
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5DFRG3H0KB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-5DFRG3H0KB');
+  </script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+  <style type="text/css">
+    .auto-style1 {
+      background-color: #505000;
+    }
+    .auto-style2 {
+      text-decoration: underline;
+    }
+    .auto-style3 {
+      color: #FF0000;
+    }
+    .auto-style6 {
+      border-width: 0px;
+    }
+    .auto-style7 {
+      border-width: 1px;
+    }
+    .auto-style8 {
+      color: #FFFFFF;
+    }
+  </style>
+  
+</head>
+
+<body onload="prettyPrint();">
+	
+<h1>物体検知 － MobileNet-SSD (学習編)</h1>
+
+<p> &nbsp;</p>
+<div class="status_information">
+  <div>
+  </div>
+  <div>
+    <p>本ページは i-PRO株式会社 の有志メンバーにより記載されたものです。<br>本ページの情報は <a href="#ライセンス">ライセンス</a> に記載の条件で提供されます。</p>
+  </div>
+</div>
+
+<p> &nbsp;</p>
+<div class="mokuji">
+  <nav>
+    <h2>目次</h2>
+    <p>=== 1-4章は別ページ「<a href="mobilenet-ssd.html">物体検知 － MobileNet-SSD (推論編)</a>」で記載 ===</p>
+    <p>1. 準備</p>
+    <p>&nbsp;&nbsp; 1-1. PyTorch をインストールする</p>
+    <p>&nbsp;&nbsp; 1-2. 必要なライブラリをインストールする</p>
+    <p>2. MobileNetV1-SSD</p>
+    <p>&nbsp;&nbsp; 2-1. MobileNetV1-SSD を動かす（PC 内蔵カメラ）</p>
+    <p>&nbsp;&nbsp; 2-2. MobileNetV1-SSD を動かす（i-PRO カメラ）</p>
+    <p>3. MobileNetV2-SSD-Lite</p>
+    <p>&nbsp;&nbsp; 3-1. MobileNetV2-SSD-Lite を動かす（PC 内蔵カメラ）</p>
+    <p>&nbsp;&nbsp; 3-2. MobileNetV2-SSD-Lite を動かす（i-PRO カメラ）</p>
+    <p>&nbsp;&nbsp; 参考： GPU動作させる場合のソースコード修正について</p>
+    <p>4. MobileNetV3-SSD-Lite</p>
+    <p>&nbsp;&nbsp; 4-1. MobileNetV3-SSD-Lite を動かす（JPEGファイル）</p>
+    <p>&nbsp;&nbsp; 4-2. MobileNetV3-SSD-Lite を動かす（PC 内蔵カメラ）</p>
+    <p>&nbsp;&nbsp; 4-3. MobileNetV3-SSD-Lite を動かす（i-PRO カメラ）</p>
+    <p>&nbsp;</p>
+    <p><a href="#5._学習">5. 学習</a></p>
+    <p>&nbsp;&nbsp; <a href="#5-1._まずはやってみる_(open_images)">5-1. まずはやってみる (Open Images)</a></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-1-1._準備">5-1-1. 準備</a></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-1-2._学習">5-1-2. 学習</a></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-1-3._学習結果と静止画を使って推論">5-1-3. 
+    学習結果と静止画を使って推論</a></p>
+    <p>&nbsp;&nbsp; <a href="#5-2._独自の画像を学習してみる_(Pascal/VOC)">5-2. 独自の画像を学習してみる (Pascal/VOC)</a></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-2-1._準備">5-2-1. 準備</a></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-2-2._アノテーション">5-2-2. アノテーション</a></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-2-3._trainval.txt、test.txt_を用意">5-2-3. trainval.txt、test.txt_を用意</a></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-2-4._学習">5-2-4. 学習</a></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-2-5._学習結果と静止画を使って推論">5-2-5. 学習結果と静止画を使って推論</a>&nbsp;</p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-2-6._学習結果とカメラを使って物体検知してみる_(i-PRO_カメラ)">5-2-6. 学習結果とカメラを使って物体検知してみる (i-PRO カメラ)</a></p>
+    <p><a href="#6._後書き">6. 後書き</a></p>
+    <p>&nbsp;</p>
+  	<p><a href="#ソースコード所在">ソースコード所在</a></p>
+    <p><a href="#ライセンス">ライセンス</a></p>
+    <p><a href="#参考">参考</a></p>
+  </nav>
+</div>
+<p> &nbsp;</p>
+<p><strong>MobileNet-SSD</strong> は、高速に物体物体検知を行うAIモデルの一つです。高い認識性能と共に GPU 
+を搭載しない組み込み機器でも動作する軽量なモデルであることに特徴があります。</p>
+<p>本ページでは、<strong>MobileNet-SSD</strong> とあなたが用意した画像データを使って独自の MobileNet-SSD 
+学習データを作成する方法について記載します。</p>
+<p>&nbsp;</p>
+
+<video controls muted autoplay="y" loop="y" width="800">
+  <source src="mobilenet-ssd_train/LabelImg_tutorial.mp4" type="video/mp4">
+  動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+</video>
+<p>[動画] アノテーション実施の様子</p>
+<p>&nbsp;</p>
+
+<video controls muted autoplay="y" loop="y" width="800">
+  <source src="mobilenet-ssd_train\bird_21723.mp4" type="video/mp4">
+  動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+</video>
+<p>[動画] 独自の MobileNet-SSD 学習データによる認識テスト例</p>
+    
+<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>
+
+<section>
+	<h2> <a name="5._学習">5. 学習</a></h2>
+	<h4>[概要]</h4>
+	<p> あなたが用意した画像データを使って独自の MobileNet-SSD 学習データを作成する手順を紹介します。</p>
+  <p> 以下の順序で進めたいと思います。</p>
+  <ol>
+    <li>使用する AI モデル紹介に記載のチュートリアルに従って学習を行ってみる</li>
+    <li>独自の画像を収集し、ツールを使って自身でアノテーションを行い、これら画像とアノテーションデータを使って学習を行ってみる</li>
+    <li>自身で作成した学習データとカメラを使って物体検知を行ってみる</li>
+  </ol>
+	<p> &nbsp;</p>
+	
+	<section>
+	<h3><a name="5-1._まずはやってみる_(open_images)">5-1. まずはやってみる (Open Images)</a></h3>
+	<h4>[概要]</h4>
+	<p>今回も <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">
+	pytorch-ssd</a> で紹介されているプログラムと内容を使って進めます。</p>
+	<p>ここでは "<a href="https://github.com/qfgaohao/pytorch-ssd#retrain-on-open-images-dataset" target="_blank">Retrain on Open Images Dataset</a>"
+    で説明されている記述に従って学習を実際にやってみます。
+    Python プログラムはもちろん、画像データおよびアノテーションデータなど必要なすべての情報を提供いただいています。
+    こちらの記事は MobileNet-SSD の学習方法を学ぶ最初の教材として最適な内容です。</p>
+	<p>
+	<img alt="&quot;Retrain on Open Images Dataset&quot; 概要" class="border_with_drop-shadow" src="mobilenet-ssd_train/img3.jpg" width="800"></p>
+	<p>&nbsp;</p>
+  <p>使用する学習データ数は以下の通りです。</p>
+      
+  <table class="border-collapse" border="1" width="500">
+    <caption>[Table.] 使用した学習データ数（重複画像を削除後の数です）</caption>
+    <thead class="standard_table">
+      <tr>
+        <th>Class name</th>
+        <th width="25%">Train</th>
+        <th width="25%">Test</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Hundgun</strong></td>
+        <td>545</td>
+        <td>68</td>
+      </tr>
+      <tr>
+        <td><strong>Shotgun</strong></td>
+        <td>416</td>
+        <td>55</td>
+      </tr>
+      <tr>
+        <td><strong>合計</strong></td>
+        <td>961</td>
+        <td>123</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <p>&nbsp;</p>
+
+  <div class="status_information">
+    <div></div>
+    <div>
+      <p><strong>NOTE</strong></p>
+      <p>"Hundgun" と "Shutgun" ２クラスで再学習を行う、という内容です。</p>
+    </div>
+  </div>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+	<h4>[評価環境]</h4>
+  <table>
+  <tbody>
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+
+    <tr>
+      <td>言語 :</td>
+      <td>Python,</td>
+      <td>3.10.7</td>
+    </tr>
+
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+
+    <tr>
+      <td>&nbsp;</td>
+      <td>PyTorch,</td>
+      <td>1.12.1+cpu</td>
+    </tr>
+
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+
+    <tr>
+      <td>OS :</td>
+      <td>Windows 11 home,</td>
+      <td>22H2</td>
+    </tr>
+
+    <tr>
+      <td class="td_separate" colspan="3"></td>
+    </tr>
+  </tbody>
+</table>
+
+  <p>&nbsp;</p>
+  <h4><a name="5-1-1._準備">5-1-1. 準備</a></h4>
+  <p>&nbsp;</p>
+    
+	<p>1. <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">
+	pytorch-ssd</a> をクローンします。（ここまで読まれた方は恐らく完了しているでしょう）</p>
+	<p><a href="mobilenet-ssd.html#2-1._MobileNetV1-SSD_を動かす（PC 内蔵カメラ）">こちら</a> の記載を参考に実施します。</p>
+	<p>&nbsp;</p>
+	<p>2. 以下のコマンドで必要なライブラリーをインストールします。これらは後述の "open_images_downloader.py" 
+	で使用しているライブラリです。</p>
+	<p><span class="cpp-source">pip install <strong>boto3 pandas</strong></span></p>
+	<p>&nbsp;</p>
+	<p>3. ディレクトリ移動</p>
+	<p>ターミナルソフトを起動後、 pytorch-ssd をクローンしたフォルダへ移動（"cd pytorch-ssd" など）します。</p>
+	<p>または Explorer で目的フォルダを開いた後、Explorer のアドレスエリアで "cmd" + [Enter] します。</p>
+	<p>&nbsp;</p>
+	<p>4. まずは再学習済みデータを使ってデモ動作してみます。</p>
+  <p>&nbsp;</p>
+  <p>■Linux の場合</p>
+	<p><a href="https://github.com/qfgaohao/pytorch-ssd#retrain-on-open-images-dataset">"Retrain on Open Images Dataset"</a> 
+	の説明では最初に以下の通り記載されています。これを実行します。</p>
+	  
+	<pre style="background-color: #000000; color: #CCCCCC; overflow-x: auto;">$ wget -P models https://storage.googleapis.com/models-hao/gun_model_2.21.pth
+$ wget -P models https://storage.googleapis.com/models-hao/open-images-model-labels.txt
+$ python run_ssd_example.py mb1-ssd models/gun_model_2.21.pth models/open-images-model-labels.txt ~/Downloads/big.JPG</pre>
+
+  <p>※ 記載の手順で進めても "big.JPG" ファイルはありませんでした。上記コマンドのテストに GUN 
+    の評価画像ファイルを必要としますので、ご自身で評価画像を入手するか、もしくは後述の「5. Download 
+    data」を実施後にこの画像ファイルを使って実験する、などする必要があります。</p>
+
+	<p>&nbsp;</p>
+  <p>■Windows の場合</p>
+	<p>Windows環境では wget を標準で使用できません。代わりに <strong>bitsadmin.exe</strong> 
+	というコマンドを使用することで下記のような感じで同じ内容を実行することができます。<br>
+	<span class="auto-style3">c:\{作業フォルダ}</span> の部分をご自身の環境に合わせて修正して実行してください。</p>
+	
+  <pre style="background-color: #000000; color: #CCCCCC; overflow-x: auto;">$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/gun_model_2.21.pth <span class="auto-style3">c:\{作業フォルダ}</span>\models\gun_model_2.21.pth
+$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/open-images-model-labels.txt <span class="auto-style3">c:\{作業フォルダ}</span>\models\open-images-model-labels.txt
+$ python run_ssd_example.py mb1-ssd models/gun_model_2.21.pth models/open-images-model-labels.txt <span class="auto-style3">{テストするJPEGファイル}</span></pre>
+
+	<p>&nbsp;</p>
+	<p>5. Download data</p>
+	<p>インターネットから学習データ一式を取得します。</p>
+  <p>&nbsp;</p>
+
+  <p>■Linux の場合</p>
+	<p>
+	<a href="https://github.com/qfgaohao/pytorch-ssd#download-data" target="_blank">"Download data"</a>では下記のように書いています。Linux 環境ではこれを実行します。</p>
+	
+	<pre style="background-color: #000000; color: #CCCCCC; overflow-x: auto;">$ python open_images_downloader.py --root ~/data/open_images --class_names "Handgun,Shotgun" --num_workers 20</pre>
+	
+	<p>&nbsp;</p>
+
+  <p>■Windows の場合</p>
+  <p>Windows 環境ではエラーになるので、"--root" 
+	の指定フォルダを下記のように変更すると無事ダウンロードすることができました。JPEG画像がそれなりの枚数あるので、私の環境で全データのダウンロードに５分ぐらいかかりました。</p>
+	
+	<pre style="background-color: #000000; color: #CCCCCC; overflow-x: auto;">$ python open_images_downloader.py --root <strong>./data/open_images</strong> --class_names "Handgun,Shotgun" --num_workers 20</pre>
+	
+	<p>&nbsp;</p>
+	<p>6. 確認</p>
+	<p>ダウンロード完了後の様子を下図に示します。</p>
+	<p>指定したフォルダ "./data/open_images" の中に７つの csv ファイルと、３つのフォルダ（test, train, 
+	validation）に多くのJPEG画像ファイルを保存していることがわかります。</p>
+	<p>
+	<img alt="ダウンロード後のフォルダの様子" src="mobilenet-ssd_train/imgA.jpg" width="800"></p>
+	<p>&nbsp;</p>
+	<p>"test" フォルダ内の様子です。</p>
+	<p><img alt="test フォルダ内の画像(例)" src="mobilenet-ssd_train/imgF.jpg" width="800"></p>
+	<p>&nbsp;</p>
+	<p>"class-descriptions-boxable.csv" の様子です。分類するクラス一覧を記述しているようです。</p>
+  <p>"Handgun", "Shot gun" も含んでいました。私がダウンロードしたデータでは 601 種類のクラスを記録していました。</p>
+  <p>先ほどの手順では "Handgun,Shotgun" 
+  を指定してデータをダウンロードしましたが、こちらに記録されているクラスを指定して画像およびアノテーションデータをダウンロードできそうです。</p>
+	<p><a href="mobilenet-ssd/img11.jpg" target="_blank">
+	<img alt="class-descriptions-boxable.csv" class="auto-style6" src="mobilenet-ssd_train/img11.jpg" width="800"></a></p>
+	<p>&nbsp;</p>
+	<p>"sub-test-annotations-bbox.csv" の様子です。画像データおよびアノテーションデータ一覧のようです。</p>
+	<p>XMin,XMax,YMin,YMax の４つは、画像データ上の物体の位置を示しています。それぞれ 0.0～1.0 
+	の範囲で表記するルールとなっているため画像の解像度に影響されません。</p>
+	<p>LabelName, id, に記載の情報は、ClassName 
+	と紐づけられている情報のようです。"class-descriptions-boxable.csv" で例えば "/m/0gxl3" を検索すると 
+	"Handgun" となっています。</p>
+	<p><a href="mobilenet-ssd/img12.jpg" target="_blank">
+	<img alt="sub-test-annotations-bbox.csv" class="auto-style6" src="mobilenet-ssd_train/img12.jpg" width="800"></a></p>
+	<p>&nbsp;</p>
+	<p>以上のような構成でデータを準備することで、あたなや私が独自に学習したい物体と画像についても同様に AI 学習データを作成できることがわかりました。</p>
+	<p>&nbsp;</p>
+	<p>7. 学習済みモデルを保存</p>
+	<p>本ページを上から順に進めてきた人たちは既に models フォルダに学習済みモデルデータを保存済みと思います。まだの方は、<a href="#2-1._MobileNetV1-SSD_を動かす（PC 内蔵カメラ）">こちら</a>に記載の内容に従って 
+	"mobilenet-v1-ssd-mp-0_675.pth" をダウンロードしておきます。</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <h4><a name="5-1-2._学習">5-1-2. 学習</a></h4>
+	<p>&nbsp;</p>
+	<p>8. Retrain (再学習)を実行します</p>
+  <p>&nbsp;</p>
+
+  <p>■Linux の場合</p>
+	<p><a href="https://github.com/qfgaohao/pytorch-ssd#retrain" target="_blank">資料</a>では下記のように書いています。Linux 環境ではこれを実行します。</p>
+	
+	<pre style="background-color: #000000; color: #CCCCCC; white-space:pre-wrap;">$ python train_ssd.py --dataset_type open_images --datasets ~/data/open_images --net mb1-ssd --pretrained_ssd models/mobilenet-v1-ssd-mp-0_675.pth --scheduler cosine --lr 0.01 --t_max 100 --validation_epochs 5 --num_epochs 100 --base_net_lr 0.001  --batch_size 5</pre>
+	
+	<p>&nbsp;</p>
+  <p>■Windows の場合</p>
+  <p>Windows 環境では <span class="cpp-source">--datasets 
+	~/data/open_images</span> 
+	の部分を実際の環境に合わせて修正します。ここでは下記コマンドへ修正して実行してみます。</p>
+	
+	<pre style="background-color: #000000; color: #CCCCCC; white-space:pre-wrap;">$ python train_ssd.py --dataset_type open_images --datasets <span class="auto-style8"><strong>./data/open_images</strong></span> --net mb1-ssd --pretrained_ssd models/mobilenet-v1-ssd-mp-0_675.pth --scheduler cosine --lr 0.01 --t_max 100 --validation_epochs 5 --num_epochs 100 --base_net_lr 0.001  --batch_size 5</pre>
+	
+	<p>&nbsp;</p>
+	
+	<p>以下、上記コマンド実行後のコンソール出力内容です。</p>
+	<p>データ読み込みまでは問題なくできていそうですが、"Start training from epoch 0." の後で１つの警告と１つのエラーを出力して停止しました。これら主力部分を<span class="auto-style3">赤字</span>で表記します。</p>
+	<pre style="background-color: #000000; color: #CCCCCC; white-space:pre-wrap;">2022-11-13 15:04:07,989 - root - INFO - Namespace(dataset_type='open_images', datasets=['./data/open_images'], validation_dataset=None, balance_data=False, net='mb1-ssd', freeze_base_net=False, freeze_net=False, mb2_width_mult=1.0, lr=0.01, momentum=0.9, weight_decay=0.0005, gamma=0.1, base_net_lr=0.001, extra_layers_lr=None, base_net=None, pretrained_ssd='models/mobilenet-v1-ssd-mp-0_675.pth', resume=None, scheduler='cosine', milestones='80,100', t_max=100.0, batch_size=5, num_epochs=100, num_workers=4, validation_epochs=5, debug_steps=100, use_cuda=True, checkpoint_folder='models/')
+2022-11-13 15:04:07,989 - root - INFO - Prepare training datasets.
+2022-11-13 15:04:08,277 - root - INFO - Dataset Summary:Number of Images: 961
+Minimum Number of Images for a Class: -1
+Label Distribution:
+	Handgun: 727
+	Shotgun: 580
+2022-11-13 15:04:08,282 - root - INFO - Stored labels into file models/open-images-model-labels.txt.
+2022-11-13 15:04:08,282 - root - INFO - Train dataset size: 961
+2022-11-13 15:04:08,282 - root - INFO - Prepare Validation datasets.
+2022-11-13 15:04:08,302 - root - INFO - Dataset Summary:Number of Images: 123
+Minimum Number of Images for a Class: -1
+Label Distribution:
+	Handgun: 81
+	Shotgun: 66
+2022-11-13 15:04:08,302 - root - INFO - validation dataset size: 123
+2022-11-13 15:04:08,302 - root - INFO - Build network.
+2022-11-13 15:04:08,349 - root - INFO - Init from pretrained ssd models/mobilenet-v1-ssd-mp-0_675.pth
+2022-11-13 15:04:08,391 - root - INFO - Took 0.04 seconds to load the model.
+2022-11-13 15:04:08,396 - root - INFO - Learning rate: 0.01, Base net learning rate: 0.001, Extra Layers learning rate: 0.01.
+2022-11-13 15:04:08,396 - root - INFO - Uses CosineAnnealingLR scheduler.
+2022-11-13 15:04:08,396 - root - INFO - Start training from epoch 0.
+
+C:\Users\foo\AppData\Local\Programs\Python\Python310\lib\site-packages\torch\optim\lr_scheduler.py:131: <span class="auto-style3"><strong>UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "</strong></span>
+Traceback (most recent call last):
+  File "C:\Users\kinos\Documents\Github\pytorch-ssd\train_ssd.py", line 325, in &lt;module&gt;
+    train(train_loader, net, criterion, optimizer,
+  File "C:\Users\kinos\Documents\Github\pytorch-ssd\train_ssd.py", line 116, in train
+    for i, data in enumerate(loader):
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\site-packages\torch\utils\data\dataloader.py", line 444, in __iter__
+    return self._get_iterator()
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\site-packages\torch\utils\data\dataloader.py", line 390, in _get_iterator
+    return _MultiProcessingDataLoaderIter(self)
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\site-packages\torch\utils\data\dataloader.py", line 1077, in __init__
+    w.start()
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\multiprocessing\process.py", line 121, in start
+    self._popen = self._Popen(self)
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\multiprocessing\context.py", line 224, in _Popen
+    return _default_context.get_context().Process._Popen(process_obj)
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\multiprocessing\context.py", line 336, in _Popen
+    return Popen(process_obj)
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\multiprocessing\popen_spawn_win32.py", line 93, in __init__
+    reduction.dump(process_obj, to_child)
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\multiprocessing\reduction.py", line 60, in dump
+    ForkingPickler(file, protocol).dump(obj)
+<span class="auto-style3"><strong>AttributeError: Can't pickle local object 'TrainAugmentation.__init__.&lt;locals&gt;.&lt;lambda&gt;'</strong></span>
+
+C:\Users\kinos\Documents\Github\pytorch-ssd&gt;Traceback (most recent call last):
+  File "&lt;string&gt;", line 1, in &lt;module&gt;
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\multiprocessing\spawn.py", line 116, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\multiprocessing\spawn.py", line 126, in _main
+    self = reduction.pickle.load(from_parent)
+EOFError: Ran out of input</pre>
+	<p>&nbsp;</p>
+	<p>"<span class="auto-style3">UserWarning: Detected call of `lr_scheduler.step()` before 
+	`optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the 
+	opposite order: `optimizer.step()` before `lr_scheduler.step()`.&nbsp; 
+	Failure to do this will result in PyTorch skipping the first value of the 
+	learning rate schedule. See more details at 
+	https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate<br>&nbsp; 
+	warnings.warn("Detected call of `lr_scheduler.step()` before 
+	`optimizer.step()`.</span>" について</p>
+	<p>こちらは、上記文章中に記載の通り "PyTorch 1.1.0" 以降での仕様変更に伴う警告のようです。</p>
+	<p>ソースファイル "train_ssd.py" 中を 323行目 周辺について、下記のとおり変更することで警告されなくなります。</p>
+	<p>（修正後）</p>
+	<pre class="prettyprint linenums:323 lang-py">
+    for epoch in range(last_epoch + 1, args.num_epochs):
+        train(train_loader, net, criterion, optimizer,
+              device=DEVICE, debug_steps=args.debug_steps, epoch=epoch)
+<span class="auto-style1">        scheduler.step()</span>
+        
+        if epoch % args.validation_epochs == 0 or epoch == args.num_epochs - 1:
+            val_loss, val_regression_loss, val_classification_loss = test(val_loader, net, criterion, DEVICE)
+            logging.info(
+                f"Epoch: {epoch}, " +
+                f"Validation Loss: {val_loss:.4f}, " +
+                f"Validation Regression Loss {val_regression_loss:.4f}, " +
+                f"Validation Classification Loss: {val_classification_loss:.4f}"
+            )
+            model_path = os.path.join(args.checkpoint_folder, f"{args.net}-Epoch-{epoch}-Loss-{val_loss}.pth")
+            net.save(model_path)
+            logging.info(f"Saved model {model_path}")
+  </pre>
+	<p>&nbsp;</p>
+	<p>（修正前）</p>
+	<pre class="prettyprint linenums:323 lang-py">
+    for epoch in range(last_epoch + 1, args.num_epochs):
+<span class="auto-style1">        scheduler.step()</span>
+        train(train_loader, net, criterion, optimizer,
+              device=DEVICE, debug_steps=args.debug_steps, epoch=epoch)
+        
+        if epoch % args.validation_epochs == 0 or epoch == args.num_epochs - 1:
+            val_loss, val_regression_loss, val_classification_loss = test(val_loader, net, criterion, DEVICE)
+            logging.info(
+                f"Epoch: {epoch}, " +
+                f"Validation Loss: {val_loss:.4f}, " +
+                f"Validation Regression Loss {val_regression_loss:.4f}, " +
+                f"Validation Classification Loss: {val_classification_loss:.4f}"
+            )
+            model_path = os.path.join(args.checkpoint_folder, f"{args.net}-Epoch-{epoch}-Loss-{val_loss}.pth")
+            net.save(model_path)
+            logging.info(f"Saved model {model_path}")
+  </pre>
+	<p>&nbsp;</p>
+	<p>（修正後）のプログラムを再度実行すると、とりあえず１つ目の警告（UserWarning）は消えました。</p>
+	<pre style="background-color: #000000; color: #CCCCCC; white-space:pre-wrap;">C:\Users\foo\Documents\Github\pytorch-ssd&gt;python train_ssd.py --dataset_type open_images --datasets ./data/open_images --net mb1-ssd --pretrained_ssd models/mobilenet-v1-ssd-mp-0_675.pth --scheduler cosine --lr 0.01 --t_max 100 --validation_epochs 5 --num_epochs 100 --base_net_lr 0.001  --batch_size 5
+2022-11-13 16:35:24,380 - root - INFO - Namespace(dataset_type='open_images', datasets=['./data/open_images'], validation_dataset=None, balance_data=False, net='mb1-ssd', freeze_base_net=False, freeze_net=False, mb2_width_mult=1.0, lr=0.01, momentum=0.9, weight_decay=0.0005, gamma=0.1, base_net_lr=0.001, extra_layers_lr=None, base_net=None, pretrained_ssd='models/mobilenet-v1-ssd-mp-0_675.pth', resume=None, scheduler='cosine', milestones='80,100', t_max=100.0, batch_size=5, num_epochs=100, num_workers=4, validation_epochs=5, debug_steps=100, use_cuda=True, checkpoint_folder='models/')
+2022-11-13 16:35:24,380 - root - INFO - Prepare training datasets.
+2022-11-13 16:35:24,662 - root - INFO - Dataset Summary:Number of Images: 961
+Minimum Number of Images for a Class: -1
+Label Distribution:
+        Handgun: 727
+        Shotgun: 580
+2022-11-13 16:35:24,662 - root - INFO - Stored labels into file models/open-images-model-labels.txt.
+2022-11-13 16:35:24,662 - root - INFO - Train dataset size: 961
+2022-11-13 16:35:24,662 - root - INFO - Prepare Validation datasets.
+2022-11-13 16:35:24,693 - root - INFO - Dataset Summary:Number of Images: 123
+Minimum Number of Images for a Class: -1
+Label Distribution:
+        Handgun: 81
+        Shotgun: 66
+2022-11-13 16:35:24,693 - root - INFO - validation dataset size: 123
+2022-11-13 16:35:24,693 - root - INFO - Build network.
+2022-11-13 16:35:24,743 - root - INFO - Init from pretrained ssd models/mobilenet-v1-ssd-mp-0_675.pth
+2022-11-13 16:35:24,774 - root - INFO - Took 0.03 seconds to load the model.
+2022-11-13 16:35:24,789 - root - INFO - Learning rate: 0.01, Base net learning rate: 0.001, Extra Layers learning rate: 0.01.
+2022-11-13 16:35:24,789 - root - INFO - Uses CosineAnnealingLR scheduler.
+2022-11-13 16:35:24,789 - root - INFO - Start training from epoch 0.
+Traceback (most recent call last):
+  File "C:\Users\kinos\Documents\Github\pytorch-ssd\train_ssd.py", line 324, in &lt;module&gt;
+    train(train_loader, net, criterion, optimizer,
+  File "C:\Users\kinos\Documents\Github\pytorch-ssd\train_ssd.py", line 116, in train
+    for i, data in enumerate(loader):
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\site-packages\torch\utils\data\dataloader.py", line 444, in __iter__
+    return self._get_iterator()
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\site-packages\torch\utils\data\dataloader.py", line 390, in _get_iterator
+    return _MultiProcessingDataLoaderIter(self)
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\site-packages\torch\utils\data\dataloader.py", line 1077, in __init__
+    w.start()
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\multiprocessing\process.py", line 121, in start
+    self._popen = self._Popen(self)
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\multiprocessing\context.py", line 224, in _Popen
+    return _default_context.get_context().Process._Popen(process_obj)
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\multiprocessing\context.py", line 336, in _Popen
+    return Popen(process_obj)
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\multiprocessing\popen_spawn_win32.py", line 93, in __init__
+    reduction.dump(process_obj, to_child)
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\multiprocessing\reduction.py", line 60, in dump
+    ForkingPickler(file, protocol).dump(obj)
+<span class="auto-style3"><strong>AttributeError: Can't pickle local object 'TrainAugmentation.__init__.&lt;locals&gt;.&lt;lambda&gt;'</strong></span>
+
+C:\Users\kinos\Documents\Github\pytorch-ssd&gt;Traceback (most recent call last):
+  File "&lt;string&gt;", line 1, in &lt;module&gt;
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\multiprocessing\spawn.py", line 116, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+  File "C:\Users\kinos\AppData\Local\Programs\Python\Python310\lib\multiprocessing\spawn.py", line 126, in _main
+    self = reduction.pickle.load(from_parent)
+EOFError: Ran out of input</pre>
+	<p>&nbsp;</p>
+	<p>残るエラー "<span class="auto-style3"><strong>AttributeError: Can't pickle local object 'TrainAugmentation.__init__.&lt;locals&gt;.&lt;lambda&gt;'</strong></span>" を解決します。</p>
+	<p>この問題を解決している記事がありました。Linux 環境では発生しない Windows 環境固有の問題と思われます。</p>
+	<p>&nbsp;</p>
+  
+  <div class="status_information" style="width: 800px">
+    <div></div>
+    <div>
+      <p><strong>NOTE</strong></p>
+      <p>「<span class="auto-style3">AttributeError: Can't pickle local object 'TrainAugmentation.__init__.&lt;locals&gt;.&lt;lambda&gt;</span>'」  
+  について、下記ページで修正方法を紹介しています。</p>
+      <p>
+      <a href="https://github.com/qfgaohao/pytorch-ssd/issues/71" target="_blank">
+      AttributeError: Can't pickle local object 
+      'TrainAugmentation.__init__.&lt;locals&gt;.&lt;lambda&gt;' · Issue #71 · 
+      qfgaohao/pytorch-ssd (github.com)</a></p>
+    </div>
+  </div>
+
+  <p>&nbsp;</p>
+	<p>上記URLに記載の内容に従って修正した後の「vision/ssd/data_preprocessing.py」を以下に記載します。<br>
+	修正した場所を色付けしています。</p>
+	<p>&nbsp;</p>
+	<p>"vision/ssd/data_preprocessing.py"</p>
+	<pre class="prettyprint linenums lang-py">from ..transforms.transforms import *
+
+
+<span class="auto-style1">class ScaleByStd:</span>
+<span class="auto-style1">    def __init__(self, std: float):</span>
+<span class="auto-style1">        self.std = std</span>
+
+<span class="auto-style1">    def __call__(self, img, boxes=None, labels=None):</span>
+<span class="auto-style1">        return (img / self.std, boxes, labels)</span>
+
+
+class TrainAugmentation:
+    def __init__(self, size, mean=0, std=1.0):
+        """
+        Args:
+            size: the size the of final image.
+            mean: mean pixel value per channel.
+        """
+        self.mean = mean
+        self.size = size
+        self.augment = Compose([
+            ConvertFromInts(),
+            PhotometricDistort(),
+            Expand(self.mean),
+            RandomSampleCrop(),
+            RandomMirror(),
+            ToPercentCoords(),
+            Resize(self.size),
+            SubtractMeans(self.mean),
+<span class="auto-style1">            #lambda img, boxes=None, labels=None: (img / std, boxes, labels),</span>
+<span class="auto-style1">            ScaleByStd(std),</span>
+            ToTensor(),
+        ])
+
+    def __call__(self, img, boxes, labels):
+        """
+
+        Args:
+            img: the output of cv.imread in RGB layout.
+            boxes: boundding boxes in the form of (x1, y1, x2, y2).
+            labels: labels of boxes.
+        """
+        return self.augment(img, boxes, labels)
+
+
+class TestTransform:
+    def __init__(self, size, mean=0.0, std=1.0):
+        self.transform = Compose([
+            ToPercentCoords(),
+            Resize(size),
+            SubtractMeans(mean),
+<span class="auto-style1">            #lambda img, boxes=None, labels=None: (img / std, boxes, labels),</span>
+<span class="auto-style1">            ScaleByStd(std),</span>
+            ToTensor(),
+        ])
+
+    def __call__(self, image, boxes, labels):
+        return self.transform(image, boxes, labels)
+
+
+class PredictionTransform:
+    def __init__(self, size, mean=0.0, std=1.0):
+        self.transform = Compose([
+            Resize(size),
+            SubtractMeans(mean),
+<span class="auto-style1">            #lambda img, boxes=None, labels=None: (img / std, boxes, labels),</span>
+<span class="auto-style1">            ScaleByStd(std),</span>
+            ToTensor()
+        ])
+
+    def __call__(self, image):
+        image, _, _ = self.transform(image)
+        return image</pre>
+	<p>&nbsp;</p>
+	<p>上記修正を行うことで、下記コマンドを正常に実行できるようになりました。</p>
+	
+	<pre style="background-color: #000000; color: #CCCCCC; white-space:pre-wrap;">python train_ssd.py --dataset_type open_images --datasets <span class="auto-style8"><strong>./data/open_images</strong></span> --net mb1-ssd --pretrained_ssd models/mobilenet-v1-ssd-mp-0_675.pth --scheduler cosine --lr 0.01 --t_max 100 --validation_epochs 5 --num_epochs 100 --base_net_lr 0.001  --batch_size 5</pre>
+	
+	<p>&nbsp;</p>
+	<p><span class="auto-style2"><strong>100 Epoch を約５時間半で学習できました</strong></span>。（CPU動作の場合です。GPU動作の場合はもっと高速に学習可能です。）</p>
+  <p>&nbsp;</p>
+  
+  <div class="status_information">
+    <div></div>
+    <div>
+      <p><strong>参考</strong></p>
+      <p>ゲーミングノートＰＣ環境でも同じ学習を実施。<br>5時間30分 ⇨ <strong>55分</strong> へ短縮できました。</p>
+      <p>[環境]</p>
+      <p>GPU: NVIDIA GeForce GTX 1650 (4GB)</p>
+      <p>CPU: Intel Core i7-9750H</p>
+      <p>Cuda: 11.6</p>
+      <p>Python: 3.10.7</p>
+      <p>PyToch: 1.12+cu116</p>
+      <p>OS: Windows 11 home, 22H2</p>
+    </div>
+  </div>
+
+  <p>&nbsp;</p>
+
+  <div class="status_information">
+    <div></div>
+    <div>
+      <p><strong>NOTE</strong></p>
+      <p>"models\open-images-model-labels.txt" は "train_ssd.py" を実行することで自動的に生成されるようにプログラミングされているようです。</p>
+      <p>dataset_type == 'voc' の場合は "voc-model-labels.txt" を自動的に生成するようです。</p>
+      <p>２つの生成方法は細かい部分でいろいろと差異がありそうです。詳細については "train_ssd.py" を参照してください。</p>
+    </div>
+  </div>
+
+	<p>&nbsp;</p>
+  
+  <div style="border-radius: 5px; padding: 1em; border: thin solid #C0C0C0; background-color: #F0FFFF;">
+    <h3>参考</h3>
+    <div class="status_information">
+      <div></div>
+      <div>
+        <p><strong>NOTE</strong></p>
+		    <p>train_ssd.py を正常に実行できるようにはなりましたが、私の環境では下記警告？が頻繁に出力されます。</p>
+        <p><span class="cpp-source">pytorch-ssd\vision\transforms\transforms.py:247: 
+		VisibleDeprecationWarning: Creating an ndarray from ragged nested 
+		sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with 
+		different lengths or shapes) is deprecated. If you meant to do this, you 
+		must specify 'dtype=object' when creating the ndarray.<br>&nbsp; mode = 
+		random.choice(self.sample_options)</span></p>
+      </div>
+    </div>
+
+    <p>&nbsp;</p>
+    <p>このままでも正常に動作するようですが、修正したい場合は下記URLの記事を参照。</p>
+    <p>
+    <a href="https://github.com/amdegroot/ssd.pytorch/issues/498" target="_blank">VisibleDeprecationWarning of augmentations.py · Issue #498 · 
+    amdegroot/ssd.pytorch (github.com)</a></p>
+    <p>&nbsp;</p>
+    <p>"transforms.py" の 247行目を以下のように修正すればよいようです。</p>
+    <pre class="prettyprint linenums lang-py" style="width: 800px; overflow-x:auto;">
+# before
+mode = random.choice(self.sample_options)
+
+# after
+random_idx = random.randint(0, len(self.sample_options) - 1)
+mode = self.sample_options[random_idx]</pre>
+  </div>
+  
+	<p>&nbsp;</p>
+  <p>&nbsp;</p>
+  
+  <h4><a name="5-1-3._学習結果と静止画を使って推論">5-1-3. 学習結果と静止画を使って推論</a></h4>
+  
+  <p>&nbsp;</p>
+  <p>9. 学習したデータとテスト画像を使用して Gun の認識をしてみます。</p>
+  <p>テスト画像は <a href="https://pixabay.com/ja/" target="_blank">Pixabay</a> 
+  から入手した画像を使用します。</p>
+  <p>&nbsp;</p>
+  <p>私の学習済みデータ（"mb1-ssd-Epoch-99-Loss-2.843603060245514.pth"）とサンプル画像（"sample_image.jpg"）を使った場合の例を以下に記載します。あなたが実際に使用するファイル名およびパスへ修正してください。</p>
+  
+  <pre style="background-color: #000000; color: #CCCCCC; white-space:pre-wrap;">$ python run_ssd_example.py mb1-ssd .\models\mb1-ssd-Epoch-99-Loss-2.843603060245514.pth models\open-images-model-labels.txt .\sample_image.jpg</pre>
+    
+  <p>&nbsp;</p>
+  <p>ただし <strong>run_ssd_example.py</strong> は OpenSSL 
+  のバージョンアップに伴って一部修正する必要があります。修正後のソースコードを下記に示します。<br>60, 64行目の部分で６か所 int 
+  キャストを追加する必要があります。この修正を行わないとプログラム実行時にエラーとなって動作しませんでした。</p>
+  <p>&nbsp;</p>
+  <p>"run_ssd_example.py"</p>
+  <pre class="prettyprint linenums lang-py">from vision.ssd.vgg_ssd import create_vgg_ssd, create_vgg_ssd_predictor
+from vision.ssd.mobilenetv1_ssd import create_mobilenetv1_ssd, create_mobilenetv1_ssd_predictor
+from vision.ssd.mobilenetv1_ssd_lite import create_mobilenetv1_ssd_lite, create_mobilenetv1_ssd_lite_predictor
+from vision.ssd.squeezenet_ssd_lite import create_squeezenet_ssd_lite, create_squeezenet_ssd_lite_predictor
+from vision.ssd.mobilenet_v2_ssd_lite import create_mobilenetv2_ssd_lite, create_mobilenetv2_ssd_lite_predictor
+from vision.ssd.mobilenetv3_ssd_lite import create_mobilenetv3_large_ssd_lite, create_mobilenetv3_small_ssd_lite
+from vision.utils.misc import Timer
+import cv2
+import sys
+
+
+if len(sys.argv) &lt; 5:
+    print('Usage: python run_ssd_example.py &lt;net type&gt;  &lt;model path&gt; &lt;label path&gt; &lt;image path&gt;')
+    sys.exit(0)
+net_type = sys.argv[1]
+model_path = sys.argv[2]
+label_path = sys.argv[3]
+image_path = sys.argv[4]
+
+class_names = [name.strip() for name in open(label_path).readlines()]
+
+if net_type == 'vgg16-ssd':
+    net = create_vgg_ssd(len(class_names), is_test=True)
+elif net_type == 'mb1-ssd':
+    net = create_mobilenetv1_ssd(len(class_names), is_test=True)
+elif net_type == 'mb1-ssd-lite':
+    net = create_mobilenetv1_ssd_lite(len(class_names), is_test=True)
+elif net_type == 'mb2-ssd-lite':
+    net = create_mobilenetv2_ssd_lite(len(class_names), is_test=True)
+elif net_type == 'mb3-large-ssd-lite':
+    net = create_mobilenetv3_large_ssd_lite(len(class_names), is_test=True)
+elif net_type == 'mb3-small-ssd-lite':
+    net = create_mobilenetv3_small_ssd_lite(len(class_names), is_test=True)
+elif net_type == 'sq-ssd-lite':
+    net = create_squeezenet_ssd_lite(len(class_names), is_test=True)
+else:
+    print("The net type is wrong. It should be one of vgg16-ssd, mb1-ssd and mb1-ssd-lite.")
+    sys.exit(1)
+net.load(model_path)
+
+if net_type == 'vgg16-ssd':
+    predictor = create_vgg_ssd_predictor(net, candidate_size=200)
+elif net_type == 'mb1-ssd':
+    predictor = create_mobilenetv1_ssd_predictor(net, candidate_size=200)
+elif net_type == 'mb1-ssd-lite':
+    predictor = create_mobilenetv1_ssd_lite_predictor(net, candidate_size=200)
+elif net_type == 'mb2-ssd-lite' or net_type == "mb3-large-ssd-lite" or net_type == "mb3-small-ssd-lite":
+    predictor = create_mobilenetv2_ssd_lite_predictor(net, candidate_size=200)
+elif net_type == 'sq-ssd-lite':
+    predictor = create_squeezenet_ssd_lite_predictor(net, candidate_size=200)
+else:
+    predictor = create_vgg_ssd_predictor(net, candidate_size=200)
+
+orig_image = cv2.imread(image_path)
+image = cv2.cvtColor(orig_image, cv2.COLOR_BGR2RGB)
+boxes, labels, probs = predictor.predict(image, 10, 0.4)
+
+for i in range(boxes.size(0)):
+    box = boxes[i, :]
+    cv2.rectangle(orig_image, (<span class="auto-style1">int(box[0])</span>, <span class="auto-style1">int(box[1])</span>), (<span class="auto-style1">int(box[2])</span>, <span class="auto-style1">int(box[3])</span>), (255, 255, 0), 4)
+    #label = f"""{voc_dataset.class_names[labels[i]]}: {probs[i]:.2f}"""
+    label = f"{class_names[labels[i]]}: {probs[i]:.2f}"
+    cv2.putText(orig_image, label,
+                (<span class="auto-style1">int(box[0])</span> + 20, <span class="auto-style1">int(box[1])</span> + 40),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,  # font scale
+                (255, 0, 255),
+                2)  # line type
+path = "run_ssd_example_output.jpg"
+cv2.imwrite(path, orig_image)
+print(f"Found {len(probs)} objects. The output image is {path}")</pre>
+	<p>&nbsp;</p>
+	  <p>以下、テストした結果をいくつか示します。</p>
+	  <p>&nbsp;</p>
+	  <p>テスト画像１： 入手元 
+	  <a href="https://pixabay.com/ja/photos/ハーレイ-クイン-コスプレ-漫画-5391062/" target="_blank">
+	  Pixabay</a></p>
+	  <p>
+	  <span style="color: rgb(0, 0, 0); font-family: sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;">
+	  商用利用無料、帰属表示必要なし、の画像です。ライセンス詳細は "<a href="https://pixabay.com/ja/service/terms/" target="_blank">Pixabay 
+	  License</a>" を参照ください。</span></p>
+	  <p>["harley-quinn-5391062_1920.jpg"]</p>
+	  <p>
+	  <img alt="harley-quinn-5391062_1920.jpg" src="mobilenet-ssd_train/imgA1.jpg" width="800"></p>
+	  <p>&nbsp;</p>
+	  <p>テスト画像２： 入手元 
+	  <a href="https://pixabay.com/ja/photos/銃-フランスの外legion-4222469/" target="_blank">
+	  Pixabay</a></p>
+	  <p>
+	  <span style="color: rgb(0, 0, 0); font-family: sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;">
+	  商用利用無料、帰属表示必要なし、の画像です。ライセンス詳細は "<a href="https://pixabay.com/ja/service/terms/" target="_blank">Pixabay 
+	  License</a>" を参照ください。</span></p>
+	  <p>["gun-4222469_1920.jpg"]</p>
+	  <p>
+	  <img alt="gun-4222469_1920.jpg" src="mobilenet-ssd_train/img4.jpg" width="800"></p>
+	  <p>&nbsp;</p>
+	  <p>テスト画像３： 入手元 
+	  <a href="https://pixabay.com/ja/photos/軍-武器-アフガニ-反逆者-60720/" target="_blank">
+	  Pixabay</a></p>
+	  <p>
+	  <span style="color: rgb(0, 0, 0); font-family: sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;">
+	  商用利用無料、帰属表示必要なし、の画像です。ライセンス詳細は "<a href="https://pixabay.com/ja/service/terms/" target="_blank">Pixabay 
+	  License</a>" を参照ください。</span></p>
+	  <p>["army-60720_1920.jpg"]</p>
+	  <p>
+	  <img alt="army-60720_1920.jpg" src="mobilenet-ssd_train/img7.jpg" width="800"></p>
+	  <p>&nbsp;</p>
+	  <p>&nbsp;</p>
+	  <p>10. "--freeze_net", "--freeze_base_net" を試してみる</p>
+	  <p>ホームページ中に下記説明がありました。</p>
+	  <p>
+  	<img alt="--freeze_base_net, --freeze_net" class="border_with_drop-shadow" src="mobilenet-ssd_train/img1B.jpg" width="800"></p>
+	  <p>&nbsp;</p>
+    <p><span class="cpp-source"><strong>--freeze_net</strong></span> を指定することで "prediction head" 
+    を除いて全レイヤーをフリーズと記載されています。俗にいう "<strong>転移学習</strong>" 
+    を行えそうです。これを指定することで演算が軽くなることを期待できます。</p>
+    <p><span class="cpp-source"><strong>--freeze_base_net</strong></span> を指定することで "base net 
+    layers" をフリーズするようです。こちらも "<strong>転移学習</strong>" のバリエーションの一つですね。本ページの例では、MobileNet 部分をフリーズして SSD or SSD-Lite 
+    部分をフリーズしない、と読めば良いのかな、と想像しています。"--freeze_net" よりは学習の演算量が多いはずです。</p>
+	  <p>&nbsp;</p>
+	  <p>ここでは学習時間の短縮を目的に、引数 "<strong>--freeze_net</strong>", "<strong>--freeze_base_net</strong>" を試してみます。それぞれ 
+	  100 Epoch 学習させたのちの "Validation Loss" についても比較してみます。</p>
+	  <p>以下、学習時の引数を変更したときの学習時間、代表的な Epoch における "Validation Loss" の表です。<br>
+	  AI学習は乱数を使っている部分もあるので、私と同じ手順を行っても同じ結果になりません。私自身が同じことを複数回行っても異なる結果になったりします。あくまで参考値ということで。</p>
+	  <p>&nbsp;</p>
+        
+    <table class="border-collapse" border="1" width="500">
+      <caption>[Table.] 引数毎の 学習時間、Validation Loss 比較</caption>
+      <thead class="standard_table">
+        <tr>
+          <th style="white-space: nowrap">Epoch num.</th>
+          <th width="25%" style="white-space: nowrap">Normal<br>(追加引数無し)</th>
+          <th width="25%" style="white-space: nowrap">--freeze_net</th>
+          <th width="25%" style="white-space: nowrap">--freeze_base_net</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>0</strong></td>
+          <td>3.77</td>
+          <td>8.19</td>
+          <td>4.63</td>
+        </tr>
+        
+        <tr>
+          <td><strong>10</strong></td>
+          <td>2.98</td>
+          <td>7.98</td>
+          <td>4.10</td>
+        </tr>
+        
+        <tr>
+          <td><strong>20</strong></td>
+          <td>2.98</td>
+          <td>8.02</td>
+          <td>3.95</td>
+        </tr>
+        
+        <tr>
+          <td><strong>30</strong></td>
+          <td>2.82</td>
+          <td>6.27</td>
+          <td>3.76</td>
+        </tr>
+        
+        <tr>
+          <td><strong>40</strong></td>
+          <td>2.75</td>
+          <td>5.91</td>
+          <td>3.59</td>
+        </tr>
+        
+        <tr>
+          <td><strong>50</strong></td>
+          <td>3.00</td>
+          <td>4.92</td>
+          <td>3.49</td>
+        </tr>
+        
+        <tr>
+          <td><strong>60</strong></td>
+          <td>2.83</td>
+          <td>4.45</td>
+          <td>3.25</td>
+        </tr>
+        
+        <tr>
+          <td><strong>70</strong></td>
+          <td>2.89</td>
+          <td>3.83</td>
+          <td>3.17</td>
+        </tr>
+        
+        <tr>
+          <td><strong>80</strong></td>
+          <td>2.80</td>
+          <td>3.58</td>
+          <td>3.07</td>
+        </tr>
+        
+        <tr>
+          <td><strong>90</strong></td>
+          <td>2.86</td>
+          <td>3.42</td>
+          <td>3.01</td>
+        </tr>
+        
+        <tr>
+          <td><strong>99</strong></td>
+          <td>2.84</td>
+          <td>3.40</td>
+          <td>3.01</td>
+        </tr>
+        
+        <tr>
+          <td><strong>学習時間</strong></td>
+          <td style="white-space: nowrap">5時間30分</td>
+          <td style="white-space: nowrap">2時間20分</td>
+          <td style="white-space: nowrap">2時間40分</td>
+        </tr>
+        
+      </tbody>
+    </table>
+    
+    <p>&nbsp;</p>
+	  <p>"--freeze_net", "--freeze_base_net" の学習時間は半分以下になりました。認識結果は Normal 
+	  より悪いですがそこそこ認識しています。</p>
+	  <p>認識性能（Validation Loss）は Normal が最も良い結果となりました。</p>
+	  <p>それぞれメリット／デメリットがありそうなので、用途などに応じて使い分けてみてはいかがでしょうか。</p>
+	  <p>以下、サンプル画像による認識結果例です。</p>
+	  <p>&nbsp;</p>
+	  <p>["Normal" Epoch99 による認識結果例]</p>
+	  <p>
+	  <img alt="gun-4222469_1920.jpg" src="mobilenet-ssd_train/img4.jpg" width="800"></p>
+	  <p>&nbsp;</p>
+	  <p>["--freeze_net" Epoch99 による認識結果例]</p>
+	  <p><img alt="--freeze_net" src="mobilenet-ssd_train/img13.jpg" width="800"></p>
+	  <p>&nbsp;</p>
+	  <p>["--freeze_base_net" Epoch99 による認識結果例]</p>
+	  <p><img alt="--freeze_base_net" src="mobilenet-ssd_train/img14.jpg" width="800"></p>
+	  <p>&nbsp;</p>
+	  <p>&nbsp;</p>
+	  <p>11. スケジューラ "multi-step" を試してみる</p>
+	  <p>"multi-step" は学習速度の減速タイミングを詳細に指示することができます。</p>
+	  <p>スケジューラを「cosine」とした上記学習では、Epoch 30～50 あたりから学習の停滞がみられます。"Validation Loss" の値だと 2.8～2.9 
+	  ぐらいから良くなりません。この辺りに達した後、学習速度をさらに減速することでより良い結果を得られるのではという仮説から、スケジューラを「multi-step」へ変更、--milestones として "50,80" 
+	  を指定して実験してみます。</p>
+	  <p>引数 --milestones で指定した Epoch で学習速度を 0.1倍 へ減速します。下記例は Epoch 0-49 まで初期値、Epoch 50-79 を 0.1倍、Epoch 80-99 をさらに 
+	  0.1倍、つまり初期値の 0.01倍へ減速します。</p>
+	  
+	  <pre style="background-color: #000000; color: #CCCCCC; white-space:pre-wrap;">python train_ssd.py --dataset_type open_images --datasets ./data/open_images --net mb1-ssd --pretrained_ssd models/mobilenet-v1-ssd-mp-0_675.pth <span class="auto-style3"><strong>--scheduler multi-step</strong> <strong>--milestones 50,80</strong></span> --lr 0.01 --validation_epochs 5 --num_epochs 100 --base_net_lr 0.001  --batch_size 5</pre>
+	  
+	  <p>&nbsp;</p>
+	  <p>下記表へ Epoch で99までの学習の様子を記載します。１回のみの結果なので、複数回実施するとまた違う結果になるかもしれません。</p>
+	  <p>&nbsp;</p>
+        
+    <table class="border-collapse" border="1" width="500">
+      <caption>[Table.] 引数毎の 学習時間、Validation Loss 比較</caption>
+      <thead class="standard_table">
+        <tr>
+          <th style="white-space: nowrap" rowspan="2">Epoch num.</th>
+          <th width="25%" style="white-space: nowrap" class="auto-style7" colspan="2">Cosine</th>
+          <th width="50%" style="white-space: nowrap" colspan="2">Multi-step (50, 80)</th>
+        </tr>
+        <tr>
+          <th style="white-space: nowrap">Validation Loss</th>
+          <th style="white-space: nowrap">Average Loss</th>
+          <th style="white-space: nowrap">Validation Loss</th>
+          <th style="white-space: nowrap">Average Loss</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>0</strong></td>
+          <td>3.58</td>
+          <td>5.95</td>
+          <td>3.68</td>
+          <td>5.86</td>
+        </tr>
+        
+        <tr>
+          <td><strong>10</strong></td>
+          <td>3.07</td>
+          <td>3.38</td>
+          <td>3.10</td>
+          <td>3.40</td>
+        </tr>
+        
+        <tr>
+          <td><strong>20</strong></td>
+          <td>2.87</td>
+          <td>3.08</td>
+          <td>3.08</td>
+          <td>3.10</td>
+        </tr>
+        
+        <tr>
+          <td><strong>30</strong></td>
+          <td>2.77</td>
+          <td>2.75</td>
+          <td>2.81</td>
+          <td>2.94</td>
+        </tr>
+        
+        <tr>
+          <td><strong>40</strong></td>
+          <td>2.84</td>
+          <td>2.52</td>
+          <td>2.92</td>
+          <td>2.91</td>
+        </tr>
+        
+        <tr>
+          <td><strong>50</strong></td>
+          <td>2.83</td>
+          <td>2.41</td>
+          <td>2.72</td>
+          <td>2.69</td>
+        </tr>
+        
+        <tr>
+          <td><strong>60</strong></td>
+          <td>2.82</td>
+          <td>2.27</td>
+          <td>2.75</td>
+          <td>2.27</td>
+        </tr>
+        
+        <tr>
+          <td><strong>70</strong></td>
+          <td>2.77</td>
+          <td>2.01</td>
+          <td>2.72</td>
+          <td>2.17</td>
+        </tr>
+        
+        <tr>
+          <td><strong>80</strong></td>
+          <td>2.80</td>
+          <td>1.99</td>
+          <td>2.72</td>
+          <td>2.10</td>
+        </tr>
+        
+        <tr>
+          <td><strong>90</strong></td>
+          <td>2.78</td>
+          <td>1.84</td>
+          <td>2.75</td>
+          <td>2.01</td>
+        </tr>
+        
+        <tr>
+          <td><strong>99</strong></td>
+          <td>2.86</td>
+          <td>1.69</td>
+          <td><strong>2.72</strong></td>
+          <td>1.99</td>
+        </tr>
+        
+        <tr>
+          <td><strong>学習時間</strong></td>
+          <td style="white-space: nowrap" class="auto-style7" colspan="2">5時間30分</td>
+          <td style="white-space: nowrap" colspan="2">5時間30分</td>
+        </tr>
+        
+      </tbody>
+    </table>
+    
+	  <p>&nbsp;</p>
+	  <p>["multistep" Epoch99 による認識結果例]</p>
+	  <p><img alt="multi-step" src="mobilenet-ssd_train/img15.jpg" width="800"></p>
+	  <p>&nbsp;</p>
+	  <p>少なくとも "multi-step" による学習はできてそうです。枠の位置はこれが最も良い結果に見えます。</p>
+    <p>&nbsp;</p>
+	</section>
+	
+<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>
+
+<section>
+  <h3><a name="5-2._独自の画像を学習してみる_(Pascal/VOC)">5-2. 独自の画像を学習してみる (Pascal/VOC)</a></h3>
+	<p>&nbsp;</p>
+  <h4>[概要]</h4>
+  <p>今度は自身で集めた画像を使ってオリジナルの学習データによる学習を試みます。</p>
+  <p>前節で使用した train_ssd.py は入力データ型として "open_images" と "voc" の２種類に対応しているようです。ここでは "voc" 
+  の出力に対応していて有名なオープンソースツール 
+  <a href="https://github.com/heartexlabs/labelImg" target="_blank">LabelImg</a> を使用してアノテーションデータを作成してみます。</p>
+  <p>そして自身で実際に作成したアノテーションデータを使って学習を行ってみます。少なめのデータで技術的に実現できることまでを目標に進めてみたいと思います。認識性能を高くしたい場合は同じ要領で学習する画像データを増やせば良いので、本ページではあくまで手順の確認と説明まで行うことにします。</p>
+  <p>&nbsp;</p>
+	<p>準備した画像データは以下の通りです。<a href="https://pixabay.com/ja" target="_blank">pixabay</a> 
+	  から入手させていただきました。</p>
+  <p>
+	  <span style="color: rgb(0, 0, 0); font-family: sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;">
+	  全て
+	  商用利用無料、帰属表示必要なし、の画像です。ライセンス詳細は "<a href="https://pixabay.com/ja/service/terms/" target="_blank">Pixabay 
+	  License</a>" を参照ください。</span></p>
+  <p>&nbsp;</p>
+        
+  <table class="border-collapse" border="1" width="500">
+    <caption>[Table.] 使用した学習データ数</caption>
+    <thead class="standard_table">
+      <tr>
+        <th>Class name</th>
+        <th width="25%">TrainVal</th>
+        <th width="25%">Test</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>bird</td>
+        <td>140</td>
+        <td>60</td>
+      </tr>
+    </tbody>
+  </table>
+    
+  <p>&nbsp;</p>
+	
+	<h4>[環境]</h4>
+  <table>
+    <tbody>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+
+      <tr>
+        <td>言語 :</td>
+        <td>Python,</td>
+        <td>3.10.7</td>
+      </tr>
+
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+        <td>PyTorch,</td>
+        <td>1.12.1+cpu</td>
+      </tr>
+
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+
+      <tr>
+        <td>OS :</td>
+        <td>Windows 11 home,</td>
+        <td>22H2</td>
+      </tr>
+
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+    </tbody>
+  </table>
+
+	<p> &nbsp;</p>
+	
+	<h4>[手順]</h4>
+  <p>&nbsp;</p>
+
+  <h4><a name="5-2-1._準備">5-2-1. 準備</a></h4>
+  <p>&nbsp;</p>
+  <p>1. "train_ssd.py" が想定する VOC データセットのフォルダ・ファイルを準備</p>
+  <p>voc 形式のフォルダおよびファイル構成は下図の通りです。この構成図に従ってフォルダを作成します。</p>
+  <p>&nbsp;</p>
+  <p>
+  <img alt="フォルダ、ファイル構成" src="mobilenet-ssd_train/folder_struct.drawio.svg" width="600"></p>
+  <p>&nbsp;</p>
+        
+  <table class="border-collapse" border="1" width="800">
+    <caption>[Table.] フォルダおよびファイル構成</caption>
+    <thead class="standard_table">
+      <tr>
+        <th>名称</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Annotations</td>
+        <td>アノテーション結果を記録した XML ファイルを保存します。</td>
+      </tr>
+      <tr>
+        <td>JPEGImages</td>
+        <td>JPEG ファイルを保存します。</td>
+      </tr>
+      <tr>
+        <td>ImageSets/Main/test.txt</td>
+        <td>テスト用ファイルのファイル名一覧を記録します。拡張子なしで記載します。</td>
+      </tr>
+      <tr>
+        <td>ImageSets/Main/trainval.txt</td>
+        <td>学習用ファイルのファイル名一覧を記録します。拡張子なしで記載します。</td>
+      </tr>
+      <tr>
+        <td>labels.txt</td>
+        <td>ラベル一覧を記録済ます。</td>
+      </tr>
+    </tbody>
+  </table>
+    
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>2. 学習用の画像を集めて "JPEGImages" フォルダへ保存します。</p>
+  <p>学習用160枚、テスト用40枚、合計200枚の JPEG ファイルをすべてここに保存しました。</p>
+  <p>&nbsp;</p>
+  <p>3. "labels.txt" を設定</p>
+  <p>"labels.txt" にアノテーションで付与した全ラベルを記載します。</p>
+  <p>ここの実施例ではオブジェクト名として "bird" のみ記載します。複数登録する場合は改行して行毎にオブジェクト名を記載します。</p>
+  <p>["labels.txt"]</p>
+  <pre style="width: 800px">bird</pre>
+  <p>&nbsp;</p>
+    
+  <div class="status_warning">
+    <div></div>
+    <div>
+      <p><strong>注意</strong></p>
+      <p>対象とするアノテーションデータファイル（*.xml）に記載の全てのラベルを "labels.txt" へ記載する必要があります。記載漏れがあると学習実行時にエラーになるので注意が必要です。</p>
+    </div>
+  </div>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <h4><a name="5-2-2._アノテーション">5-2-2. アノテーション</a></h4>
+  <p>4. LabelImg をインストール</p>
+  <p>アノテーションツール LabelImg をインストールします。pip, setuptools を更新した後、pip で labelimg をインストールします。</p>
+  
+  <pre style="background-color: #000000; color: #CCCCCC; width: 800px;overflow-x: auto;">$ python -m pip install --upgrade pip setuptools 
+$ pip3 install labelImg
+</pre>
+  
+  <p>&nbsp;</p>
+  <p>5. LabelImg を起動、設定</p>
+  <p>LabelImg の起動方法は下記いずれかで行います。</p>
+  <pre style="background-color: #000000; color: #CCCCCC; width: 800px;overflow-x: auto;">$ labelImg [IMAGE_PATH] [PRE-DEFINED CLASS FILE]</pre>
+  <p>または</p>
+  <pre style="background-color: #000000; color: #CCCCCC; width: 800px;overflow-x: auto;">$ labelImg</pre>
+  <p>&nbsp;</p>
+  
+  <table class="border-collapse" border="1" width="800">
+    <thead class="standard_table">
+      <tr>
+        <th>項目</th>
+        <th>説明</th>
+        <th>備考</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="white-space: nowrap"><strong>[IMAGE_PATH]</strong></td>
+        <td>JPEG 画像を保存しているパスを指定します。</td>
+        <td>指定なしでも起動後に選択可能です。</td>
+      </tr>
+      <tr>
+        <td style="white-space: nowrap"><strong>[PRE-DEFINED CLASS FILE]</strong></td>
+        <td>ラベル名を保存しているテキストファイルのパスを指定します。LabelImg 
+        でアノテーション時に画面でリストから選択するだけでクラスを選択することが可能になります。</td>
+        <td>使用する場合は起動時に引数として設定する必要があります。</td>
+      </tr>
+    </tbody>
+  </table>
+    
+  <p>&nbsp;</p>
+  <p>ここでは [PRE-DEFINED CLASS FILE] として先に作成した "labels.txt" を指定してみます。私は下記のようなコマンドで 
+  LabelImg を起動します。</p>
+  <pre style="width: 800px; color: #FFFFFF; background-color: #000000">$ labelimg .\data\voc\JPEGImages .\data\voc\labels.txt</pre>
+  <p>&nbsp;</p>
+  <p>6. LabelImg 設定</p>
+  <p>起動直後の画面です。[PRE-DEFINED CLASS FILE]を適切に設定していれば当該フォルダ中の最初の画像を表示しているはずです。</p>
+  <p>下記２つを設定します。</p>
+  <p>(1) Change Save Dir： アノテーション結果（xml ファイル）を保存するフォルダを設定します。</p>
+  <p>(2) 出力形式： 「Pascal/VOC」形式を設定します。</p>
+  <p><a href="mobilenet-ssd_train/img9.jpg" target="_blank">
+  <img alt="LabelImg 初期設定" src="mobilenet-ssd_train/img9.jpg" width="800" class="auto-style6"></a>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>7. LabelImg を使ってアノテーション実施</p>
+  <p>LabelImg を使ってアノテーションを実施します。こちらは動画で紹介したいと思います。</p>
+    <video controls muted autoplay="y" loop="y" width="800">
+      <source src="mobilenet-ssd_train/LabelImg_tutorial.mp4" type="video/mp4">
+      動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+    </video>
+    <p>[動画] アノテーション実施の様子</p>
+  <p>&nbsp;</p>
+  <p>設定後の枠位置再修正、ラベル変更、なども可能です。実際に出力されたアノテーション結果データを以下に例示します。複数の枠を設定した場合は 
+  &lt;object&gt; の情報を複数記録したファイルとなります。</p>
+  <p>&nbsp;</p>
+  <p>["animal-1851487_1920.xml"]</p>
+  
+  <pre class="prettyprint linenums lang-xml">&lt;annotation&gt;
+  &lt;folder&gt;JPEGImages&lt;/folder&gt;
+  &lt;filename&gt;animal-1851487_1920.jpg&lt;/filename&gt;
+  &lt;path&gt;C:\Users\[user-name]\Documents\Github\pytorch-ssd\data\voc\JPEGImages\animal-1851487_1920.jpg&lt;/path&gt;
+  &lt;source&gt;
+    &lt;database&gt;Unknown&lt;/database&gt;
+  &lt;/source&gt;
+  &lt;size&gt;
+    &lt;width&gt;1920&lt;/width&gt;
+    &lt;height&gt;1282&lt;/height&gt;
+    &lt;depth&gt;3&lt;/depth&gt;
+  &lt;/size&gt;
+  &lt;segmented&gt;0&lt;/segmented&gt;
+  &lt;object&gt;
+    &lt;name&gt;bird&lt;/name&gt;
+    &lt;pose&gt;Unspecified&lt;/pose&gt;
+    &lt;truncated&gt;0&lt;/truncated&gt;
+    &lt;difficult&gt;0&lt;/difficult&gt;
+    &lt;bndbox&gt;
+      &lt;xmin&gt;989&lt;/xmin&gt;
+      &lt;ymin&gt;656&lt;/ymin&gt;
+      &lt;xmax&gt;1273&lt;/xmax&gt;
+      &lt;ymax&gt;1048&lt;/ymax&gt;
+    &lt;/bndbox&gt;
+  &lt;/object&gt;
+&lt;/annotation&gt;</pre>
+  <p>&nbsp;</p>
+  <div style="border-radius: 5px; padding: 1em; border: thin solid #C0C0C0; background-color: #F0FFFF;">
+    <div class="status_information">
+      <div></div>
+      <div>
+        <p><strong>参考</strong></p>
+        <p>私の環境で LabelImg メニューから "View" &gt; "Display Labels" 
+        を選択するとアプリケーションを異常終了しました。</p>
+        <p>
+        "C:\Users\[user-name]\AppData\Local\Programs\Python\Python310\lib\site-packages\libs\shape.py" 
+        の131行目の min_x, min_y を int でキャストすることで正常動作するようになりました。</p>
+      </div>
+    </div>
+
+    <p>&nbsp;</p>
+  <p>エラー出力内容です。</p>
+  <pre style="background-color: #000000; color: #FFFFFF; width: 1000px"> File "C:\Users\[user-name]\AppData\Local\Programs\Python\Python310\lib\site-packages\libs\shape.py", line 131, in paint
+    painter.drawText(min_x, min_y, self.label)
+TypeError: arguments did not match any overloaded call:
+  drawText(self, Union[QPointF, QPoint], str): argument 1 has unexpected type 'float'
+  drawText(self, QRectF, int, str): argument 1 has unexpected type 'float'
+  drawText(self, QRect, int, str): argument 1 has unexpected type 'float'
+  drawText(self, QRectF, str, option: QTextOption = QTextOption()): argument 1 has unexpected type 'float'
+  drawText(self, QPoint, str): argument 1 has unexpected type 'float'
+  drawText(self, int, int, int, int, int, str): argument 1 has unexpected type 'float'
+  drawText(self, int, int, str): argument 1 has unexpected type 'float'</pre>
+  <p>
+  "C:\Users\[user-name]\AppData\Local\Programs\Python\Python310\lib\site-packages\libs\shape.py" 
+  131行目 修正後の内容</p>
+  <pre class="prettyprint linenums:131 lang-py" style="width: 800px; overflow-x:auto;"> painter.drawText(<span class="auto-style1"><strong>int(</strong></span>min_x<span class="auto-style1"><strong>)</strong></span>, <span class="auto-style1"><strong>int(</strong></span>min_y<span class="auto-style1"><strong>)</strong></span>, self.label)</pre>
+  <p>&nbsp;</p>
+  <p>
+  <img alt="&quot;Display Labels&quot; を有効化" src="mobilenet-ssd_train/img40.jpg" width="800"></p>
+  <p>"Display Labels" を有効化した例</p>
+  </div>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <h4><a name="5-2-3._trainval.txt、test.txt_を用意">
+  5-2-3. "trainval.txt"、"test.txt" を用意</a></h4>
+  <p>&nbsp;</p>
+    
+  <p>8. "ImageSets\Main\trainval.txt"、"ImageSets\Main\test.txt" を用意します</p>
+  <p>ここでは全画像データから 70% を学習用（"trainval.txt"）に、30% を評価用（"test.txt"）に使用します。各ファイル（"trainval.txt", 
+  "test.txt"）に拡張子を除いたファイル名一覧を記載します。</p>
+  <p>学習は "trainval.txt" 
+  に記載の順序で行うので、ファイル記載順によってデータに偏りが無い方が良いです。このため一般的にはファイルリストをランダムにシャッフルします。</p>
+  <p>また、今回はオブジェクト種類が１つなのでまだ良いのですが、複数の種類を学習するときは種別ごとに適正に配分する必要があるので大変です。今後のことを考えて 
+  "trainval.txt" と "test.txt" を自動生成するプログラムを作成してみました。下記にソースコードを記載します。</p>
+  <p>使用方法概要です。</p>
+  <ul>
+    <li>他のプログラムと同様に、下記ソースコードを pytorch-ssd のルートフォルダに保存します。</li>
+    <li>上記に構成したフォルダ構成のままであれば、このプログラムを実行するだけです。</li>
+    <li>パスやファイル名を変更する場合、下記表を参考に引数を指定して実行します。</li>
+    <li>学習用・評価用の比率（70%, 30%）を変更したい場合はプログラム中の定数を直接変更してください。</li>
+  </ul>
+  <p>&nbsp;</p>
+        
+  <table class="border-collapse" border="1" width="800">
+    <caption>"create_imagesets_files.py" オプション一覧</caption>
+    <thead class="standard_table">
+      <tr>
+        <th>オプション</th>
+        <th>内容</th>
+        <th>デフォルト値</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>--jpeg_path</strong></td>
+        <td>JPEG ファイルを保存するファルダパス</td>
+        <td>"./data/voc/JPEGImages"</td>
+      </tr>
+      <tr>
+        <td><strong>--xml_path</strong></td>
+        <td>XML ファイルを保存するフォルダパス</td>
+        <td>"./data/voc/Annotations"</td>
+      </tr>
+      <tr>
+        <td><strong>--imagesets_path</strong></td>
+        <td>trainval.txt, test.txt を保存するフォルダパス</td>
+        <td>"./data/voc/ImageSets/Main"</td>
+      </tr>
+      <tr>
+        <td><strong>--trainval_filename</strong></td>
+        <td>trainval ファイル名</td>
+        <td>"trainval.txt"</td>
+      </tr>
+      <tr>
+        <td><strong>--test_filename </strong></td>
+        <td>test ファイル名</td>
+        <td>"test.txt"</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <p>&nbsp;</p>
+  <p>["<a href="https://github.com/i-pro-corp/python-examples/blob/main/mobilenet-ssd/create_imagesets_files.py" target="_blank">create_imagesets_files.py</a>"]</p>
+  <pre class="prettyprint linenums lang-py">'''
+[Abstract]
+    JPEGファイル（*.jpg）、アノテーションファイル（*.xml）から "trainval.txt" "test.txt" を作成する
+    
+[Details]
+    - jpeg_path と xml_path に保存されているファイルを確認して両方に存在するファイルのみでファイルリストを作成する。
+    - XML ファイルの内容を確認し、対象全ファイル中に存在するクラス名の一覧を作成する。
+    - クラス毎に "&lt;class_name&gt;_trainval.txt", "&lt;class_name&gt;_test.txt" を作成する。
+      ファイルの 70% を "&lt;class_name&gt;_trainval.txt" に、30% を "&lt;class_name&gt;_test.txt" に保存する。 
+    - 全ての "&lt;class_name&gt;_trainval.txt" を集めて "trainval.txt" として保存する。ファイル一覧をランダムシャッフルする。
+    - 全ての "&lt;class_name&gt;_test.txt" を集めて "test.txt" として保存する。ファイル一覧をランダムシャッフルする。
+
+[Author]
+    kinoshita hidetoshi (木下英俊)
+
+[library install]
+    下記 import 参照
+'''
+
+import argparse
+import logging
+import sys
+import os
+import glob
+import random
+import xml.etree.ElementTree as ET
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+
+'''
+[Abstract]
+    指定フォルダ中の *.jpg ファイルリストを作成する。
+    basename（フォルダパス無し）、拡張子無し、の表記とする。
+'''
+def create_jpeg_list(folder_path):
+    files_with_path = glob.glob(folder_path + "/*.jpg")
+    files_without_path_ext = []
+    for file in files_with_path:
+        files_without_path_ext.append(os.path.splitext(os.path.basename(file))[0])
+    return files_without_path_ext
+
+
+'''
+[Abstract]
+    指定フォルダ中の *.xml ファイルリストを作成する。
+    basename（フォルダパス無し）、拡張子無し、の表記とする。
+'''
+def create_xml_list(folder_path):
+    files_with_path = glob.glob(folder_path + "/*.xml")
+    files_without_path_ext = []
+    for file in files_with_path:
+        files_without_path_ext.append(os.path.splitext(os.path.basename(file))[0])
+    return files_without_path_ext
+
+
+'''
+[Abstract]
+    jpeg_files, xml_files の両方に存在するもののみのファイルリストを作成する。
+'''
+def create_target_list(jpeg_path, xml_path):
+
+    '''
+    JPEG ファイル一覧を作成する
+    '''
+    jpeg_files = create_jpeg_list(jpeg_path)
+
+    '''
+    XML ファイル一覧を作成する
+    '''
+    xml_files = create_xml_list(xml_path)
+
+    '''
+    JPEG, XML 両方に共通であるものだけをリスト化    
+    '''
+    target_files = []
+    for file in jpeg_files:
+        if file in xml_files:
+            target_files.append(file)
+
+    return target_files
+
+
+'''
+[Abstract]
+    特定クラス向けの "&lt;class_name&gt;_trainval.txt", "&lt;class_name&gt;_test.txt" を出力する
+'''
+def save_trainval_test_with_class_name(target_files, class_name):
+    '''
+    ファイルリストの 70% を "&lt;class_name&gt;_trainval.txt" へ、30% を "&lt;class_name&gt;_test.txt" へ出力
+    '''
+    files_end = len(target_files)
+    test_end  = int(files_end * 0.3)
+
+    '''
+    "&lt;class_name&gt;_test.txt", "&lt;class_name&gt;_trainval.txt" 出力
+    '''
+    with open( os.path.join( args.imagesets_path, class_name + '_' + args.test_filename), 'w') as f:
+        f.write('\n'.join(target_files[0:test_end]))
+
+    with open( os.path.join( args.imagesets_path, class_name + '_' + args.trainval_filename), 'w') as f:
+        f.write('\n'.join(target_files[test_end:files_end]))
+
+
+'''
+[Abstract]
+    アノテーションファイル（XMLファイル）から "trainval.txt" "test.txt" を作成する
+'''
+def create_imagesets_files():
+    '''
+    JPEG, XML 両方に共通に存在するファイル名だけをリスト化
+    '''
+    target_files = create_target_list(args.jpeg_path, args.xml_path)
+
+    '''
+    ラベルリストを作成
+    '''
+    label_list = []
+    for file in target_files:
+        annotation_file = os.path.join( args.xml_path, file + '.xml')
+        objects = ET.parse(annotation_file).findall("object")
+        for object in objects:
+            #class_name = object.find('name').text.lower().strip()
+            class_name = object.find('name').text.strip()
+            if class_name not in label_list:
+                label_list.append(class_name)
+
+    logging.info('=== label_list ===')
+    logging.info(label_list)
+
+    '''
+    ラベル毎の trainval_&lt;label&gt;.txt, test_&lt;label&gt;.txt を作成
+    それぞれ全体の 70%, 30% の比率で出力
+    '''
+    trainval_files_list = []
+    test_files_list = []
+    for label in label_list:
+        file_list = []
+        for file in target_files:
+            annotation_file = os.path.join( args.xml_path, file + '.xml')
+            objects = ET.parse(annotation_file).findall("object")
+            for object in objects:
+                class_name = object.find('name').text.strip()
+                if class_name == label:
+                    file_list.append(file)
+                    break
+        
+        save_trainval_test_with_class_name(file_list, label)
+        trainval_files_list.append( label + '_' + args.trainval_filename)
+        test_files_list.append( label + '_' + args.test_filename)
+
+    '''
+    &lt;label&gt;_trainval.txt を全て結合し、trainval.txt を作成
+    ファイルリストはランダムソート後に出力
+    '''
+    trainval_files = []
+    for file in trainval_files_list:
+        with open( os.path.join( args.imagesets_path, file), 'r') as f:
+             for line in f:
+                trainval_files.append(line.strip())
+
+    random.shuffle(trainval_files)
+    filename = os.path.join( args.imagesets_path, args.trainval_filename)
+    with open( filename, 'w') as f:
+        f.write('\n'.join(trainval_files))
+        logging.info('=== trainval.txt ===')
+        logging.info('path : ' + filename)
+        logging.info('size : ' + str(len(trainval_files)))
+
+    '''
+    &lt;label&gt;_test.txt を全て結合し、test.txt を作成
+    ファイルリストはランダムソート後に出力
+    '''
+    test_files = []
+    for file in test_files_list:
+        with open( os.path.join( args.imagesets_path, file), 'r') as f:
+            for line in f:
+                test_files.append(line.strip())
+
+    random.shuffle(test_files)
+    filename = os.path.join( args.imagesets_path, args.test_filename)
+    with open( filename, 'w') as f:
+        f.write('\n'.join(test_files))
+        logging.info('=== test.txt ===')
+        logging.info('path : ' + filename)
+        logging.info('size : ' + str(len(test_files)))
+
+
+'''
+[Abstract]
+    main 関数
+'''
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser( description='Create "ImageSets/Main/trainval.txt", "ImageSets/Main.test.txt" files.')
+    parser.add_argument("--jpeg_path", default="./data/voc/JPEGImages", type=str, help='Specify JPEGImages (jpeg files) path.')
+    parser.add_argument("--xml_path", default="./data/voc/Annotations", type=str, help='Specify Annotations (xml files) path.')
+    parser.add_argument("--imagesets_path", default="./data/voc/ImageSets/Main", type=str, help='Specify ImageSets path.')
+    parser.add_argument("--trainval_filename", default="trainval.txt", type=str, help='Specify trainval.txt filename.')
+    parser.add_argument("--test_filename", default="test.txt", type=str, help='Specify test.txt filename.')
+    args = parser.parse_args()
+
+    logging.info('=== args ===')
+    logging.info(args)
+    
+    if os.path.exists( args.jpeg_path ) == False:
+        print("NOT exist " + args.jpeg_path + ".")
+        sys.exit(1)
+
+    if os.path.exists( args.xml_path ) == False:
+        print("NOT exist " + args.xml_path + ".")
+        sys.exit(1)
+
+    if os.path.exists( args.imagesets_path ) == False:
+        print("NOT exist " + args.imagesets_path + ".")
+        sys.exit(1)
+
+    create_imagesets_files()</pre>
+  <p>&nbsp;</p>
+  <p>実行後のログ出力例です。</p>
+  <pre>2023-02-16 17:48:25,323 - root - INFO - === args ===
+2023-02-16 17:48:25,323 - root - INFO - Namespace(jpeg_path='./data/voc/JPEGImages', xml_path='./data/voc/Annotations', imagesets_path='./data/voc/ImageSets/Main', trainval_filename='trainval.txt', test_filename='test.txt')
+2023-02-16 17:48:25,361 - root - INFO - === label_list ===
+2023-02-16 17:48:25,362 - root - INFO - ['bird']
+2023-02-16 17:48:25,388 - root - INFO - === trainval.txt ===
+2023-02-16 17:48:25,388 - root - INFO - path : ./data/voc/ImageSets/Main\trainval.txt
+2023-02-16 17:48:25,389 - root - INFO - size : 140
+2023-02-16 17:48:25,395 - root - INFO - === test.txt ===
+2023-02-16 17:48:25,395 - root - INFO - path : ./data/voc/ImageSets/Main\test.txt
+2023-02-16 17:48:25,395 - root - INFO - size : 60</pre>
+  <p>&nbsp;</p>
+    
+  <div class="status_warning">
+    <div></div>
+    <div>
+      <p><strong>注意</strong></p>
+      <p>ログ出力を確認し、意図通りのオブジェクト名（ここでは ['bird'] 
+      の部分）のみであることを確認しましょう。意図しないオブジェクト名があるとこの後の学習でエラーの原因となります。</p>
+      <p>同様に各出力枚数についても確認し、あなたの期待する値と一致することを確認しましょう。</p>
+    </div>
+  </div>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>"trainval.txt" 出力例です。</p>
+  <pre style="width: 400px">grey-heron-6318054_1920
+bird-g0919a497b_1920
+crows-7381423_1920
+kingfisher-gc64d47593_1920
+rooster-1867562_1920
+blue-tit-6908151_1920
+bird-9950_1920
+tit-4987149_1920
+seagull-4841143_1920
+mallard-3524390_1920
+kingfisher-881975_1920
+seagull-640229_1920
+hd-wallpaper-2566241_1920
+robin-6619184_1920
+deckchairs-355596_1920
+falcon-1264605_1920
+seagull-5289474_1920
+kingfisher-1867936_1920
+sparrows-2763553_1920
+flamingo-6126763_1920
+･･･</pre>
+  <p>&nbsp;</p>
+  <p>"test.txt" 出力例です。</p>
+  <pre style="width: 400px">bird-6983434_1920
+bird-4087736_1920
+bird-5965265_1920
+bird-7000837_1920
+bird-4062359_1920
+barn-owl-1107397_1920
+bird-4198001_1920
+bird-4401223_1920
+bird-4563886_1920
+bird-349026_1920
+bird-2847799_1920
+bird-7356346_1920
+bird-1213447_1920
+bird-6721895_1920
+bird-173584_1920
+bird-7145813_1920
+bird-5981360_1920
+bird-7299650_1920
+animal-1851487_1920
+bird-7016926_1920
+･･･</pre>
+  <p>&nbsp;</p>
+  <p>以上で学習のための事前準備を完了です。</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <h4><a name="5-2-4._学習">5-2-4. 学習</a></h4>
+  <p>9. 学習を実施</p>
+    
+  <div class="status_warning">
+    <div></div>
+    <div>
+      <p><strong>注意</strong></p>
+      <p>前節から順番に作業してきている前提で記載しています。</p>
+      <p>"<a href="#5-1-2._学習">5-1-2. 学習</a>" で説明したプログラム修正を必要とするはずです。ご注意ください。</p>
+    </div>
+  </div>
+
+  <p>&nbsp;</p>
+  <p>下記コマンドにより学習を実行しました。</p>
+  <pre style="color: #FFFFFF; background-color: #000000">$ python train_ssd.py --dataset_type <span class="auto-style3"><strong>voc</strong></span> --datasets ./data/voc --<strong>validation_dataset</strong> ./data/voc --net mb1-ssd --pretrained_ssd models/mobilenet-v1-ssd-mp-0_675.pth --scheduler cosine --lr 0.01 --t_max 100 --validation_epochs 5 --num_epochs 100 --debug_steps 25  --base_net_lr 0.001  --batch_size 5</pre>
+  <p>&nbsp;</p>
+        
+    <table class="border-collapse" border="1" width="800">
+      <caption>"train_ssd.py" オプションとして設定した内容一覧</caption>
+      <thead class="standard_table">
+        <tr>
+          <th>オプション</th>
+          <th>設定値</th>
+          <th>補足</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>--dataset_type</strong></td>
+          <td>voc</td>
+          <td>Pascal/VOC 型のアノテーションデータセットを使用。</td>
+        </tr>
+        <tr>
+          <td><strong>--datasets</strong></td>
+          <td>./data/voc</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td style="white-space: nowrap"><strong>--validation_dataset</strong></td>
+          <td>./data/voc</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><strong>--net</strong></td>
+          <td>mb1-ssd</td>
+          <td>MobileNet-SSD v1</td>
+        </tr>
+        <tr>
+          <td><strong>--pretrained_ssd</strong></td>
+          <td>model/mobilenet-v1-ssd-mp-0_675.pth</td>
+          <td>Pretrained base model.</td>
+        </tr>
+        <tr>
+          <td><strong>--scheduler</strong></td>
+          <td>cosine</td>
+          <td>Scheduler for SGD. It can one of multi-step and cosine.</td>
+        </tr>
+        <tr>
+          <td><strong>--lr</strong></td>
+          <td>0.01</td>
+          <td>initial learning rate.</td>
+        </tr>
+        <tr>
+          <td><strong>--base_net_lr</strong></td>
+          <td>0.001</td>
+          <td>initial learning rate for base net. </td>
+        </tr>
+        <tr>
+          <td><strong>--t_max</strong></td>
+          <td>100</td>
+          <td>T_max value for Cosine Annealing Scheduler.</td>
+        </tr>
+        <tr>
+          <td style="white-space: nowrap"><strong>--validation_epochs</strong></td>
+          <td>5</td>
+          <td>評価（validation）を行う Epoch 周期</td>
+        </tr>
+        <tr>
+          <td><strong>--num_epochs</strong></td>
+          <td>100</td>
+          <td>学習回数。1 Epoch 毎に全ての学習画像で訓練する。今回の例だと、140枚の画像を使って100回反復することを意味する。</td>
+        </tr>
+        <tr>
+          <td><strong>--batch_size</strong></td>
+          <td>5</td>
+          <td>訓練一回で使用する画像枚数。この１回を step と呼ぶようです。</td>
+        </tr>
+        <tr>
+          <td><strong>--debug_steps</strong></td>
+          <td>25</td>
+          <td>Set the debug log output frequency.<br>今回の例では 学習データ数が 140、バッチサイズが 
+          5 なので、1 Epoch 毎に 28回（28 step）の訓練を行います。<br>各 Epoch 
+          で一回のデバッグ出力をして欲しい、という意図から適当ではありますがここでは 25 という値を設定しました。15～28 
+          から選べば各１回のデバッグ出力を行えるはずです。逆に 28 より大きい値を設定するとデバッグ出力無しになります。</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <p>&nbsp;</p>
+  <p>下記表に学習時の精度遷移を参考記載します。</p>
+        
+  <table class="border-collapse" border="1" width="500">
+    <caption>[Table.] 引数毎の 学習時間、Validation Loss 比較</caption>
+    <thead class="standard_table">
+      <tr>
+        <th style="white-space: nowrap">Epoch num.</th>
+        <th style="white-space: nowrap">Validation Loss</th>
+        <th style="white-space: nowrap">Average Loss</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>0</strong></td>
+        <td>4.67</td>
+        <td>6.15</td>
+      </tr>
+      
+      <tr>
+        <td><strong>10</strong></td>
+        <td>2.74</td>
+        <td>2.35</td>
+      </tr>
+      
+      <tr>
+        <td><strong>20</strong></td>
+        <td>2.78</td>
+        <td>2.11</td>
+      </tr>
+      
+      <tr>
+        <td><strong>30</strong></td>
+        <td>2.48</td>
+        <td>1.83</td>
+      </tr>
+      
+      <tr>
+        <td><strong>40</strong></td>
+        <td>2.40</td>
+        <td>1.60</td>
+      </tr>
+      
+      <tr>
+        <td><strong>50</strong></td>
+        <td>2.18</td>
+        <td>1.50</td>
+      </tr>
+      
+      <tr>
+        <td><strong>60</strong></td>
+        <td>2.15</td>
+        <td>1.28</td>
+      </tr>
+      
+      <tr>
+        <td><strong>70</strong></td>
+        <td>2.13</td>
+        <td>1.24</td>
+      </tr>
+      
+      <tr>
+        <td><strong>80</strong></td>
+        <td>2.16</td>
+        <td>1.33</td>
+      </tr>
+      
+      <tr>
+        <td><strong>90</strong></td>
+        <td>2.09</td>
+        <td>1.16</td>
+      </tr>
+      
+      <tr>
+        <td><strong>99</strong></td>
+        <td>2.07</td>
+        <td>1.22</td>
+      </tr>
+      
+      <tr>
+        <td><strong>学習時間</strong></td>
+        <td style="white-space: nowrap" class="auto-style7" colspan="2">52分 （CPU 環境）</td>
+      </tr>
+      
+    </tbody>
+  </table>
+  
+  <p>&nbsp;</p>
+  <p>52分（CPU 環境）で "100 Epoch" の学習を完了できました。</p>
+  <p>&nbsp;</p>
+  <p>学習データと共に出力された "models/voc-model-labels.txt" の内容を以下に記載します。</p>
+  <p>["models/voc-model-labels.txt" の内容]</p>
+  <pre style="width: 500px">BACKGROUND
+bird</pre>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  
+  <div class="status_information">
+    <div></div>
+    <div>
+      <p><strong>参考</strong></p>
+      <p>ゲーミングノートＰＣ環境でも同じ学習を実施。<br>52分 ⇨ <strong>22分</strong> へ短縮できました。</p>
+      <p>[環境]</p>
+      <p>GPU: NVIDIA GeForce GTX 1650 (4GB)</p>
+      <p>CPU: Intel Core i7-9750H</p>
+      <p>Cuda: 11.7</p>
+      <p>Python: 3.10.7</p>
+      <p>PyToch: 1.12+cu116</p>
+      <p>OS: Windows 11 home, 22H2</p>
+    </div>
+  </div>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <h4><a name="5-2-5._学習結果と静止画を使って推論">5-2-5. 学習結果と静止画を使って推論</a></h4>
+  <p>&nbsp;</p>
+  <p>10. 学習したデータとテスト画像を使用して認識</p>
+  <p>私の学習済みデータ（"mb1-ssd-Epoch-99-Loss-2.0738580177227655.pth"）とサンプル画像（"birds-7469509_1920.jpg"）を使った 
+  コマンド実施例 を以下に記載します。あなたが実際に使用するファイル名およびパスへ修正してください。</p>
+  
+  <p>(コマンド書式)</p>
+  <pre style="color: #FFFFFF; background-color: #000000">$ python run_ssd_example.py mb1-ssd <strong>&lt;学習データファイル パス&gt;</strong> <strong>&lt;ラベルファイル パス&gt;</strong> <strong>&lt;認識対象画像 パス&gt;</strong></pre>
+  <p>(具体例)</p>
+  <pre style="background-color: #000000; color: #FFFFFF; white-space:pre-wrap;">$ python run_ssd_example.py mb1-ssd .\models\mb1-ssd-Epoch-99-Loss-2.0738580177227655.pth .\models\voc-model-labels.txt .\data\voc\JPEGImages\birds-7469509_1920.jpg</pre>
+    
+  <p>&nbsp;</p>
+  <p>以下、いくつかのサンプル画像による認識結果です。</p>
+  <p>&nbsp;</p>
+  <p>テスト画像１： 入手元
+  <a href="https://pixabay.com/ja/photos/鳥-カモメ-空飛ぶカモメ-空-7469509/" target="_blank">Pixabay</a></p>
+  <p>
+  <span style="color: rgb(0, 0, 0); font-family: sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;">
+  商用利用無料、帰属表示必要なし、の画像です。ライセンス詳細は "<a href="https://pixabay.com/ja/service/terms/" target="_blank">Pixabay License</a>" を参照ください。</span></p>
+  <p>["birds-7469509_1920.jpg"]</p>
+  <p><img alt="birds-7469509_1920.jpg" src="mobilenet-ssd_train/img70.jpg" width="800"></p>
+  <p>&nbsp;</p>
+  <p>テスト画像２： 入手元 
+  <a href="https://pixabay.com/ja/photos/gray-heron-bird-5077089/" target="_blank">Pixabay</a></p>
+  <p>
+  <span style="color: rgb(0, 0, 0); font-family: sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;">
+  商用利用無料、帰属表示必要なし、の画像です。ライセンス詳細は "<a href="https://pixabay.com/ja/service/terms/" target="_blank">Pixabay License</a>" を参照ください。</span></p>
+  <p>["gray-heron-5077089_1920.jpg"]</p>
+  <p><img alt="gray-heron-5077089_1920.jpg" src="mobilenet-ssd_train/img76.jpg" width="800"></p>
+  <p>&nbsp;</p>
+  <p>テスト画像３： 入手元 
+  <a href="https://pixabay.com/ja/photos/ヒドリガモ-アヒル-水鳥-動物-4914971/" target="_blank">Pixabay</a></p>
+  <p>
+  <span style="color: rgb(0, 0, 0); font-family: sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;">
+  商用利用無料、帰属表示必要なし、の画像です。ライセンス詳細は "<a href="https://pixabay.com/ja/service/terms/" target="_blank">Pixabay License</a>" を参照ください。</span></p>
+  <p>["eurasian-wigeon-4914971_1920.jpg"]</p>
+  <p><img alt="eurasian-wigeon-4914971_1920.jpg" src="mobilenet-ssd_train/img7A.jpg" width="800"></p>
+  <p>&nbsp;</p>
+  <p>今回学習に使用した画像枚数は 140枚 という少ないものでしたが、私の予想に反してそこそこ以上の良い認識性能を実現できました。</p>
+  <p>学習済みデータを元に追加学習を行っていることも効率よく学習できた大きな要因でしょう。短い時間で学習できているのは軽量型のAIモデル（MobileNet）を使っていることも理由の１つでしょう。</p>
+  <p>少ない学習画像枚数、短い学習時間で実現できました。正常認識できない画像を収集して追加学習すればさらなる認識性能向上も見込めます。様々な応用を考えることができそうと思いました。AIを学習したり応用したい人達の参考になれば幸いです。</p>
+  <p>&nbsp;</p>
+</section>
+
+<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>
+
+<section>
+  <h4><a name="5-2-6._学習結果とカメラを使って物体検知してみる_(i-PRO_カメラ)">5-2-6. 学習結果とカメラを使って物体検知してみる 
+  (i-PRO カメラ)</a></h4>
+  <p>&nbsp;</p>
+  <h4>[概要]</h4>
+  <p>前節で作成した学習結果とカメラを使って物体検知を行ってみます。</p>
+  <p>
+  &nbsp;</p>
+	
+	<h4>[環境]</h4>
+  <table>
+    <tbody>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+
+      <tr>
+        <td>言語 :</td>
+        <td>Python,</td>
+        <td>3.10.7</td>
+      </tr>
+
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+        <td>PyTorch,</td>
+        <td>1.12.1+cpu</td>
+      </tr>
+
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+
+      <tr>
+        <td>OS :</td>
+        <td>Windows 11 home,</td>
+        <td>22H2</td>
+      </tr>
+
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+    </tbody>
+  </table>
+
+	<p> &nbsp;</p>
+	
+	<h4>[手順]</h4>
+  <p>&nbsp;記事「<a href="./mobilenet-ssd.html#2-2._MobileNetV1-SSD_%E3%82%92%E5%8B%95%E3%81%8B%E3%81%99%EF%BC%88i-PRO_%E3%82%AB%E3%83%A1%E3%83%A9%EF%BC%89">2-2. MobileNetV1-SSD を動かす（i-PRO カメラ）</a>」の内容に従って行います。</p>
+  <p>元の記事内容からラベルと学習データを変更するだけで、あなたが作成した学習データによる物体検知を行うことができます。</p>
+  <p>環境構築などは既にできていることを前提に詳細説明を割愛します。</p>
+  <p>&nbsp;</p>
+	<p>下記コマンドを入力してプログラムを起動します。</p>
+  <ul>
+    <li>&lt;<em>学習データファイル パス</em>&gt;、&lt;<em>ラベルファイル パス</em>&gt; にあなたが作成したファイルのパスを記載します。</li>
+    <li>４番目の引数として RTSP 表記で i-PRO カメラの接続を記載します。<span class="auto-style3">{user-id}</span>, 
+    <span class="auto-style3">{password}</span>, <span class="auto-style3">{ip-address}</span> 
+	  の部分をご自身が使われる i-PRO カメラの設定に合わせて修正して実行してください。<br>その他 RTSP に関しては記事「<a href="connect_with_rtsp.html">RTSP で画像を取得する</a>」を参照ください。</li>
+  </ul>
+  <p>&nbsp;</p>
+  <p>(コマンド書式)</p>
+  <pre style="color: #FFFFFF; background-color: #000000">$ python run_ssd_live_demo.py mb1-ssd <strong>&lt;<em>学習データファイル パス</em>&gt;</strong> <strong>&lt;<em>ラベルファイル パス</em>&gt;</strong> <span class="auto-style4">rtsp://</span><span class="auto-style3">{user-id}</span>:<span class="auto-style3">{password}</span>@<span class="auto-style3">{ip-address}</span><span class="auto-style4">/MediaInput/stream_1</span></pre>
+  <p>(具体例)</p>
+  <pre style="color: #FFFFFF; background-color: #000000">$ python run_ssd_live_demo.py mb1-ssd models/<strong>mb1-ssd-Epoch-99-Loss-2.0738580177227655.pth</strong> models/<strong>voc-model-labels.txt</strong> rtsp://admin:Admin12345@192.168.0.10/MediaInput/stream_1</pre>
+	<p>&nbsp;</p>
+	<p>以下、いくつかのサンプル動画による認識結果です。</p>
+  <p>※ PC上で再生表示する動画を i-PRO カメラで接写してテストしています。このため画質が荒くなっていますこと、ご容赦ください。 </p>
+  <p>&nbsp;</p>
+
+  <p>テスト動画１： 入手元
+  <a href="https://pixabay.com/ja/videos/ロビン-鳥-森-自然-バネ-21723/" target="_blank">Pixabay</a></p>
+  <p>商用利用無料、帰属表示必要なし、の動画です。ライセンス詳細は "<a href="https://pixabay.com/ja/service/terms/" target="_blank">Pixabay License</a>" を参照ください。</p>
+  <video controls muted autoplay="y" loop="y" width="800">
+    <source src="mobilenet-ssd_train\bird_21723.mp4" type="video/mp4">
+    動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+  </video>
+  <p>[動画] テスト動画１</p>
+  
+  <p>&nbsp;</p>
+  
+  <p>テスト動画２： 入手元 
+  <a href="https://pixabay.com/ja/videos/スズメ-鳥-ジャンプ-ダンス-38521/" target="_blank">Pixabay</a></p>
+  <p>  商用利用無料、帰属表示必要なし、の動画です。ライセンス詳細は "<a href="https://pixabay.com/ja/service/terms/" target="_blank">Pixabay License</a>" を参照ください。</p>
+  <video controls muted autoplay="y" loop="y" width="800">
+    <source src="mobilenet-ssd_train\bird_38521.mp4" type="video/mp4">
+    動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+  </video>
+  <p>[動画] テスト動画２</p>
+  
+  <p>&nbsp;</p>
+  
+  <p>テスト動画３： 入手元    
+  <a href="https://pixabay.com/ja/videos/グリーブ-lake-nature-26928/" target="_blank">Pixabay</a></p>
+  <p>商用利用無料、帰属表示必要なし、の動画です。ライセンス詳細は "<a href="https://pixabay.com/ja/service/terms/" target="_blank">Pixabay License</a>" を参照ください。</p>
+  <video controls muted autoplay="y" loop="y" width="800">
+    <source src="mobilenet-ssd_train\bird_26928.mp4" type="video/mp4">
+    動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+  </video>
+  <p>[動画] テスト動画３</p>
+  
+  <p>&nbsp;</p>
+  <p>今回学習に使用した画像枚数は 140枚 という少ないものでしたが、私の予想に反してそこそこ以上の良い認識性能を実現できました。</p>
+    
+  <p>&nbsp;</p>
+    
+</section>
+
+&nbsp;
+<hr>
+&nbsp;
+
+</section>
+
+<section>
+  <h2><a name="6._後書き">6. 後書き</a></h2>
+  <p>MobileNet-SSD とオープンソースツールの LabelImg を使って、あなたが独自の物体検知 AI 
+  を実現する方法と手順について記載しました。とっつきにくい部分、面倒な部分があるかと思いますが決して難しい内容ではないと考えます。意図通りに実際に動いたときの驚き・感動はなかなか良い気持ちを味わえると思います。本文記載の通り、そこそこの性能でよければ100枚ぐらいの画像でも十分実験できると思います。是非チャレンジしてみてください。（たくさんの画像をアノテーションするのは大変ですけどね）</p>
+  <p>&nbsp;</p>
+  <p>最後に思いつくままにコツやヒントなどを箇条書きさせていただきます。</p>
+  <ul>
+    <li>認識しない画像は、学習用画像として追加して再学習します。</li>
+    <li>誤検知した画像は、同様に学習用画像として追加して学習します。アノテーション枠を付けていない部分は背景（BACKGROUND）として学習されるので誤検知を減らすことができます。</li>
+    <li>
+    似たような画像をたくさん学習することは避けましょう。学習時間増大の原因となるだけでなく認識精度低下の原因となります。バランスよく学習することはとても重要です。</li>
+    <li>メモリ量などPC環境が許せばバッチサイズを大きめにした方が良い、と言われています。その際は学習率（lr, 
+    base_net_lr）も大きい値を設定したほうが良い、という報告がありました。</li>
+  </ul>
+  <p>&nbsp;</p>
+  <p>以上です。このページを訪問いただいた皆さんの参考になれば幸いです。</p>
+  &nbsp;
+  &nbsp;
+</section>
+
+<p>&nbsp;</p>
+<hr>
+<p>&nbsp;</p>
+
+<section>
+  <h2><a id="ライセンス">ライセンス</a></h2>
+<p>本ページの情報は、特記無い限り下記 MIT ライセンスで提供されます。</p>
+<div class="license">
+The MIT License (MIT)<br><br>
+
+Copyright © 2023 Kinoshita Hidetoshi<br><br>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:<br><br>
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.<br><br>
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</div>
+  <p>&nbsp;</p>
+</section>
+
+<br>
+
+<section>
+	<h2><a id="参考">参考</a></h2>
+	<ul>
+		<li>[1] PyTorch<br><a href="https://pytorch.org/" target="_blank">
+      https://pytorch.org/</a></li>
+    <li>[2] qfgaohao/pytorch-ssd: MobileNetV1, MobileNetV2, VGG based 
+      SSD/SSD-lite implementation in Pytorch 1.0 / Pytorch 0.4. Out-of-box 
+      support for retraining on Open Images dataset. ONNX and Caffe2 support. 
+      Experiment Ideas like CoordConv. (github.com)<br>
+      <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">
+      https://github.com/qfgaohao/pytorch-ssd</a></li>
+    <li>[3] PyTorchによるSSD Mobilenetでの転移学習（Jetson Nano） | そう備忘録 (souichi.club)<br>
+      <a href="https://www.souichi.club/deep-learning/transfer-learning/" target="_blank">
+      https://www.souichi.club/deep-learning/transfer-learning/</a></li>
+		<li>[4] PyTorch 新たなクラスの物体検出をSSDでやってみる | cedro-blog (cedro3.com)<br>
+      <a href="http://cedro3.com/ai/pytorch-ssd-bccd/" target="_blank">
+      http://cedro3.com/ai/pytorch-ssd-bccd/</a></li>
+		<li>[5] MobilenetSSD : 高速に物体検出を行う機械学習モデル. ailia… | by Kazuki Kyakuno | axinc | Medium<br>
+      <a href="https://medium.com/axinc/mobilenetssd-高速に物体検出を行う機械学習モデル-be3ca37c411" target="_blank">
+      https://medium.com/axinc/mobilenetssd-高速に物体検出を行う機械学習モデル-be3ca37c411</a></li>
+		<li>[6] 画像を扱う機械学習のためのデータセットまとめ - Qiita<br>
+      <a href="https://qiita.com/leetmikeal/items/7c0d23e39bf38ab8be23" target="_blank">
+      https://qiita.com/leetmikeal/items/7c0d23e39bf38ab8be23</a></li>
+		<li>[7]
+      <a href="https://udemy.benesse.co.jp/data-science/deep-learning/transfer-learning.html#:~:text=%E8%BB%A2%E7%A7%BB%E5%AD%A6%E7%BF%92%E3%81%A8%E3%83%95%E3%82%A1%E3%82%A4%E3%83%B3%E3%83%81%E3%83%A5%E3%83%BC%E3%83%8B%E3%83%B3%E3%82%B0%E3%81%AE%E9%81%95%E3%81%84%E3%81%AF%EF%BC%9F%20%E8%BB%A2%E7%A7%BB%E5%AD%A6%E7%BF%92%E3%81%A8%E3%83%95%E3%82%A1%E3%82%A4%E3%83%B3%E3%83%81%E3%83%A5%E3%83%BC%E3%83%8B%E3%83%B3%E3%82%B0%E3%81%AF%E3%80%81%E3%81%A9%E3%81%A1%E3%82%89%E3%82%82%E5%AD%A6%E7%BF%92%E6%B8%88%E3%81%BF%E3%81%AE%E3%83%A2%E3%83%87%E3%83%AB%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%9F%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%81%AE%E6%89%8B%E6%B3%95%E3%81%A7%E3%81%99%E3%80%82%20%E3%82%88%E3%81%8F%E6%B7%B7%E5%90%8C%E3%81%95%E3%82%8C%E3%81%A6%E3%81%97%E3%81%BE%E3%81%84%E3%81%BE%E3%81%99%E3%81%8C%E3%80%81%E3%81%93%E3%81%AE2%E3%81%A4%E3%81%AE%E6%89%8B%E6%B3%95%E3%81%AF%E7%95%B0%E3%81%AA%E3%82%8A%E3%81%BE%E3%81%99%E3%80%82,%E3%81%9D%E3%82%8C%E3%81%9E%E3%82%8C%E3%81%AE%E9%81%95%E3%81%84%E3%82%92%E8%A6%8B%E3%81%A6%E3%81%84%E3%81%8D%E3%81%BE%E3%81%97%E3%82%87%E3%81%86%E3%80%82%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%B3%E3%83%81%E3%83%A5%E3%83%BC%E3%83%8B%E3%83%B3%E3%82%B0%E3%81%AF%E3%80%81%E5%AD%A6%E7%BF%92%E6%B8%88%E3%81%BF%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E5%B1%A4%E3%81%AE%E9%87%8D%E3%81%BF%E3%82%92%E5%BE%AE%E8%AA%BF%E6%95%B4%E3%81%99%E3%82%8B%E6%89%8B%E6%B3%95%E3%81%A7%E3%81%99%E3%80%82%20%E5%AD%A6%E7%BF%92%E6%B8%88%E3%81%BF%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E9%87%8D%E3%81%BF%E3%82%92%E5%88%9D%E6%9C%9F%E5%80%A4%E3%81%A8%E3%81%97%E3%80%81%E5%86%8D%E5%BA%A6%E5%AD%A6%E7%BF%92%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8%E3%81%AB%E3%82%88%E3%81%A3%E3%81%A6%E5%BE%AE%E8%AA%BF%E6%95%B4%E3%81%97%E3%81%BE%E3%81%99%E3%80%82%20%E8%BB%A2%E7%A7%BB%E5%AD%A6%E7%BF%92%E3%81%AF%E3%80%81%E5%AD%A6%E7%BF%92%E6%B8%88%E3%81%BF%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E9%87%8D%E3%81%BF%E3%81%AF%E5%9B%BA%E5%AE%9A%E3%81%97%E3%80%81%E8%BF%BD%E5%8A%A0%E3%81%97%E3%81%9F%E5%B1%A4%E3%81%AE%E3%81%BF%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%A6%E5%AD%A6%E7%BF%92%E3%81%97%E3%81%BE%E3%81%99%E3%80%82">
+      転移学習とは？ディープラーニングで期待の「転移学…｜Udemy メディア (benesse.co.jp)</a></li>
+		<li>[8] dusty-nv/pytorch-ssd: MobileNetV1, MobileNetV2, VGG based 
+      SSD/SSD-lite implementation in PyTorch. Out-of-box support for 
+      retraining on Open Images dataset. ONNX and Caffe2 support. Experiment 
+      Ideas like CoordConv. (github.com)<br>
+      <a href="https://github.com/dusty-nv/pytorch-ssd/" target="_blank">
+      https://github.com/dusty-nv/pytorch-ssd/</a></li>
+		<li>[9] dusty-nv/jetson-inference: Hello AI World guide to deploying 
+      deep-learning inference networks and deep vision primitives with 
+      TensorRT and NVIDIA Jetson. (github.com)<br>
+      <a href="https://github.com/dusty-nv/jetson-inference" target="_blank">
+      https://github.com/dusty-nv/jetson-inference</a></li>
+	</ul>
+</section>
+
+<p>&nbsp;</p>
+	<p>アノテーションツール</p>
+	<ul>
+		<li>heartexlabs/labelImg<br>
+		<a href="https://github.com/heartexlabs/labelImg" target="_blank">
+		https://github.com/heartexlabs/labelImg</a></li>
+		<li>AIアノテーションツール20選を比較！タグ付け自動化ツールの選び方を紹介 (aismiley.co.jp)<br>
+		<a href="https://aismiley.co.jp/ai_news/3-tools-to-perform-overlay-indispensable-for-machine-learning/" target="_blank">
+		https://aismiley.co.jp/ai_news/3-tools-to-perform-overlay-indispensable-for-machine-learning/</a></li>
+		<li>opencv/cvat: Annotate better with CVAT, the industry-leading data 
+		engine for machine learning. Used and trusted by teams at any scale, for 
+		data of any scale. (github.com)<br>
+		<a href="https://github.com/opencv/cvat" target="_blank">
+		https://github.com/opencv/cvat</a></li>
+	</ul>
+<p>&nbsp;</p>
+
+<hr>
+
+<p>&nbsp;</p>
+
+<section>
+	<h2 style="margin-bottom:5px">変更履歴</h2>
+	<table>
+	  <tr>
+	    <td class="td_history_date">2023/3/1</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">新規作成,</td>
+	    <td class="td_history">木下英俊</td>
+	  </tr>
+	</table>
+</section>
+
+<p>&nbsp;</p>
+
+<section>
+<p><a href="../../index.html" target="_parent">Programming Items トップページ</a></p>
+<p><a href="../../privacy_policy.html">プライバシーポリシー</a></p>
+</section>
+
+<p>&nbsp;</p>
+
+<footer>
+	<p><small>&copy; 2023  i-PRO Co., Ltd.</small></p>
+</footer>
+
+</body>
+</html>

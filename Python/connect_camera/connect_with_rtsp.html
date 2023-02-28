@@ -41,15 +41,15 @@
     background-color: #505000;
   }
   .auto-style3 {
- text-decoration: underline;
-}
+   text-decoration: underline;
+  }
   </style>
 
 </head>
 
 <body onload="prettyPrint();">
 
-<h1>RTSP で画像を取得する</h1>
+<h1>RTSP で画像を取得する (Python)</h1>
 
 <p> &nbsp;</p>
     <div class="status_information">
@@ -84,10 +84,23 @@
 </div>
 
 <p> &nbsp;</p>
+<p> &nbsp;</p>
+<p> <strong>RTSP</strong> (<strong>Real Time Streaming Protocol</strong>) 
+とは、IETF において標準化された映像（ビデオ）および音声（オーディオ）などのストリーミングデータを制御するためのプロトコルです。1998年に最初の版が "<a href="https://www.rfc-editor.org/rfc/rfc2326" target="_blank">RFC 
+2326</a>" として、バージョン2.0が2016年に "<a href="https://tools.ietf.org/html/rfc7826" target="_blank">RFC 
+7826</a>" として標準化されました。</p>
+<p>本ページでは、<strong>i-PRO</strong> カメラとPCを <strong>RTSP</strong> により接続してPC画面へ表示するプログラムを Python 
+で作成する例を紹介します。とても短いプログラムで i-PRO カメラの映像を見ることができます。動作確認は i-PRO mini (WV-S7130)、モジュールカメラ（AIスターターキット）を使って行いましたが、ほとんどの i-PRO 
+カメラでそのまま利用できるはずです。ぜひお試しください。</p>
 <p>&nbsp;</p>
 
-<p> i-PRO のカメラ i-PRO mini (WV-S7130)、モジュールカメラ（AIスターターキット）を入手したので、カメラとPCを接続して動作するプログラムを作成してみました。こちらで紹介します。ここで記載の内容は、ほとんどの i-PRO カメラでそのまま利用できると思いますが未確認です。</p>
-<p> &nbsp;</p>
+<video controls muted autoplay="y" loop="y" width="800">
+  <source src="connect_with_rtsp/rtsp_first.mp4" type="video/mp4">
+  動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+</video>
+<p>[動画] RTSP でカメラと接続して映像表示した様子</p>
+
+<p>&nbsp;</p>
 <hr>
 <p> &nbsp;</p>
 
@@ -175,8 +188,11 @@
       </tr>
       </table>
     <p>&nbsp;</p>
-    <p>(例) <span class="cpp-source">
-    rtsp://admin:password@192.168.0.10/MediaInput/stream_1</span></p>
+    <p>(具体例)</p>
+    
+    <blockquote>
+      rtsp://admin:password@192.168.0.10/MediaInput/stream_1</blockquote>
+    
     <p>&nbsp;</p>
     <p class="auto-style3"><strong>補足： </strong> </p>
     <ul>
@@ -190,7 +206,6 @@
       <p>i-PRO マルチセンサーカメラは仕様が異なります。下記表を参照ください。</p>
       </li>
     </ul>
-    <p>&nbsp;</p>
     <p>&nbsp;</p>
     
     <h3>i-PRO マルチセンサーカメラ（WV-X8570/WV-S8530 等）</h3>
@@ -239,12 +254,12 @@
 <section>
 	<h2> <a name="2. i-PRO カメラと RTSP 接続して映像を表示してみる">2. i-PRO カメラと RTSP 接続して映像を表示してみる</a></h2>
 	<h4>[概要]</h4>
-    <p>Python で i-PRO カメラ（i-PRO mini (WV-S7130W)）と RTSP 接続して映像を表示してみます。<br>とりあえず映像を取得してPC画面に表示するまでをやってみます。</p>
-    <ul>
-      <li>Stream1 はデフォルトで 1920x1080、H.265 となっています。<br>
-        必要に応じて H.264 へ変更してみてください。H.264 の方が処理は軽くなりそうです。</li>
-      <li>それでもまだ処理が重たい場合は、接続先を stream1 から stream2 または stream3 などへ変更してみてください。</li>
-    </ul>
+  <p>Python で i-PRO カメラと RTSP 接続して映像を表示してみます。<br>とりあえず映像を取得してPC画面に表示するまでをやってみます。</p>
+  <ul>
+    <li>Stream1 はデフォルトで 1920x1080、H.265 となっています。<br>
+      必要に応じて H.264 へ変更してみてください。H.264 の方が処理は軽くなりそうです。</li>
+    <li>それでもまだ処理が重たい場合は、接続先を stream1 から stream2 または stream3 などへ変更してみてください。</li>
+  </ul>
 	<p> &nbsp;</p>
 	
 	<h4>[評価環境1]</h4>
@@ -362,29 +377,29 @@ while True:
 cap.release()
 cv2.destroyAllWindows()</pre>
 
-    <p>&nbsp;</p>
-    <p>上記プログラムを動かしてみます。</p>
-	  <p>Windows での実行はこんな感じで行います。</p>
-    <p><span class="cpp-source"><strong>python</strong> connect_with_rtsp_1.py</span></p>
-	  <p>&nbsp;</p>
-	  <p>Linux での実行はこんな感じで行います。</p>
-    <p><span class="cpp-source"><strong>python3</strong> connect_with_rtsp_1.py</span></p>
-    <p>&nbsp;</p>
-    <p>Windows環境で複数の Python バージョンをインストールしている場合、下図のような感じで実行バージョンを指定することもできます。<br>
-    こちらはバージョン 3.10 の Python で実行を指示する例です。</p>
-    <p><span class="cpp-source"><strong>py</strong> -3.10 connect_with_rtsp_1.py</span></p>
-    <p>&nbsp;</p>
-    <p>上記プログラムを動かした様子を動画で示します。</p>
-    <p>こんなに簡単なプログラムでとても快適な映像表示を実現することができました。</p>
-    
-<video controls muted autoplay="y" loop="y" src="connect_with_rtsp/rtsp_first.mp4" width="800px">
-  <p>動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。</p>
-</video>
+  <p>&nbsp;</p>
+  <p>上記プログラムを動かしてみます。</p>
+  <p>Windows ではこんな感じで実行します。</p>
+  <pre style="width: 500px; color: #FFFFFF; background-color: #000000">$ <strong>python</strong> connect_with_rtsp_1.py</pre>
+  <p>&nbsp;</p>
+  <p>Linux はこんな感じで実行します。</p>
+  <pre style="width: 500px; color: #FFFFFF; background-color: #000000">$ <strong>python3</strong> connect_with_rtsp_1.py</pre>
+  <p>&nbsp;</p>
+  <p>Windows環境で複数の Python バージョンをインストールしている場合、下図のような感じで実行バージョンを指定することもできます。<br>
+  こちらはバージョン 3.10 の Python で実行する例です。</p>
+  <pre style="width: 500px; color: #FFFFFF; background-color: #000000;">$ <strong style="box-sizing: inherit">py -3.10</strong> connect_with_rtsp_1.py</pre>
+  <p>&nbsp;</p>
+  <p>上記プログラムを動かした様子を動画で示します。</p>
+  <p>こんなに簡単なプログラムでとても快適な映像表示を実現することができました。</p>
+  
+  <video controls muted autoplay="y" loop="y" width="800">
+    <source src="connect_with_rtsp/rtsp_first.mp4" type="video/mp4">
+    動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+  </video>
+  <p>[動画] RTSP でカメラと接続して映像表示した様子</p>
 
-<p>[動画] RTSP でカメラと接続して映像表示してみた様子</p>
-    
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
     
 </section>
 
@@ -2233,6 +2248,12 @@ if __name__ == "__main__":
 <section>
 	<h2 style="margin-bottom:5px">変更履歴</h2>
 	<table>
+	  <tr>
+	    <td class="td_history_date">2023/3/1</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">説明および表現を一部更新,</td>
+	    <td class="td_history">木下英俊</td>
+	  </tr>
 	  <tr>
 	    <td class="td_history_date">2022/7/20</td>
 	    <td class="td_history_separator">-</td>
