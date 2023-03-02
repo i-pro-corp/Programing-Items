@@ -252,7 +252,7 @@
 	<p>&nbsp;</p>
 	<p>2. 以下のコマンドで必要なライブラリーをインストールします。これらは後述の "open_images_downloader.py" 
 	で使用しているライブラリです。</p>
-	<p><span class="cpp-source">pip install <strong>boto3 pandas</strong></span></p>
+	<p><span class="cpp-source">pip3 install <strong>boto3 pandas</strong></span></p>
 	<p>&nbsp;</p>
 	<p>3. ディレクトリ移動</p>
 	<p>ターミナルソフトを起動後、 pytorch-ssd をクローンしたフォルダへ移動（"cd pytorch-ssd" など）します。</p>
@@ -261,7 +261,7 @@
 	<p>4. まずは再学習済みデータを使ってデモ動作してみます。</p>
   <p>&nbsp;</p>
   <p>■Linux の場合</p>
-	<p><a href="https://github.com/qfgaohao/pytorch-ssd#retrain-on-open-images-dataset">"Retrain on Open Images Dataset"</a> 
+	<p><a href="https://github.com/qfgaohao/pytorch-ssd#retrain-on-open-images-dataset" target="_blank">"Retrain on Open Images Dataset"</a> 
 	の説明では最初に以下の通り記載されています。これを実行します。</p>
 	  
 	<pre style="background-color: #000000; color: #CCCCCC; overflow-x: auto;">$ wget -P models https://storage.googleapis.com/models-hao/gun_model_2.21.pth
@@ -2132,33 +2132,42 @@ bird</pre>
 <p>&nbsp;</p>
 <hr>
 <p>&nbsp;</p>
+<section>
+  <h2><a name="ソースコード所在">ソースコード所在</a></h2>
+  <p>本ページで紹介のソースコードは、下記 github より取得できます。</p>
+  <p>下記 github のソースコードと本ページの内容は差異がある場合があります。</p>
+  <p><a href="https://github.com/i-pro-corp/python-examples" target="_blank">
+  i-pro-corp/python-examples: Examples for i-PRO cameras. (github.com)</a></p>
+</section>
+
+<p>&nbsp;</p>
 
 <section>
   <h2><a id="ライセンス">ライセンス</a></h2>
-<p>本ページの情報は、特記無い限り下記 MIT ライセンスで提供されます。</p>
-<div class="license">
-The MIT License (MIT)<br><br>
+  <p>本ページの情報は、特記無い限り下記 MIT ライセンスで提供されます。</p>
+  <div class="license">
+  The MIT License (MIT)<br><br>
 
-Copyright © 2023 Kinoshita Hidetoshi<br><br>
+  Copyright © 2023 Kinoshita Hidetoshi<br><br>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:<br><br>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:<br><br>
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.<br><br>
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.<br><br>
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-</div>
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+  </div>
   <p>&nbsp;</p>
 </section>
 
@@ -2188,7 +2197,7 @@ SOFTWARE.
       <a href="https://qiita.com/leetmikeal/items/7c0d23e39bf38ab8be23" target="_blank">
       https://qiita.com/leetmikeal/items/7c0d23e39bf38ab8be23</a></li>
 		<li>[7]
-      <a href="https://udemy.benesse.co.jp/data-science/deep-learning/transfer-learning.html#:~:text=%E8%BB%A2%E7%A7%BB%E5%AD%A6%E7%BF%92%E3%81%A8%E3%83%95%E3%82%A1%E3%82%A4%E3%83%B3%E3%83%81%E3%83%A5%E3%83%BC%E3%83%8B%E3%83%B3%E3%82%B0%E3%81%AE%E9%81%95%E3%81%84%E3%81%AF%EF%BC%9F%20%E8%BB%A2%E7%A7%BB%E5%AD%A6%E7%BF%92%E3%81%A8%E3%83%95%E3%82%A1%E3%82%A4%E3%83%B3%E3%83%81%E3%83%A5%E3%83%BC%E3%83%8B%E3%83%B3%E3%82%B0%E3%81%AF%E3%80%81%E3%81%A9%E3%81%A1%E3%82%89%E3%82%82%E5%AD%A6%E7%BF%92%E6%B8%88%E3%81%BF%E3%81%AE%E3%83%A2%E3%83%87%E3%83%AB%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%9F%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%81%AE%E6%89%8B%E6%B3%95%E3%81%A7%E3%81%99%E3%80%82%20%E3%82%88%E3%81%8F%E6%B7%B7%E5%90%8C%E3%81%95%E3%82%8C%E3%81%A6%E3%81%97%E3%81%BE%E3%81%84%E3%81%BE%E3%81%99%E3%81%8C%E3%80%81%E3%81%93%E3%81%AE2%E3%81%A4%E3%81%AE%E6%89%8B%E6%B3%95%E3%81%AF%E7%95%B0%E3%81%AA%E3%82%8A%E3%81%BE%E3%81%99%E3%80%82,%E3%81%9D%E3%82%8C%E3%81%9E%E3%82%8C%E3%81%AE%E9%81%95%E3%81%84%E3%82%92%E8%A6%8B%E3%81%A6%E3%81%84%E3%81%8D%E3%81%BE%E3%81%97%E3%82%87%E3%81%86%E3%80%82%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%B3%E3%83%81%E3%83%A5%E3%83%BC%E3%83%8B%E3%83%B3%E3%82%B0%E3%81%AF%E3%80%81%E5%AD%A6%E7%BF%92%E6%B8%88%E3%81%BF%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E5%B1%A4%E3%81%AE%E9%87%8D%E3%81%BF%E3%82%92%E5%BE%AE%E8%AA%BF%E6%95%B4%E3%81%99%E3%82%8B%E6%89%8B%E6%B3%95%E3%81%A7%E3%81%99%E3%80%82%20%E5%AD%A6%E7%BF%92%E6%B8%88%E3%81%BF%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E9%87%8D%E3%81%BF%E3%82%92%E5%88%9D%E6%9C%9F%E5%80%A4%E3%81%A8%E3%81%97%E3%80%81%E5%86%8D%E5%BA%A6%E5%AD%A6%E7%BF%92%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8%E3%81%AB%E3%82%88%E3%81%A3%E3%81%A6%E5%BE%AE%E8%AA%BF%E6%95%B4%E3%81%97%E3%81%BE%E3%81%99%E3%80%82%20%E8%BB%A2%E7%A7%BB%E5%AD%A6%E7%BF%92%E3%81%AF%E3%80%81%E5%AD%A6%E7%BF%92%E6%B8%88%E3%81%BF%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E9%87%8D%E3%81%BF%E3%81%AF%E5%9B%BA%E5%AE%9A%E3%81%97%E3%80%81%E8%BF%BD%E5%8A%A0%E3%81%97%E3%81%9F%E5%B1%A4%E3%81%AE%E3%81%BF%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%A6%E5%AD%A6%E7%BF%92%E3%81%97%E3%81%BE%E3%81%99%E3%80%82">
+      <a href="https://udemy.benesse.co.jp/data-science/deep-learning/transfer-learning.html#:~:text=%E8%BB%A2%E7%A7%BB%E5%AD%A6%E7%BF%92%E3%81%A8%E3%83%95%E3%82%A1%E3%82%A4%E3%83%B3%E3%83%81%E3%83%A5%E3%83%BC%E3%83%8B%E3%83%B3%E3%82%B0%E3%81%AE%E9%81%95%E3%81%84%E3%81%AF%EF%BC%9F%20%E8%BB%A2%E7%A7%BB%E5%AD%A6%E7%BF%92%E3%81%A8%E3%83%95%E3%82%A1%E3%82%A4%E3%83%B3%E3%83%81%E3%83%A5%E3%83%BC%E3%83%8B%E3%83%B3%E3%82%B0%E3%81%AF%E3%80%81%E3%81%A9%E3%81%A1%E3%82%89%E3%82%82%E5%AD%A6%E7%BF%92%E6%B8%88%E3%81%BF%E3%81%AE%E3%83%A2%E3%83%87%E3%83%AB%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%9F%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%81%AE%E6%89%8B%E6%B3%95%E3%81%A7%E3%81%99%E3%80%82%20%E3%82%88%E3%81%8F%E6%B7%B7%E5%90%8C%E3%81%95%E3%82%8C%E3%81%A6%E3%81%97%E3%81%BE%E3%81%84%E3%81%BE%E3%81%99%E3%81%8C%E3%80%81%E3%81%93%E3%81%AE2%E3%81%A4%E3%81%AE%E6%89%8B%E6%B3%95%E3%81%AF%E7%95%B0%E3%81%AA%E3%82%8A%E3%81%BE%E3%81%99%E3%80%82,%E3%81%9D%E3%82%8C%E3%81%9E%E3%82%8C%E3%81%AE%E9%81%95%E3%81%84%E3%82%92%E8%A6%8B%E3%81%A6%E3%81%84%E3%81%8D%E3%81%BE%E3%81%97%E3%82%87%E3%81%86%E3%80%82%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%B3%E3%83%81%E3%83%A5%E3%83%BC%E3%83%8B%E3%83%B3%E3%82%B0%E3%81%AF%E3%80%81%E5%AD%A6%E7%BF%92%E6%B8%88%E3%81%BF%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E5%B1%A4%E3%81%AE%E9%87%8D%E3%81%BF%E3%82%92%E5%BE%AE%E8%AA%BF%E6%95%B4%E3%81%99%E3%82%8B%E6%89%8B%E6%B3%95%E3%81%A7%E3%81%99%E3%80%82%20%E5%AD%A6%E7%BF%92%E6%B8%88%E3%81%BF%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E9%87%8D%E3%81%BF%E3%82%92%E5%88%9D%E6%9C%9F%E5%80%A4%E3%81%A8%E3%81%97%E3%80%81%E5%86%8D%E5%BA%A6%E5%AD%A6%E7%BF%92%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8%E3%81%AB%E3%82%88%E3%81%A3%E3%81%A6%E5%BE%AE%E8%AA%BF%E6%95%B4%E3%81%97%E3%81%BE%E3%81%99%E3%80%82%20%E8%BB%A2%E7%A7%BB%E5%AD%A6%E7%BF%92%E3%81%AF%E3%80%81%E5%AD%A6%E7%BF%92%E6%B8%88%E3%81%BF%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E9%87%8D%E3%81%BF%E3%81%AF%E5%9B%BA%E5%AE%9A%E3%81%97%E3%80%81%E8%BF%BD%E5%8A%A0%E3%81%97%E3%81%9F%E5%B1%A4%E3%81%AE%E3%81%BF%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%A6%E5%AD%A6%E7%BF%92%E3%81%97%E3%81%BE%E3%81%99%E3%80%82" target="_blank">
       転移学習とは？ディープラーニングで期待の「転移学…｜Udemy メディア (benesse.co.jp)</a></li>
 		<li>[8] dusty-nv/pytorch-ssd: MobileNetV1, MobileNetV2, VGG based 
       SSD/SSD-lite implementation in PyTorch. Out-of-box support for 
