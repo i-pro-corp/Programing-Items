@@ -330,9 +330,25 @@ $ python run_ssd_example.py mb1-ssd models/gun_model_2.21.pth models/open-images
 	<p>&nbsp;</p>
 	<p>以上のような構成でデータを準備することで、あたなや私が独自に学習したい物体と画像についても同様に AI 学習データを作成できることがわかりました。</p>
 	<p>&nbsp;</p>
-	<p>7. 学習済みモデルを保存</p>
-	<p>本ページを上から順に進めてきた人たちは既に models フォルダに学習済みモデルデータを保存済みと思います。まだの方は、<a href="#2-1._MobileNetV1-SSD_を動かす（PC 内蔵カメラ）">こちら</a>に記載の内容に従って 
-	"mobilenet-v1-ssd-mp-0_675.pth" をダウンロードしておきます。</p>
+	<p>&nbsp;</p>
+  <p>7. 学習済みモデルを保存</p>
+  <p>本ページを上から順に進めてきた人たちは既に models フォルダに学習済みモデルデータを保存済みと思います。まだの方は、<a href="../../../Programing-Items_dev/Python/connect_camera/mobilenet-ssd.html#2-1._MobileNetV1-SSD_を動かす（PC 内蔵カメラ）">こちら</a>に記載の内容に従って 
+  "mobilenet-v1-ssd-mp-0_675.pth" をダウンロードしておきます。下記へ省略記載します。</p>
+  <p>&nbsp;</p>
+  <p>■Linux の場合</p>
+  <pre>$ wget -P models https://storage.googleapis.com/models-hao/mobilenet-v1-ssd-mp-0_675.pth </pre>
+  <p>&nbsp;</p>
+  <p>■Windows の場合</p>
+  <p>&nbsp;Windows に標準では wget コマンドは無いため上記を実行してもエラーになるので、代わりに bitsadmin 
+  コマンドで代用するという方法を記載します。</p>
+  <p>&nbsp;</p>
+  <p class="auto-style2"><strong>bitsadmin.exe</strong> の書き方：</p>
+  <blockquote>
+    <strong>bitsadmin.exe</strong> /transfer ＜ジョブ名＞ ＜URL＞ ＜保存先ファイル名（フルパス）＞ 
+  </blockquote>
+  <p><span class="auto-style3">c:\{作業フォルダ}</span> 
+  の部分をご自身の環境に合わせて修正して実行してください。</p>
+  <pre>$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/mobilenet-v1-ssd-mp-0_675.pth <span class="auto-style3">c:\{作業フォルダ}</span>\models\mobilenet-v1-ssd-mp-0_675.pth</pre>
   <p>&nbsp;</p>
   <p>&nbsp;</p>
 
