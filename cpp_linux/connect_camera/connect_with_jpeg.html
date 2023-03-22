@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="yomogida yasuo (蓬田康雄)">
+  <meta name="description" content="Introducing programming for i-PRO cameras.">
+  <meta name="keywords" content="i-PRO">
+  
+  <!-- キャッシュ無効化 -->
+  <meta http-equiv="Cache-Control" content="no-cache">
+	
+  <!-- タイトル -->
+  <title>JPEGで画像を取得する (c++/Linux) | i-PRO - Programming Items</title>
+	
+  <!-- ファビコン -->
+  <link rel="shortcut icon" href="../../favicon.ico">
+
+  <!-- CSS -->
+  <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="../../design.css" type="text/css">
+  
+	<!-- Start for 'google-code-prettify' -->
+	<link href="../../prettify/styles/desert.css" rel="stylesheet" type="text/css">
+	<script src="../../prettify/prettify.js" type="text/javascript"></script>
+	<!-- End for 'google-code-prettify' -->
+	
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5DFRG3H0KB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-5DFRG3H0KB');
+  </script>  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+  <style type="text/css">
+    .super {
+      vertical-align: super;
+    }
+  </style>
+
+</head>
+
+<body onload="prettyPrint();">
+
+<h1>JPEGで画像を取得する (c++/Linux)</h1>
+
+<p>&nbsp;</p>
+  <div class="status_information">
+    <div>
+    </div>
+    <div>
+      <p>本ページは i-PRO株式会社 の有志メンバーにより記載されたものです。<br>本ページの情報は <a href="#ライセンス">ライセンス</a> に記載の条件で提供されます。</p>
+    </div>
+  </div>
+<p>&nbsp;</p>
+
+<div class="mokuji">
+  <nav>
+    <h2>目次</h2>
+    <p><a href="#1._CGI_表記仕様">1. CGI 表記仕様</a></p>
+    <p><a href="#2. i-PRO カメラと JPEG 接続して映像を表示してみる">2. i-PRO カメラと JPEG 接続して映像を表示してみる</a></p>
+    <br>
+    <p><a href="#ソースコード所在">ソースコード所在</a></p>
+    <p><a href="#ライセンス">ライセンス</a></p>
+    <p><a href="#参考">参考</a></p>
+  </nav>
+</div>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<p> 本ページでは、i-PRO カメラとLinux OS の PCを HTTPで接続してJPEG映像を連続で表示するプログラムを&nbsp;c++ で作成します。</p>
+<p> Python の記事は <a href="../../Python/connect_camera/connect_with_jpeg.html">
+<strong>こちら</strong></a> を参照ください。</p>
+    
+<p>&nbsp;</p>
+<hr>
+<hr>
+<p>&nbsp;</p>
+
+<section>
+  <h2><a id="1._CGI_表記仕様">1. CGI 表記仕様</a></h2>
+  <h4>[概要]</h4>
+  <p>JPEG(1shot要求)で接続するための表記を以下に記載します。</p>
+  <p>「ネットワークカメラCGIコマンドインターフェース仕様書 統合版」<span class="super">[1]</span> 
+  で下記に記載されている情報です。</p>
+  <ul>
+    <li>i-pro カメラ外部インタフェース仕様書ver1.59.pdf ： 「3.1.8. カメラ映像 (JPEG) 1shot要求」</li>
+  </ul>
+  <p><span class="cpp-source">
+  http://&lt;カメラのIPアドレス&gt;/cgi-bin/camera?resolution={resolution}</span></p>
+  <p>&nbsp;</p>
+  <p class="auto-style2"><strong>補足説明:</strong></p>
+  <ul>
+    <li>resolution :<br>カメラ側で設定されている解像度から選択する必要があります。<br>
+    カメラ側設定と一致する値が無い場合はカメラ側設定のデフォルト値が採用されます。</li>
+  </ul>
+  <p>&nbsp;</p>
+
+</section>
+
+<p>&nbsp;</p>
+ 
+<section>
+  <h2> <a id="2. i-PRO カメラと JPEG 接続して映像を表示してみる">2. i-PRO カメラと JPEG 接続して映像を表示してみる</a></h2>
+	<h4>[概要]</h4>
+    <p>Linux の c++ と OpenCV を使って、PC と i-PRO カメラを HTTPで接続してJPEG映像を連続で表示してみます。</p>
+	<p> &nbsp;</p>
+	
+	<h4>[評価環境]</h4>
+	<table>
+	<tbody>
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>開発環境 :<br><br></td>
+      <td>GNU<br>build-essensial<br>CMake</td>
+      <td>9.4.0<br>12.8<br>3.16.3</td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>ライブラリ :</td>
+      <td>OpenCV<br>libcurl4</td>
+      <td>4.6.0<br>7.68.0-1ubuntu2.14 amd64</td>
+	  </tr>
+		
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+		
+	  <tr>
+	    <td>OS :</td>
+	    <td>ubuntu</td>
+	    <td>20.04 LTS</td>
+	  </tr>
+	  
+	  <tr>
+	    <td class="td_separate" colspan="3"></td>
+	  </tr>
+	</tbody>
+	</table>
+	
+	<p>&nbsp;</p>
+    <h4>[環境準備]</h4>
+	<p>以下のコマンドを実施して環境を準備します。</p>
+  
+	<pre class="prettyprint linenums lang-cpp">sudo apt update -y &amp;&amp; sudo apt upgrade -y
+sudo apt install build-essential libopencv-dev cmake -y
+sudo apt install libcurl4-openssl-dev -y
+sudo apt update -y &amp;&amp; sudo apt upgrade -y</pre>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	
+  <h4>[プログラム]</h4>
+  <p> サンプルプログラムのソースコードを以下に示します。</p>
+	<ul>
+    <li>ソースを格納するフォルダを作成し、そこで作業を起こってください。</li>
+	  <li>user_id, user_pw, host はあなたが使用するカメラの設定に従って変更してください。</li>
+	  <li>プログラムを終了するときはキーボードから "q" キーを押す、またはコンソール上で [ctrl]+[c] してください。</li>
+	</ul>
+  <p>&nbsp;</p>
+  <p>[プログラムソース &quot;<a href="https://github.com/i-pro-corp/cpp-examples/blob/main/linux/connect_with_jpeg/opencv_jpeg.cpp" target="_blank">opencv_jpeg.cpp</a>&quot;]</p>
+  
+	<pre class="prettyprint linenums lang-cpp">/*
+======================================================================================
+
+[Abstract]
+Try connecting to an i-PRO camera with RTSP.
+HTTPで接続してJPEGの連続表示で i-PRO カメラと接続してみる
+
+[Details]
+Let's try first.
+まずはやってみる
+
+[Library install]
+sudo apt update -y &amp;&amp; sudo apt upgrade -y
+sudo apt install build-essential libopencv-dev cmake -y
+sudo apt install libcurl4-openssl-dev -y&nbsp;
+sudo apt update -y &amp;&amp; sudo apt upgrade -y
+
+======================================================================================
+*/
+
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;opencv2/opencv.hpp&gt;
+#include &lt;opencv2/core/utility.hpp&gt;
+#include &lt;curl/curl.h&gt;
+
+<span class="kwd" style="background-repeat: no-repeat; box-sizing: inherit; margin: 0px; padding: 0px; color: rgb(240, 230, 140); font-weight: bold; font-family: monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: pre; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(51, 51, 51); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">const</span><span class="pln" style="background-repeat: no-repeat; box-sizing: inherit; margin: 0px; padding: 0px; color: rgb(255, 255, 255); font-family: monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: pre; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(51, 51, 51); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;"> </span>std::string user_id &nbsp; &nbsp; = "user-id"; &nbsp; &nbsp; &nbsp;   // Change to match your camera setting
+<span class="kwd" style="background-repeat: no-repeat; box-sizing: inherit; margin: 0px; padding: 0px; color: rgb(240, 230, 140); font-weight: bold; font-family: monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: pre; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(51, 51, 51); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">const</span><span class="pln" style="background-repeat: no-repeat; box-sizing: inherit; margin: 0px; padding: 0px; color: rgb(255, 255, 255); font-family: monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: pre; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(51, 51, 51); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;"> </span>std::string user_pw &nbsp; &nbsp; = "password"; &nbsp; &nbsp; &nbsp;  // Change to match your camera setting
+<span class="kwd" style="background-repeat: no-repeat; box-sizing: inherit; margin: 0px; padding: 0px; color: rgb(240, 230, 140); font-weight: bold; font-family: monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: pre; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(51, 51, 51); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">const</span><span class="pln" style="background-repeat: no-repeat; box-sizing: inherit; margin: 0px; padding: 0px; color: rgb(255, 255, 255); font-family: monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: pre; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(51, 51, 51); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;"> </span>std::string host &nbsp; &nbsp; &nbsp;  = "192.168.0.10"; &nbsp;  // Change to match your camera setting
+<span class="kwd" style="background-repeat: no-repeat; box-sizing: inherit; margin: 0px; padding: 0px; color: rgb(240, 230, 140); font-weight: bold; font-family: monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: pre; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(51, 51, 51); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">const</span><span class="pln" style="background-repeat: no-repeat; box-sizing: inherit; margin: 0px; padding: 0px; color: rgb(255, 255, 255); font-family: monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: pre; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(51, 51, 51); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;"> </span>std::string winname &nbsp; &nbsp; = "VIDEO"; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // Window title
+
+<span class="kwd" style="background-repeat: no-repeat; box-sizing: inherit; margin: 0px; padding: 0px; color: rgb(240, 230, 140); font-weight: bold; font-family: monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: pre; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(51, 51, 51); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">const</span><span class="pln" style="background-repeat: no-repeat; box-sizing: inherit; margin: 0px; padding: 0px; color: rgb(255, 255, 255); font-family: monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: pre; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(51, 51, 51); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;"> </span>std::string cameraURL   = "http://" + host + "/cgi-bin/camera";
+
+// data receive callback function
+
+/// &lt;summary&gt;
+/// onReceive function
+/// &lt;/summary&gt;
+/// &lt;returns&gt;segment size of recive data&lt;/returns&gt;
+size_t onReceive(void* ptr, size_t size, size_t nmemb, void* userdata) {
+
+    std::vector&lt;char&gt;* receiveBuffer = (std::vector&lt;char&gt;*)userdata;
+    const size_t sizes = size * nmemb;
+
+    receiveBuffer-&gt;insert(receiveBuffer-&gt;end(), (char*)ptr, (char*)ptr + sizes);
+
+    return sizes;
+}
+
+
+/// &lt;summary&gt;
+/// main function
+/// &lt;/summary&gt;
+/// &lt;returns&gt;Always returns EXIT_SUCCESS(0).&lt;/returns&gt;
+int main() {
+
+    char ret;
+    std::vector&lt;char&gt; receiveBuffer;
+    CURL* curl = NULL;
+    CURLcode res;
+
+    while (true) {
+
+        // initialize curl.
+        curl = curl_easy_init();
+        if (!curl) {
+            printf("curl_easy_init() failed...\n");
+            break;
+        }
+
+        // curl option for digest authentication
+        curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+        std::string user_id_pw = user_id + ":" + user_pw;
+        curl_easy_setopt(curl, CURLOPT_USERPWD, user_id_pw.c_str());
+
+        // curl option
+        curl_easy_setopt(curl, CURLOPT_URL, cameraURL.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &amp;receiveBuffer); 
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, onReceive);
+
+        // execute
+        res = curl_easy_perform(curl);
+
+        if (res != CURLE_OK) {
+            printf("curl_easy_perform() failed...%s\n", curl_easy_strerror(res));
+            break;
+        }
+        curl_easy_cleanup(curl); 
+
+        // JPEG decode
+        cv::Mat frame = cv::imdecode(receiveBuffer, cv::IMREAD_UNCHANGED);
+
+        // Clear all received data.
+        receiveBuffer.clear();
+
+        // Please modify the value to fit your PC screen size.
+        resize(frame, frame, cv::Size(), 0.5, 0.5); // Setting by magnification.
+
+        // Display video.
+        cv::imshow(winname, frame);
+
+        ret = (char)cv::waitKey(1); // necessary to display the video by cv::imshow().
+
+        // Press the "q" key to finish.
+        if (ret == 'q') {
+            break;
+        }
+    }
+
+    cv::destroyAllWindows();
+
+    return EXIT_SUCCESS;
+
+}
+
+</pre>
+	<p>難しい事をしているように見えますが、HTTPサーバーからJPEGファイルを保存するサンプルコードを元にしてソースコードを書いています。<br>
+	curl_easy_setoptでコールバック関数を呼び出すようにして、コールバック関数で受信バッファにデータを書き込んでいます。<br>
+	GETがおわるとcurl_easy_perform関数から抜けるので、受信バッファに格納されたJPEGデータをデコードして、受信バッファをクリアしています。</p>
+	 <p>&nbsp;</p>
+	 <p>&nbsp;</p>
+	
+     <h4>[ビルド]</h4>
+  <p> ビルドにおいて環境依存を極力するなくするため、以下の手順でビルドします。</p>
+	<ol>
+		<li>CMakeでMakefileを生成する</li>
+		<li>生成したMakefileを使ってビルドする </li>
+	</ol>
+	<p>&nbsp;</p>
+	<p>ソースコード（opencv_jpeg.cpp）と同じディレクトリに以下のように中身が書かれたCMakeLists.txtを配置してください。</p>
+	<p>
+	<span style="color: rgb(0, 0, 0); font-family: sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;">
+	CMake</span>の知識がある方は、内容をカスタマイズしてお使いください。</p>
+  <p>&nbsp;</p>
+  <p>["<a href="https://github.com/i-pro-corp/cpp-examples/blob/main/linux/connect_with_jpeg/CMakeLists.txt" target="_blank">CMakeLists.txt</a>"]</p>
+  
+	<pre class="prettyprint linenums lang-cpp"># 変数SOURCE_CORDEを宣言し、ソースコードのファイル名の拡張子無くした値を入れる。
+# cmake -D SOURCE_CODE=(ソース名)で上書き可
+set(SOURCE_CODE opencv_jpeg CACHE NAME "Target object name")
+
+# CMakeの最低バージョンを記述
+cmake_minimum_required(VERSION 2.8)
+
+# ソリューション名を指定
+project( ${SOURCE_CODE} )
+
+# OpenCVのパッケージを探す
+find_package( OpenCV REQUIRED )
+
+#ヘッダファイルのパスを指定
+include_directories( ${OpenCV_INCLUDE_DIRS} )
+
+# CURLのパッケージを探す
+find_package( CURL REQUIRED )
+
+#ヘッダファイルのパスを指定
+include_directories( ${CURL_INCLUDE_DIR} )
+
+# 実行ファイル名とソース指定（ここではソースと同じ名前の実行ファイルを作ります）
+add_executable( ${SOURCE_CODE} ${SOURCE_CODE}.cpp )
+
+#リンク先のライブラリを指定
+target_link_libraries( ${SOURCE_CODE} ${OpenCV_LIBS} ${CURL_LIBRARIES})
+</pre>
+	<p>&nbsp;</p>
+	<p>ビルド環境を作成してアプリケーションを構築するため、以下のコマンドを実施します。</p>
+  
+</section>
+
+	<pre class="prettyprint linenums lang-cpp">mkdir build &amp;&amp; cd build
+cmake ..
+make</pre>
+
+<p>&nbsp;</p>
+<p>
+これにより、buildディレクトリに[opencv_jpeg]という実行ファイルができましたので、以下のようにコマンドを実施すればアプリケーションが実施されます</p>
+  
+	<pre class="prettyprint linenums lang-cpp">./opencv_jpeg</pre>
+<p>&nbsp;</p>
+<p>ソースコードの変更をする場合は、すでにビルド環境ができていますので、buildディレクトリで以下のようにすれば更新が可能です。</p>
+<p>ライブラリを追加する場合は CMakeLists.txtの追記を行い、build ディレクトリを削除してcmakeをやり直してください。</p>
+  
+	<pre class="prettyprint linenums lang-cpp">make clean
+make</pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<section>
+  <h2><a name="ソースコード所在">ソースコード所在</a></h2>
+  <p>本ページで紹介のソースコードは、下記 github より取得できます。</p>
+  <p>下記 github のソースコードと本ページの内容は差異がある場合があります。</p>
+  <p><a href="https://github.com/i-pro-corp/cpp-examples" target="_blank">
+  i-pro-corp/cpp-examples: c++ sample programs for i-PRO camera. (github.com)</a></p>
+  <p>&nbsp;</p>
+</section>
+
+<p>&nbsp;</p>
+
+<section>
+  <h2><a name="ライセンス">ライセンス</a></h2>
+<p>本ページの情報は、特記無い限り下記ライセンスで提供されます。</p>
+<div class="license">
+    <br>Copyright 2023 i-PRO Co., Ltd.<br><br>Licensed under the Apache License, Version 
+    2.0 (the "License");<br>you may not use this file except in compliance with 
+    the License.<br>You may obtain a copy of the License at <br><br>&nbsp;&nbsp;&nbsp;
+    <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">http://www.apache.org/licenses/LICENSE-2.0</a><br><br>
+    Unless required by 
+    applicable law or agreed to in writing, software <br>distributed under the 
+    License is distributed on an "AS IS" BASIS, <br>WITHOUT WARRANTIES OR 
+    CONDITIONS OF ANY KIND, either express or implied. <br>See the License for 
+    the specific language governing permissions and<br>limitations under the 
+    License. <br> <br>
+</div>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</section>
+
+
+<section>
+	<h2><a name="参考">参考</a></h2>
+	<ul>
+		<li>[1] ネットワークカメラCGIコマンドインターフェース仕様書　統合版<br>
+      <a href="https://connect.panasonic.com/jp-ja/products-services_security_support_specifications-manuals-firms-dvlp_2012100910461872" target="_blank">
+        https://connect.panasonic.com/jp-ja/products-services_security_support_specifications-manuals-firms-dvlp_2012100910461872</a></li>
+		<li>[2] OpenCVを使ったC++コードをコンパイルする（CMake, GCC, pkg-config） <br>
+      <a href="https://qiita.com/kekenonono/items/0fcf042bca2d3d17867a" target="_blank">https://qiita.com/kekenonono/items/0fcf042bca2d3d17867a</a></li>
+		<li>[3] cURLとOpenCVを使ったHTTPでJPEG画像をダウンロード＆表示サンプル<br>
+      <a href="https://gist.github.com/yoggy/4993381" target="_blank">https://gist.github.com/yoggy/4993381</a></li>
+	</ul>
+</section>
+
+<p>&nbsp;</p>
+
+<hr>
+
+<p>&nbsp;</p>
+
+<section>
+	<h2 style="margin-bottom:5px">変更履歴</h2>
+	<table>
+	  <tr>
+	    <td class="td_history_date">2023/3/22</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">新規作成,</td>
+	    <td class="td_history">蓬田 康雄</td>
+	  </tr>
+	</table>
+</section>
+
+<p>&nbsp;</p>
+<p><a href="../../index.html" target="_parent">i-PRO - Programming Items トップページ</a></p>
+<p><a href="../../privacy_policy.html">プライバシーポリシー</a></p>
+<p>&nbsp;</p>
+
+<footer>
+	<p><small>&copy; 2023  i-PRO Co., Ltd.</small></p>
+</footer>
+
+</body>
+</html>

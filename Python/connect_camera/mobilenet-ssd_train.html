@@ -146,7 +146,7 @@
     <li>独自の画像を収集し、ツールを使って自身でアノテーションを行い、これら画像とアノテーションデータを使って学習を行ってみる</li>
     <li>自身で作成した学習データとカメラを使って物体検知を行ってみる</li>
   </ol>
-	<p> &nbsp;</p>
+	<p>&nbsp;</p>
 	
 	<section>
 	<h3><a name="5-1._まずはやってみる_(open_images)">5-1. まずはやってみる (Open Images)</a></h3>
@@ -157,8 +157,7 @@
     で説明されている記述に従って学習を実際にやってみます。
     Python プログラムはもちろん、画像データおよびアノテーションデータなど必要なすべての情報を提供いただいています。
     こちらの記事は MobileNet-SSD の学習方法を学ぶ最初の教材として最適な内容です。</p>
-	<p>
-	<img alt="&quot;Retrain on Open Images Dataset&quot; 概要" class="border_with_drop-shadow" src="mobilenet-ssd_train/img3.jpg" width="800"></p>
+	<p><img alt="&quot;Retrain on Open Images Dataset&quot; 概要" class="border_with_drop-shadow" src="mobilenet-ssd_train/img3.jpg" width="800"></p>
 	<p>&nbsp;</p>
   <p>使用する学習データ数は以下の通りです。</p>
       
@@ -330,25 +329,25 @@ $ python run_ssd_example.py mb1-ssd models/gun_model_2.21.pth models/open-images
 	<p>&nbsp;</p>
 	<p>以上のような構成でデータを準備することで、あたなや私が独自に学習したい物体と画像についても同様に AI 学習データを作成できることがわかりました。</p>
 	<p>&nbsp;</p>
-	<p>&nbsp;</p>
-  <p>7. 学習済みモデルを保存</p>
-  <p>本ページを上から順に進めてきた人たちは既に models フォルダに学習済みモデルデータを保存済みと思います。まだの方は、<a href="mobilenet-ssd.html#2-1._MobileNetV1-SSD_を動かす（PC 内蔵カメラ）">こちら</a>に記載の内容に従って 
-  "mobilenet-v1-ssd-mp-0_675.pth" をダウンロードしておきます。下記へ省略記載します。</p>
+	<p>7. 学習済みモデルを保存</p>
+	<p>本ページを上から順に進めてきた人たちは既に models フォルダに学習済みモデルデータを保存済みと思います。まだの方は、<a href="mobilenet-ssd.html#2-1._MobileNetV1-SSD_を動かす（PC 内蔵カメラ）">こちら</a>に記載の内容に従って 
+	"mobilenet-v1-ssd-mp-0_675.pth" をダウンロードしておきます。下記へ省略記載します。</p>
   <p>&nbsp;</p>
-  <p>■Linux の場合</p>
-  <pre>$ wget -P models https://storage.googleapis.com/models-hao/mobilenet-v1-ssd-mp-0_675.pth </pre>
+	<p>■Linux の場合</p>
+  <pre style="color: #FFFFFF; background-color: #000000">$ wget -P models https://storage.googleapis.com/models-hao/mobilenet-v1-ssd-mp-0_675.pth </pre>
   <p>&nbsp;</p>
-  <p>■Windows の場合</p>
+	<p>■Windows の場合</p>
   <p>&nbsp;Windows に標準では wget コマンドは無いため上記を実行してもエラーになるので、代わりに bitsadmin 
   コマンドで代用するという方法を記載します。</p>
   <p>&nbsp;</p>
   <p class="auto-style2"><strong>bitsadmin.exe</strong> の書き方：</p>
+  
   <blockquote>
-    <strong>bitsadmin.exe</strong> /transfer ＜ジョブ名＞ ＜URL＞ ＜保存先ファイル名（フルパス）＞ 
+    <strong>bitsadmin.exe</strong> /transfer ＜ジョブ名＞ ＜URL＞ ＜保存先ファイル名（フルパス）＞
   </blockquote>
-  <p><span class="auto-style3">c:\{作業フォルダ}</span> 
-  の部分をご自身の環境に合わせて修正して実行してください。</p>
-  <pre>$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/mobilenet-v1-ssd-mp-0_675.pth <span class="auto-style3">c:\{作業フォルダ}</span>\models\mobilenet-v1-ssd-mp-0_675.pth</pre>
+    
+  <p><span class="auto-style3">c:\{作業フォルダ}</span> の部分をご自身の環境に合わせて修正して実行してください。</p>
+  <pre style="color: #FFFFFF; background-color: #000000">$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/mobilenet-v1-ssd-mp-0_675.pth <span class="auto-style3">c:\{作業フォルダ}</span>\models\mobilenet-v1-ssd-mp-0_675.pth</pre>
   <p>&nbsp;</p>
   <p>&nbsp;</p>
 
@@ -1357,8 +1356,7 @@ $ pip3 install labelImg
         <p>
         "C:\Users\[user-name]\AppData\Local\Programs\Python\Python310\lib\site-packages\libs\shape.py" 
         の131行目の min_x, min_y を int でキャストすることで正常動作するようになりました。</p>
-        <p>
-        ※ この修正なしで正常に動作しました、とご連絡くださった方もいらっしゃいました。</p>
+        <p>※ この修正なしで正常に動作しました、とご連絡くださった方もいらっしゃいました。</p>
       </div>
     </div>
 
@@ -2148,12 +2146,12 @@ bird</pre>
 <p>&nbsp;</p>
 <hr>
 <p>&nbsp;</p>
+
 <section>
   <h2><a name="ソースコード所在">ソースコード所在</a></h2>
   <p>本ページで紹介のソースコードは、下記 github より取得できます。</p>
   <p>下記 github のソースコードと本ページの内容は差異がある場合があります。</p>
-  <p><a href="https://github.com/i-pro-corp/python-examples" target="_blank">
-  i-pro-corp/python-examples: Examples for i-PRO cameras. (github.com)</a></p>
+  <p><a href="https://github.com/i-pro-corp/python-examples" target="_blank">i-pro-corp/python-examples: Examples for i-PRO cameras. (github.com)</a></p>
 </section>
 
 <p>&nbsp;</p>
@@ -2162,16 +2160,16 @@ bird</pre>
   <h2><a id="ライセンス">ライセンス</a></h2>
   <p>本ページの情報は、特記無い限り下記ライセンスで提供されます。</p>
   <div class="license">
-    <br>Copyright 2023 i-PRO Co., Ltd.<br><br>Licensed under the Apache License, 
-    Version 2.0 (the "License");<br>you may not use this file except in 
-    compliance with the License.<br>You may obtain a copy of the License at <br>
-    <br>&nbsp;&nbsp;&nbsp; <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">
-    http://www.apache.org/licenses/LICENSE-2.0</a><br><br>Unless required by 
+    <br>Copyright 2023 i-PRO Co., Ltd.<br><br>Licensed under the Apache License, Version 
+    2.0 (the "License");<br>you may not use this file except in compliance with 
+    the License.<br>You may obtain a copy of the License at <br><br>&nbsp;&nbsp;&nbsp;
+    <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">http://www.apache.org/licenses/LICENSE-2.0</a><br><br>
+    Unless required by 
     applicable law or agreed to in writing, software <br>distributed under the 
     License is distributed on an "AS IS" BASIS, <br>WITHOUT WARRANTIES OR 
     CONDITIONS OF ANY KIND, either express or implied. <br>See the License for 
     the specific language governing permissions and<br>limitations under the 
-    License. <br><br>
+    License. <br> <br>
   </div>
   <p>&nbsp;</p>
 </section>

@@ -320,13 +320,13 @@ td:nth-last-child(1){
 .td_history_separator{
 	text-align:center;
 	vertical-align: top;
-	padding: 0px 5px !important;
+	padding: 0px 0.5ex !important;
 }
 
 .td_history{
 	text-align: left;
 	vertical-align: top;
-	padding: 0px !important;
+	padding: 0 1ex 0 0 !important;
 }
 
 
