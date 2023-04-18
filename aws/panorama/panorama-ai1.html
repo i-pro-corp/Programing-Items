@@ -11,7 +11,7 @@
   <meta http-equiv="Cache-Control" content="no-cache">
 	
   <!-- タイトル -->
-  <title>AWS Panorama でAIを動作させる | i-PRO - Programming Items</title>
+  <title>Panorama でAIを動作させる | i-PRO - Programming Items</title>
 	
   <!-- ファビコン -->
   <link rel="shortcut icon" href="../../favicon.ico">
@@ -55,7 +55,7 @@
 
 <body onload="prettyPrint();">
 
-<h1>AWS Panorama でAIを動作させる</h1>
+<h1>Panorama でAIを動作させる</h1>
 
 <p>&nbsp;</p>
   <div class="status_information">
@@ -73,7 +73,7 @@
 	  <p><a href="#1. AWS Panoramaについて">1. AWS Panoramaについて</a></p>
     <p><a href="#2. 準備">2. 準備</a></p>
 	  <p><a href="#3. サンプルのAIモデルをデプロイする">3. サンプルのAIモデルをデプロイする</a></p>
-    &nbsp;&nbsp; <a href="#[手順1 - デバイスの登録]">[手順1 - デバイスの登録]</a><p>&nbsp;&nbsp;
+    &nbsp;&nbsp; <a href="#[手順1 - アプライアンスの登録]">[手順1 - アプライアンスの登録]</a><p>&nbsp;&nbsp;
 	  <a href="#[手順2 - カメラの登録]">[手順2 - カメラの登録]</a></p>
 	  <p>&nbsp;&nbsp; <a href="#[手順3 - アプリケーションの登録]">[手順3 - アプリケーションの登録]</a></p>
 	  <p>&nbsp;&nbsp; <a href="#[手順4 - アプリケーションのデプロイ]">[手順4 - アプリケーションのデプロイ]</a></p>
@@ -87,7 +87,7 @@
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
-<p> <strong>AWS Panorama </strong>は<strong>Amazon Web Services (AWS) </strong>
+<p> <strong>AWS Panorama </strong>は<strong>Aamazon Web Services (AWS) </strong>
 が展開しているAIサービスの一つで、機械学習ができるデバイス(専用ハードウェア) とSDKで構成されています。</p>
 <p> AWS 
 Panoramaデバイス を既存のIPカメラが存在するオンプレミス環境に設置することで、AWSから様々な画像解析アプリケーションをデバイスへデプロイし、推論の実施とその結果をAWSへアップロードすることができるようになります。</p>
@@ -101,7 +101,7 @@ Panoramaデバイス を既存のIPカメラが存在するオンプレミス環
 	<li>商品の配置、在庫確認などの改善といった実店舗のレイアウトを最適化する</li>
 </ul>
 <p>といったことが期待できそうです。</p>
-<p> このような製造業のDXやマーケティング等、多種多様なニーズに応えることのできる BTOカメラ <strong>i-PRO moduca</strong> 
+<p> このような製造業のDXやマーケティング等、多種多様なニーズに答えることのできる BTOカメラ <strong>i-PRO moduca</strong> 
 でも当然導入できるはず、ということで moduca と 
 AWS Panoramaデバイス を組み合わせてどのようなことができるか、検証してみました。</p>
 <p> &nbsp;</p>
@@ -115,7 +115,7 @@ AWS Panoramaデバイス を組み合わせてどのようなことができる�
 <p>&nbsp;</p>
 
 <section>
-  <h2><a id="1. AWS Panoramaについて">1. AWS Panoramaについて</a></h2>
+  <h2><a id="1._JPEG_表記仕様" name="1. AWS Panoramaについて">1. AWS Panoramaについて</a></h2>
   <p>AWS Panoramaの全体像は以下の図のようになっています[1]。</p>
 	<p>
 	<img alt="panorama-overview" src="panorama-ai1/panorama-overview.png" width="960"></p>
@@ -138,7 +138,7 @@ AWS Panoramaデバイス を組み合わせてどのようなことができる�
 <p>&nbsp;</p>
  
 <section>
-  <h2> <a id="2. 準備">2. 準備</a></h2>
+  <h2> <a id="2. i-PRO カメラと JPEG 接続して映像を表示してみる" name="2. 準備">2. 準備</a></h2>
 	<h4>[概要]</h4>
     <p>AWS 
 	PanoramaはAWSのサービスの一つのため、AWSのアカウントおよび月額使用料が必要となります。また、開発用のPCおよびDockerが動作する環境が必要となります。</p>
@@ -315,7 +315,7 @@ AWS Panoramaデバイス を組み合わせてどのようなことができる�
 	<p>AWSコマンドラインインターフェイス を用いてAWSへアクセスするには、事前に認証の設定が必要です。</p>
 	<p>&nbsp;</p>
 	<ol>
-		<li>AWS マネジメントコンソール にログインし、画面右上のアカウント名をクリックし、「セキュリティ認証情報」を選択します。<br>
+		<li>AWS Management Consoleにログインし、画面右上のアカウント名をクリックし、「セキュリティ認証情報」を選択します。<br>
 		<img alt="aws-management-console" src="panorama-ai1/aws-management-console.png" class="border_with_drop-shadow" width="371"><br><br></li>
 		<li>アクセスキー セクションの「アクセスキーを作成」→「コマンドラインインターフェイス (CLI)」を選択し、「上記のレコメンデーションを理解し、アクセスキーを作成します」にチェックを入れ、「次へ」を選択します。<br><br></li>
 		<li>「アクセスキーを作成」を選択します。<br><br></li>
@@ -350,23 +350,23 @@ export AWS_SESSION_TOKEN=[SessionToken]</pre>
 	<img alt="network-overview" src="panorama-ai1/network-overview.png" class="border_with_drop-shadow" width="640"><br></p>
 	<p><br></p>
 	<h2 class="auto-style3"><strong>
-	<a id="3. サンプルのAIモデルをデプロイする">3. サンプルのAIモデルをデプロイする</a></strong></h2>
+	<a id="2. i-PRO カメラと JPEG 接続して映像を表示してみる0" name="3. サンプルのAIモデルをデプロイする">3. サンプルのAIモデルをデプロイする</a></strong></h2>
 	<h4></h4>
 	<h4>[概要]</h4>
   <p> AWS Panoramaのホームページにて 
   <a href="https://docs.aws.amazon.com/ja_jp/panorama/latest/dev/panorama-welcome.html" target="_blank">
   ディベロッパーガイド</a> が公開されています。基本的にはこちらに従ってサンプルのAIモデルのデプロイまでを実施してみました。</p>
 	<p> </p>
-	<h4> <a name="[手順1 - デバイスの登録]">[手順1 - デバイスの登録]</a></h4>
+	<h4> <a name="[手順1 - アプライアンスの登録]">[手順1 - アプライアンスの登録]</a></h4>
 	<ol>
 		<li>AWSのマネジメントコンソールにログイン後、<a href="https://us-east-1.console.aws.amazon.com/panorama/home?region=us-east-1#getting-started" target="_blank">https://us-east-1.console.aws.amazon.com/panorama/home?region=us-east-1#getting-started</a> 
 		にアクセスします。Panoramaデバイス にアプリをデプロイするまでの手順がStepに従って示されています。日本リージョンではまだサービスが提供されていないため、ここでは「バージニア北部」を選択しています。<br>
 		<img alt="reg-appliance1" src="panorama-ai1/reg-appliance1.png" class="border_with_drop-shadow" width="600"><br><br></li>
-		<li>Step-1の<strong> Add device </strong>を選択します。以下の5ステップでデバイスの登録を実施します。<br><br></li>
+		<li>Step-1の<strong> Add device </strong>を選択します。以下の5ステップでアプライアンスの登録を実施します。<br><br></li>
 		<li>
 		デバイス名を入力します。「i-PROAppliance」と入力しました。オプションでデバイスの説明やタグ付けも可能ですが今回はスキップしました。<br>
 		<img alt="reg appliance2" src="panorama-ai1/reg-appliance2.png" class="border_with_drop-shadow" width="600"><br><br></li>
-		<li>指示に従ってデバイスの電源をONにしてケーブルを接続します。ThinkEdge 
+		<li>指示に従ってアプライアンスの電源をONにしてケーブルを接続します。ThinkEdge 
 		SE70はLANのポートが二つありますが、ポート1の方に接続しました。<br>
 		<img alt="reg-appliance3" src="panorama-ai1/reg-appliance3.png" class="border_with_drop-shadow" width="600"><br><br>
 		LANの接続が認識され、通信ができていれば、フロントのLEDは左が緑の点灯、右が緑の点滅になります。 <br>
@@ -392,8 +392,8 @@ export AWS_SESSION_TOKEN=[SessionToken]</pre>
 		<li value="6">接続用の情報が生成されます。「Download」ボタンを押すと 
 		certificates-omni_[デバイス名].zipというファイルがダウンロードされます。<br>このファイルをUSBメモリのトップディレクトリに保存し、「Next」ボタンを押します。<br>
 		<img alt="reg appliance5" src="panorama-ai1/reg-appliance5.png" class="border_with_drop-shadow" width="600"><br><br></li>
-		<li>USBメモリをデバイスの前面のUSBポートに挿入します。自動的にデータが読み込まれAWS 
-		Panorama と Panoramaデバイス が関連付けされます。<br>以下のように表示されると関連付けは成功です。この情報ファイルは5分間のみ有効となります。<br>
+		<li>USBメモリをアプライアンスの前面のUSBポートに挿入します。自動的にデータが読み込まれAWS 
+		Panoramaとアプライアンスが関連付けされます。<br>以下のように表示されると関連付けは成功です。この情報ファイルは5分間のみ有効となります。<br>
 		<img alt="reg appliance6" src="panorama-ai1/reg-appliance6.png" class="border_with_drop-shadow" width="600"><br><br></li>
 		<li>これで接続は完了です。<br>
 		<img alt="reg appliance7" src="panorama-ai1/reg-appliance7.png" class="border_with_drop-shadow" width="600"></li>
@@ -449,7 +449,7 @@ export AWS_SESSION_TOKEN=[SessionToken]</pre>
 			</div>
 		</div>
 		<br></li>
-		<li>次にデバイス上で動作するアプリケーションコンテナをビルドします。まずは以下のコマンドでAWSアカウントIDを変数に設定します。<br><pre style="background-color: #000000; width: 900px" class="auto-style1">ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')</pre>
+		<li>次にアプライアンス上で動作するアプリケーションコンテナをビルドします。まずは以下のコマンドでAWSアカウントIDを変数に設定します。<br><pre style="background-color: #000000; width: 900px" class="auto-style1">ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')</pre>
 		</li>
 		<li>その後以下のコマンドでコンテナのビルドを行います。<br><pre style="background-color: #000000; width: 900px" class="auto-style1">panorama-cli build-container --container-asset-name code_asset --package-path packages/${ACCOUNT_ID}-SAMPLE_CODE-1.0</pre>
 		このコマンドの出力例は以下のようになります。以下の例では何回か実施しているので一部キャッシュが効いています。<pre style="background-color: #000000; width: 900px" class="auto-style1">ipro@ipro-P30AD:~/aws-panorama-sample$ panorama-cli build-container --container-asset-name code_asset --package-path packages/${ACCOUNT_ID}-SAMPLE_CODE-1.0
@@ -486,13 +486,13 @@ gzip -1 code_asset.tar
 Container asset for the package has been succesfully built at /aws-panorama-sample/assets/4b4c01a2d1fea3a68a625321bde552a47fe9422d190e94f62e6fad46f0a5d84c.tar.gz</pre>
 		この操作では以下のことを実施しています。<ul>
 			<li>packages/[アカウントID]-SAMPLE_CODE-1.0/Dockerfileの記述にしたがって、Panorama 
-			デバイス内で実行できる環境をプルする。</li>
+			アプライアンス内で実行できる環境をプルする。</li>
 			<li>同フォルダ内にあるapplication.py等のファイルをイメージ内にコピーする。</li>
 			<li>code_asset.tarというファイル名でイメージをエクスポートする。</li>
 			<li>同フォルダ内にあるpackage.jsonの”assets”に”code_asset”の情報を追加する。<br><br></li>
 		</ul>
 		</li>
-		<li>次に以下のコマンドでアプリケーションのパッケージ化と登録、Amazon S3アクセスポイントへのアップロードを行います。<pre style="background-color: #000000; width: 900px" class="auto-style1">panorama-cli package-application</pre>
+		<li>次に以下のコマンドでアプリケーションのパッケージ化と登録、Aamazon S3アクセスポイントへのアップロードを行います。<pre style="background-color: #000000; width: 900px" class="auto-style1">panorama-cli package-application</pre>
 		このコマンドの出力例は以下になります。<pre style="background-color: #000000; width: 900px" class="auto-style1">ipro@ipro-P30AD:~/aws-panorama-sample$ panorama-cli package-application
 Uploading package SQUEEZENET_PYTORCH_V1
 Patch Version 8561e0a3e77c82fc7704586aec94a85f228d182ca41142f90d4eefcccc32fcc2 already registered, ignoring upload
@@ -524,7 +524,7 @@ All packages uploaded and registered successfully
 	<p> &nbsp;</p>
 	<h4> <a name="[手順4 - アプリケーションのデプロイ]">[手順4 - アプリケーションのデプロイ]</a><br></h4>
 	<ol>
-		<li>再びAWS マネジメントコンソール のPanorama ページから、Get startedを選択し、「Deploy 
+		<li>再びAWS Management ConsoleのPanorama ページから、Get startedを選択し、「Deploy 
 		application」ボタンを押します。<br><br></li>
 		<li>以下のようなウィンドウが表示されますので「Ok」を選択します。<br>
 		<img alt="Deploy application1" src="panorama-ai1/apl-deploy1.png" class="border_with_drop-shadow" width="480"><br><br></li>
@@ -543,9 +543,9 @@ All packages uploaded and registered successfully
 		<img alt="Deploy application6" src="panorama-ai1/apl-deploy6.png" class="border_with_drop-shadow" width="600"><br><br></li>
 		<li>デバイスの選択画面です。「Select device」を選択します。<br>
 		<img alt="Deploy application7" src="panorama-ai1/apl-deploy7.png" class="border_with_drop-shadow" width="600"><br><br></li>
-		<li>手順1で登録したデバイス (i-PROAppliance) を選択し「Select」を押します。<br>
+		<li>手順1で登録したアプライアンス (i-PROAppliance) を選択し「Select」を押します。<br>
 		<img alt="Deploy application8" src="panorama-ai1/apl-deploy8.png" class="border_with_drop-shadow" width="600"><br><br></li>
-		<li>このように表示されます。デバイスが「Online」であることを確認します。<br>
+		<li>このように表示されます。アプライアンスが「Online」であることを確認します。<br>
 		<img alt="Deploy application9" src="panorama-ai1/apl-deploy9.png" class="border_with_drop-shadow" width="600"><br><br></li>
 		<li>次はデータ入力ソースの選択です。「View input(s)」を選択します。<br>
 		<img alt="Deploy application10" src="panorama-ai1/apl-deploy10.png" class="border_with_drop-shadow" width="600"><br><br></li>
@@ -566,7 +566,7 @@ All packages uploaded and registered successfully
 		<br><br></li>
 	</ol>
 	<h4> <a name="[手順5 - 動作確認]">[手順5 - 動作確認]</a></h4>
-	<p>デプロイに成功すると、デバイスに接続したHDMIモニターにカメラの映像と検知結果が表示されるようになります。</p>
+	<p>デプロイに成功すると、アプライアンスに接続したHDMIモニターにカメラの映像と検知結果が表示されるようになります。</p>
 	<p>これはキーボードを映した結果です。</p>
 	<p>
 	<img alt="Result keyboard" src="panorama-ai1/panorama_result2.jpg" width="600"></p>
