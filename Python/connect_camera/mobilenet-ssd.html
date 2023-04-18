@@ -96,7 +96,7 @@
     <p>&nbsp;&nbsp; 5-2. 独自の画像を学習してみる (Pascal/VOC)</p>
     <p>&nbsp;&nbsp;&nbsp;&nbsp; 5-2-1. 準備</p>
     <p>&nbsp;&nbsp;&nbsp;&nbsp; 5-2-2. アノテーション</p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp; 5-2-3. trainval.txt、test.txt_を用意</p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp; 5-2-3. "trainval.txt"、"test.txt" を用意</p>
     <p>&nbsp;&nbsp;&nbsp;&nbsp; 5-2-4. 学習</p>
     <p>&nbsp;&nbsp;&nbsp;&nbsp; 5-2-5. 学習結果と静止画を使って推論&nbsp;</p>
     <p>&nbsp;&nbsp;&nbsp;&nbsp; 5-2-6. 学習結果とカメラを使って物体検知してみる (i-PRO カメラ)</p>
@@ -312,48 +312,48 @@ V1 の原著論文</a></p>
 	
   <h4>[評価環境]</h4>
   <table>
-  <tbody>
-    <tr>
-      <td class="td_separate" colspan="3"></td>
-    </tr>
+    <tbody>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
 
-    <tr>
-      <td>言語 :</td>
-      <td>Python,</td>
-      <td>3.10.4 </td>
-    </tr>
+      <tr>
+        <td>言語 :</td>
+        <td>Python,</td>
+        <td>3.10.4 </td>
+      </tr>
 
-    <tr>
-      <td class="td_separate" colspan="3"></td>
-    </tr>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
 
-    <tr>
-      <td>&nbsp;</td>
-      <td>PyTorch,</td>
-      <td>1.11.0</td>
-    </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>PyTorch,</td>
+        <td>1.11.0</td>
+      </tr>
 
-    <tr>
-      <td class="td_separate" colspan="3"></td>
-    </tr>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
 
-    <tr>
-      <td>OS :</td>
-      <td>Windows 11 home,</td>
-      <td>21H2</td>
-    </tr>
+      <tr>
+        <td>OS :</td>
+        <td>Windows 11 home,</td>
+        <td>21H2</td>
+      </tr>
 
-	  <tr>
-	    <td>&nbsp;</td>
-	    <td>Windows 10 pro,</td>
-	    <td>21H2</td>
-	  </tr>
-		
-    <tr>
-      <td class="td_separate" colspan="3"></td>
-    </tr>
-  </tbody>
-</table>
+      <tr>
+        <td>&nbsp;</td>
+        <td>Windows 10 pro,</td>
+        <td>21H2</td>
+      </tr>
+      
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+    </tbody>
+  </table>
 
   <p>&nbsp;</p>
   <p>&nbsp;</p>
@@ -362,33 +362,34 @@ V1 の原著論文</a></p>
   pytorch-ssd</a> から git clone してソースコード一式を入手します。</p>
 	<p>任意のフォルダで端末（コマンドプロンプト等）を起動して下記コマンドをインプットします。</p>
   <p>（git を既にインストール済みとして記載します。）</p>
-  <pre style="color: #FFFFFF; background-color: #000000">$ git clone https://github.com/qfgaohao/pytorch-ssd.git</pre>
+  <pre style="color: #FFFFFF; background-color: #000000; overflow-x: auto;">$ git clone https://github.com/qfgaohao/pytorch-ssd.git</pre>
   <p>&nbsp;</p>
 	<p>2. "git clone" したフォルダへ移動します。</p>
-	<pre style="color: #FFFFFF; background-color: #000000">$ cd pytorch-ssd</pre>
+	<pre style="color: #FFFFFF; background-color: #000000; overflow-x: auto;">$ cd pytorch-ssd</pre>
 	<p>&nbsp;</p>
   <p>3. README.md 中の "Run the live MobilenetV1 SSD demo" に記載の内容に従って下記を実行します。</p>
-	<p>■Linux の場合</p>
-	<p>最初の２行は学習済みデータとラベルデータの取得なので、初めて実行するときのみ実施すれば良いです。</p>
-  <pre style="color: #FFFFFF; background-color: #000000">$ wget -P models https://storage.googleapis.com/models-hao/mobilenet-v1-ssd-mp-0_675.pth 
-$ wget -P models https://storage.googleapis.com/models-hao/voc-model-labels.txt
-$ python run_ssd_live_demo.py mb1-ssd models/mobilenet-v1-ssd-mp-0_675.pth models/voc-model-labels.txt </pre>
+  <p>下記 Google Drive を開いて、"mobilenet-v1-ssd-mp-0_675.pth" および 
+  "voc-model-labels.txt" の２つのファイルを取得して models フォルダに保存します。</p>
+  <p>
+    <a href="https://drive.google.com/drive/folders/1pKn-RifvJGWiOx0ZCRLtCXM5GT5lAluu" target="_blank">
+    https://drive.google.com/drive/folders/1pKn-RifvJGWiOx0ZCRLtCXM5GT5lAluu</a></p>
   <p>&nbsp;</p>
-	<p>■Windows の場合</p>
-  <p>&nbsp;Windows に標準では wget コマンドは無いため上記を実行してもエラーになるので、代わりに 
-  bitsadmin コマンドで代用するという方法をここでは紹介します。</p>
+
+  <div class="status_information">
+    <div>
+    </div>
+    <div>
+      <p><strong>NOTE</strong></p>
+      <p>2023/3/11 の 
+      <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">
+      pytorch-ssd</a> 更新によりモデルファイルの取得方法が変更になりました。</p>
+    </div>
+  </div>
+
   <p>&nbsp;</p>
-  <p class="auto-style2"><strong>bitsadmin.exe</strong> の書き方：</p>
-  
-  <blockquote>
-    <strong>bitsadmin.exe</strong> /transfer ＜ジョブ名＞ ＜URL＞ ＜保存先ファイル名（フルパス）＞
-  </blockquote>
-    
-  <p>上記内容を bitsadmin.exe で置き換えると以下のようになるので、Windows 環境の方はこちらで実施します。<br>
-  <span class="auto-style3">c:\{作業フォルダ}</span> の部分をご自身の環境に合わせて修正して実行してください。</p>
-  <pre style="color: #FFFFFF; background-color: #000000">$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/mobilenet-v1-ssd-mp-0_675.pth <span class="auto-style3">c:\{作業フォルダ}</span>\models\mobilenet-v1-ssd-mp-0_675.pth
-$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/voc-model-labels.txt <span class="auto-style3">c:\{作業フォルダ}</span>\models\voc-model-labels.txt
-$ python run_ssd_live_demo.py mb1-ssd models/mobilenet-v1-ssd-mp-0_675.pth models/voc-model-labels.txt</pre>
+
+  <p>4. 下記コマンドを実行することで推論を実行します。</p>
+  <pre style="color: #FFFFFF; background-color: #000000; overflow-x: auto;">$ python run_ssd_live_demo.py mb1-ssd models/mobilenet-v1-ssd-mp-0_675.pth models/voc-model-labels.txt </pre>
   <p>&nbsp;</p>
 	<p>学習済みモデルは VOC dataset を使って学習しているので、このプログラムは下記 20クラス を検知します。</p>
 	<pre style="width: 200px">1: aeroplane
@@ -411,16 +412,18 @@ $ python run_ssd_live_demo.py mb1-ssd models/mobilenet-v1-ssd-mp-0_675.pth model
 18: sofa
 19: train
 20: tvmonitor</pre>
+
 	<p>&nbsp;</p>
-    <p>4. 上記手順でプログラム（"python run_ssd_live_demo.py ･･･" のところ）を実行したところ、私の環境では下図のようなエラーを表示して正常に動作しませんでした。</p>
-    <p><a href="mobilenet-ssd/img9.gif" target="_blank">
-    <img alt="pytorch-ssd － run_ssd_live_demo.py エラー発生時の画面" src="mobilenet-ssd/img9.gif" width="800"></a></p>
-    <p>&nbsp;</p>
-    <p>どうやら、box[0], box[1], box[2], box[3] 
-    が浮動小数点なのですがここの引数は整数(int)である必要がある、ということがエラーの理由のようです。<br>エラーとなった 76行目と、同様に 
-    79行目の２カ所を int 型へ変換するように修正します。下図だと4行目、7行目の色付きの場所へ int() を追加しました。<br>
-    これでエラーを解決してプログラムを実行できるようになりました。</p>
-    <pre class="prettyprint linenums:73 lang-py">
+
+  <p>5. 上記手順でプログラム（"python run_ssd_live_demo.py ･･･" のところ）を実行したところ、私の環境では下図のようなエラーを表示して正常に動作しませんでした。</p>
+  <p><a href="mobilenet-ssd/img9.gif" target="_blank">
+  <img alt="pytorch-ssd － run_ssd_live_demo.py エラー発生時の画面" src="mobilenet-ssd/img9.gif" width="800"></a></p>
+  <p>&nbsp;</p>
+  <p>どうやら、box[0], box[1], box[2], box[3] 
+  が浮動小数点なのですがここの引数は整数(int)である必要がある、ということがエラーの理由のようです。<br>エラーとなった 76行目と、同様に 
+  79行目の２カ所を int 型へ変換するように修正します。下図だと4行目、7行目の色付きの場所へ int() を追加しました。<br>
+  これでエラーを解決してプログラムを実行できるようになりました。</p>
+  <pre class="prettyprint linenums:73 lang-py">
         for i in range(boxes.size(0)):
         box = boxes[i, :]
         label = f"{class_names[labels[i]]}: {probs[i]:.2f}"
@@ -432,50 +435,46 @@ $ python run_ssd_live_demo.py mb1-ssd models/mobilenet-v1-ssd-mp-0_675.pth model
                     1,  # font scale
                     (255, 0, 255),
                     2)  # line type</pre>
-    <p>&nbsp;</p>
+  <p>&nbsp;</p>
 	<p>別サイトの記事記載[9] によると、OpenCVバージョンアップに伴う影響だそうです。元々はこのようなエラーは出なかったのでしょう。</p>
 	<p>修正を <a href="https://github.com/qfgaohao/pytorch-ssd/pull/178" target="_blank">Pull Request #178</a> しておきましたが、ポスト後に確認したら私を含めて３件の同件修正が Pull Request 
     されていました。こちらのリポジトリはメンテを終了しているかもしれません。</p>
 	<p>&nbsp;</p>
     
-    <div class="status_ok" style="width: 700px">
-      <div></div>
-      <div>
-        <p>(2022-08-03 追記)</p>
-		<p>私から出した Pull Request (#178) が先ほどマージされました。</p>
-		<p>このためマージ後のソースを取得（git clone）した方はこちら 4 に記載の修正は不要です。</p>
-        <p>
-		<a href="https://github.com/qfgaohao/pytorch-ssd/pull/178" target="_blank">Bug fix. 
-		by kinoshita-hidetoshi · Pull Request #178 · qfgaohao/pytorch-ssd · 
-		GitHub</a></p>
-      </div>
+  <div class="status_ok" style="width: 700px">
+    <div></div>
+    <div>
+      <p>(2022-08-03 追記)</p>
+      <p>私から出した Pull Request (#178) が先ほどマージされました。</p>
+      <p>このためマージ後のソースを取得（git clone）した方はこちら 4 に記載の修正は不要です。</p>
+      <p>
+        <a href="https://github.com/qfgaohao/pytorch-ssd/pull/178" target="_blank">
+        Bug fix. by kinoshita-hidetoshi · Pull Request #178 · qfgaohao/pytorch-ssd · GitHub</a></p>
     </div>
+  </div>
 
-    <p>&nbsp;</p>
-	  <p>&nbsp;</p>
-    <p>5. 修正したプログラムを動かした様子を以下に示します。</p>
-    <p>カメラはPC内蔵のカメラです。PyTorch は前述の通り CPU 版ですがかなり快適に動作できています。</p>
-    <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>6. 修正したプログラムを動かした様子を以下に示します。</p>
+  <p>カメラはPC内蔵のカメラです。PyTorch は前述の通り CPU 版ですがかなり快適に動作できています。</p>
+  <p>&nbsp;</p>
+  
+  <p>[動画] プログラムを動作させた様子（PC 内蔵カメラ）</p>
+  <video controls muted autoplay="y" loop="y" src="mobilenet-ssd/mobilenetv1-ssd-pccam.mp4" width="800">
+    <p>動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。</p>
+  </video> <br>
     
-  	<p>[動画] プログラムを動作させた様子（PC 内蔵カメラ）</p>
-    <video controls muted autoplay="y" loop="y" src="mobilenet-ssd/mobilenetv1-ssd-pccam.mp4" width="800">
-      <p>動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。</p>
-    </video> <br>
-    
-	<p>&nbsp;</p>
 	<p>&nbsp;</p>
   
-    <div class="status_information">
-      <div></div>
-      <div>
-        <p><strong>NOTE</strong></p>
-        <p>プログラム "run_ssd_live_demo.py" 中で PC内蔵カメラ からのキャプチャーを行っている部分は下記の箇所です。</p>
-		    <p><span class="cpp-source">cap = cv2.VideoCapture(0)   # capture from camera</span></p>
-		  </div>
+  <div class="status_information">
+    <div></div>
+    <div>
+      <p><strong>NOTE</strong></p>
+      <p>プログラム "run_ssd_live_demo.py" 中で PC内蔵カメラ からのキャプチャーを行っている部分は下記の箇所です。</p>
+      <p><span class="cpp-source">cap = cv2.VideoCapture(0)   # capture from camera</span></p>
     </div>
+  </div>
 
-    <p>&nbsp;</p>
-	<p>&nbsp;</p>
   <p>&nbsp;</p>
     
 </section>
@@ -547,27 +546,33 @@ $ python run_ssd_live_demo.py mb1-ssd models/mobilenet-v1-ssd-mp-0_675.pth model
 	<p>2. "git clone" したフォルダへ移動します。</p>
 	<pre style="color: #FFFFFF; background-color: #000000">$ cd pytorch-ssd</pre>
 	<p>&nbsp;</p>
-  <p>3. README.md 中の "Run the live MobilenetV1 SSD demo" に記載の内容に従って下記を実行します。（前章と同じです。実施済みなら不要です。）</p>
-	<p>■Linux の場合</p>
-  <pre style="color: #FFFFFF; background-color: #000000">$ wget -P models https://storage.googleapis.com/models-hao/mobilenet-v1-ssd-mp-0_675.pth 
-$ wget -P models https://storage.googleapis.com/models-hao/voc-model-labels.txt
-</pre>
+  <p>3. README.md 中の "Run the live MobilenetV1 SSD demo" 
+  に記載の内容に従って下記を実行します。（前章と同じです。実施済みなら不要です。）</p>
+  <p>下記 Google Drive を開いて、"mobilenet-v1-ssd-mp-0_675.pth" および 
+  "voc-model-labels.txt" の２つのファイルを取得して models フォルダに保存します。</p>
+  <p>
+  <a href="https://drive.google.com/drive/folders/1pKn-RifvJGWiOx0ZCRLtCXM5GT5lAluu" target="_blank">
+  https://drive.google.com/drive/folders/1pKn-RifvJGWiOx0ZCRLtCXM5GT5lAluu</a></p>
   <p>&nbsp;</p>
-	<p>■Windows の場合</p>
-  <p>Windows 環境で bitsadmin.exe を使って実施する場合は下記を実施します。<br>
-  <span class="auto-style3">c:\{作業フォルダ}</span> の部分をご自身の環境に合わせて修正して実行してください。</p>
-  <pre style="color: #FFFFFF; background-color: #000000">$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/mobilenet-v1-ssd-mp-0_675.pth <span class="auto-style3">c:\{作業フォルダ}</span>\models\mobilenet-v1-ssd-mp-0_675.pth
-$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/voc-model-labels.txt <span class="auto-style3">c:\{作業フォルダ}</span>\models\voc-model-labels.txt
-</pre>
-
+  <div class="status_information">
+    <div>
+    </div>
+    <div>
+      <p><strong>NOTE</strong></p>
+      <p>2023/3/11 の 
+      <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">
+      pytorch-ssd</a> 更新によりモデルファイルの取得方法が変更になりました。</p>
+    </div>
+  </div>
   <p>&nbsp;</p>
-
-	<p>4. 下記コマンドを入力してプログラムを起動します。ここでは４番目の引数として RTSP 表記で i-PRO カメラの接続を記載します。</p>
+  <p>4. 下記コマンドを入力してプログラムを起動します。ここでは４番目の引数として RTSP 表記で i-PRO カメラの接続を記載します。</p>
 	<p><span class="auto-style3">{user-id}</span>, <span class="auto-style3">
 	{password}</span>, <span class="auto-style3">{ip-address}</span> 
 	の部分をご自身が使われる i-PRO カメラの設定に合わせて修正して実行してください。</p>
 	<p>その他 RTSP に関しては記事「<a href="connect_with_rtsp.html">RTSP で画像を取得する</a>」を参照ください。</p>
-  <pre style="color: #FFFFFF; background-color: #000000">$ python run_ssd_live_demo.py mb1-ssd models/mobilenet-v1-ssd-mp-0_675.pth models/voc-model-labels.txt <span class="auto-style1">rtsp://</span><span class="auto-style6">{user-id}</span>:<span class="auto-style6">{password}</span>@<span class="auto-style6">{ip-address}</span><span class="auto-style1">/MediaInput/stream_1</span></pre>
+	
+  <pre style="color: #FFFFFF; background-color: #000000;">$ python run_ssd_live_demo.py mb1-ssd models/mobilenet-v1-ssd-mp-0_675.pth models/voc-model-labels.txt <span class="auto-style1">rtsp://</span><span class="auto-style6">{user-id}</span>:<span class="auto-style6">{password}</span>@<span class="auto-style6">{ip-address}</span><span class="auto-style1">/MediaInput/stream_1</span></pre>
+  
   <p>(例) <span class="cpp-source">python run_ssd_live_demo.py mb1-ssd 
 	models/mobilenet-v1-ssd-mp-0_675.pth models/voc-model-labels.txt 
 	rtsp://admin:Admin12345@192.168.0.10/MediaInput/stream_1</span></p>
@@ -763,26 +768,34 @@ V2の1階層が対応する、という感じで読むと概ね同じような�
 	<p>2. "git clone" したフォルダへ移動します。</p>
 	<pre style="color: #FFFFFF; background-color: #000000">$ cd pytorch-ssd</pre>
 	<p>&nbsp;</p>
-  <p>3. README.md 中の "Run the live MobileNetV2 SSD Lite demo" に記載の内容に従って下記を実行します。</p>
-
-	<p>■Linux の場合</p>
-  <p>最初の２行は学習済みデータとラベルデータの取得なので、初めて実行するときのみ実施すれば良いです。また２行目の 
-	"voc-model-labels.txt" は MobileNetV1-SSD と同一のファイルです。</p>
-  <pre style="color: #FFFFFF; background-color: #000000">
-$ wget -P models https://storage.googleapis.com/models-hao/mb2-ssd-lite-mp-0_686.pth
-$ wget -P models https://storage.googleapis.com/models-hao/voc-model-labels.txt
-$ python run_ssd_live_demo.py mb2-ssd-lite models/mb2-ssd-lite-mp-0_686.pth models/voc-model-labels.txt</pre>
+  <p>3. README.md 中の "Run the live MobileNetV2 SSD Lite demo" 
+  に記載の内容に従って下記を実行します。</p>
+  <p>&nbsp;</p>
+  <p>下記 Google Drive を開いて、"mb2-ssd-lite-mp-0_686.pth" および 
+  "voc-model-labels.txt" の２つのファイルを取得して models フォルダに保存します。</p>
+  <p>
+  <a href="https://drive.google.com/drive/folders/1pKn-RifvJGWiOx0ZCRLtCXM5GT5lAluu" target="_blank">
+  https://drive.google.com/drive/folders/1pKn-RifvJGWiOx0ZCRLtCXM5GT5lAluu</a></p>
   <p>&nbsp;</p>
 
-	<p>■Windows の場合</p>
-  <p>上記内容を bitsadmin.exe で置き換えると以下のようになるので、Windows 環境の方はこちらで実施します。<br>
-  <span class="auto-style3">c:\{作業フォルダ}</span> の部分をご自身の環境に合わせて修正して実行してください。</p>
-  <pre style="color: #FFFFFF; background-color: #000000">$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/mb2-ssd-lite-mp-0_686.pth <span class="auto-style3">c:\{作業フォルダ}</span>\models\mb2-ssd-lite-mp-0_686.pth
-$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/voc-model-labels.txt <span class="auto-style3">c:\{作業フォルダ}</span>\models\voc-model-labels.txt
-$ python run_ssd_live_demo.py mb2-ssd-lite models/mb2-ssd-lite-mp-0_686.pth models/voc-model-labels.txt</pre>
+  <div class="status_information">
+    <div>
+    </div>
+    <div>
+      <p><strong>NOTE</strong></p>
+      <p>2023/3/11 の 
+      <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">
+      pytorch-ssd</a> 更新によりモデルファイルの取得方法が変更になりました。</p>
+    </div>
+  </div>
+
   <p>&nbsp;</p>
+  <p>4. 下記コマンドを実行することで推論を実行します。</p>
+  
+  <pre style="color: #FFFFFF; background-color: #000000; overflow-x: auto;">$ python run_ssd_live_demo.py mb2-ssd-lite models/mb2-ssd-lite-mp-0_686.pth models/voc-model-labels.txt</pre>
+  
   <p>&nbsp;</p>
-  <p>4. プログラムを動かした様子を以下に示します。</p>
+  <p>5. プログラムを動かした様子を以下に示します。</p>
   <p>カメラはPC内蔵のカメラです。PyTorch は前述の通り CPU 版ですがかなり快適に動作できています。</p>
   <p>&nbsp;</p>
   
@@ -796,8 +809,6 @@ $ python run_ssd_live_demo.py mb2-ssd-lite models/mb2-ssd-lite-mp-0_686.pth mode
 	<p>私が触ってみた印象ですが、認識精度が若干向上して CPU 負荷も若干軽くなったという気がします。</p>
 	<p>&nbsp;</p>
   
-  <p>&nbsp;</p>
-    
 </section>
 	
 <p>&nbsp;</p>
@@ -809,7 +820,6 @@ $ python run_ssd_live_demo.py mb2-ssd-lite models/mb2-ssd-lite-mp-0_686.pth mode
 	<p>本章では i-PRO カメラとPCを LAN 接続してリアルタイムで物体検知してみます。前章と同様に <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">
     pytorch-ssd</a> を使って行います。</p>
     <p>&nbsp;</p>
-	<p> &nbsp;</p>
 	
   <h4>[評価環境]</h4>
   <table>
@@ -857,7 +867,6 @@ $ python run_ssd_live_demo.py mb2-ssd-lite models/mb2-ssd-lite-mp-0_686.pth mode
   </table>
 
   <p>&nbsp;</p>
-  <p>&nbsp;</p>
   <h4>[手順]</h4>
   <p>1. <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">
   pytorch-ssd</a> から git clone してソースコード一式を入手します。（前章と同じです。実施済みなら不要です。）</p>
@@ -867,28 +876,38 @@ $ python run_ssd_live_demo.py mb2-ssd-lite models/mb2-ssd-lite-mp-0_686.pth mode
 	<p>2. "git clone" したフォルダへ移動します。</p>
 	<pre style="color: #FFFFFF; background-color: #000000">$ cd pytorch-ssd</pre>
 	<p>&nbsp;</p>
-    
-  <p>3. README.md 中の "Run the live MobilenetV1 SSD demo" に記載の内容に従って下記を実行します。（前章と同じです。実施済みなら不要です。）</p>
-	<p>■Linux の場合</p>
-  <pre style="color: #FFFFFF; background-color: #000000">$ wget -P models https://storage.googleapis.com/models-hao/mb2-ssd-lite-mp-0_686.pth
-$ wget -P models https://storage.googleapis.com/models-hao/voc-model-labels.txt</pre>
+  <p>3. README.md 中の "Run the live MobilenetV1 SSD demo" 
+  に記載の内容に従って下記を実行します。（前章と同じです。実施済みなら不要です。）</p>
+  <p>下記 Google Drive を開いて、"mb2-ssd-lite-mp-0_686.pth" および 
+  "voc-model-labels.txt" の２つのファイルを取得して models フォルダに保存します。</p>
+  <p>
+  <a href="https://drive.google.com/drive/folders/1pKn-RifvJGWiOx0ZCRLtCXM5GT5lAluu" target="_blank">
+  https://drive.google.com/drive/folders/1pKn-RifvJGWiOx0ZCRLtCXM5GT5lAluu</a></p>
   <p>&nbsp;</p>
-	<p>■Windows の場合</p>
-  <p>Windows 環境で bitsadmin.exe を使って実施する場合は下記を実施します。<br>
-  <span class="auto-style3">c:\{作業フォルダ}</span> の部分をご自身の環境に合わせて修正して実行してください。</p>
-  <pre style="color: #FFFFFF; background-color: #000000">$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/mb2-ssd-lite-mp-0_686.pth <span class="auto-style3">c:\{作業フォルダ}</span>\models\mb2-ssd-lite-mp-0_686.pth
-$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/voc-model-labels.txt <span class="auto-style3">c:\{作業フォルダ}</span>\models\voc-model-labels.txt</pre>
+
+  <div class="status_information">
+    <div>
+    </div>
+    <div>
+      <p><strong>NOTE</strong></p>
+      <p>2023/3/11 の 
+      <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">
+      pytorch-ssd</a> 更新によりモデルファイルの取得方法が変更になりました。</p>
+    </div>
+  </div>
+
   <p>&nbsp;</p>
-    
+  
 	<p>4. 下記コマンドを入力してプログラムを起動します。ここでは４番目の引数として RTSP 表記で i-PRO カメラの接続を記載します。</p>
 	<p><span class="auto-style3">{user-id}</span>, <span class="auto-style3">
 	{password}</span>, <span class="auto-style3">{ip-address}</span> 
 	の部分をご自身が使われる i-PRO カメラの設定に合わせて修正して実行してください。</p>
 	<p>その他 RTSP に関しては記事「<a href="connect_with_rtsp.html">RTSP で画像を取得する</a>」を参照ください。</p>
+	
   <pre style="color: #FFFFFF; background-color: #000000">$ python run_ssd_live_demo.py mb2-ssd-lite models/mb2-ssd-lite-mp-0_686.pth models/voc-model-labels.txt <span class="auto-style1">rtsp://</span><span class="auto-style6">{user-id}</span>:<span class="auto-style6">{password}</span>@<span class="auto-style6">{ip-address}</span><span class="auto-style1">/MediaInput/stream_1</span></pre>
+  
   <p>(例) <span class="cpp-source">python run_ssd_live_demo.py mb2-ssd-lite models/mb2-ssd-lite-mp-0_686.pth models/voc-model-labels.txt 
 rtsp://admin:Admin12345@192.168.0.10/MediaInput/stream_1</span></p>
-  <p>&nbsp;</p>
   <p>&nbsp;</p>
     
 	<p>5. プログラムを動かした様子を以下に示します。</p>
@@ -1832,6 +1851,12 @@ cv2.destroyAllWindows()</pre>
 <section>
 	<h2 style="margin-bottom:5px">変更履歴</h2>
 	<table>
+	  <tr>
+	    <td class="td_history_date">2023/4/12</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">サイト <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">pytorch-ssd</a> の更新に伴う記事更新,</td>
+      <td class="td_history">木下英俊</td>
+	  </tr>
 	  <tr>
 	    <td class="td_history_date">2023/3/1</td>
 	    <td class="td_history_separator">-</td>

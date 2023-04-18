@@ -101,7 +101,7 @@
     <p>&nbsp;&nbsp; <a href="#5-2._独自の画像を学習してみる_(Pascal/VOC)">5-2. 独自の画像を学習してみる (Pascal/VOC)</a></p>
     <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-2-1._準備">5-2-1. 準備</a></p>
     <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-2-2._アノテーション">5-2-2. アノテーション</a></p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-2-3._trainval.txt、test.txt_を用意">5-2-3. trainval.txt、test.txt_を用意</a></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-2-3._trainval.txt、test.txt_を用意">5-2-3. "trainval.txt"、"test.txt" を用意</a></p>
     <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-2-4._学習">5-2-4. 学習</a></p>
     <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-2-5._学習結果と静止画を使って推論">5-2-5. 学習結果と静止画を使って推論</a>&nbsp;</p>
     <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#5-2-6._学習結果とカメラを使って物体検知してみる_(i-PRO_カメラ)">5-2-6. 学習結果とカメラを使って物体検知してみる (i-PRO カメラ)</a></p>
@@ -257,31 +257,34 @@
 	<p>ターミナルソフトを起動後、 pytorch-ssd をクローンしたフォルダへ移動（"cd pytorch-ssd" など）します。</p>
 	<p>または Explorer で目的フォルダを開いた後、Explorer のアドレスエリアで "cmd" + [Enter] します。</p>
 	<p>&nbsp;</p>
-	<p>4. まずは再学習済みデータを使ってデモ動作してみます。</p>
+  <p>4. まずは再学習済みデータを使ってデモ動作してみます。</p>
+  <p>下記 Google Drive を開いて、"gun_model_2.21.pth" および 
+  "open-images-model-labels.txt" の２つのファイルを取得して models フォルダに保存します。</p>
+  <p>
+  <a href="https://drive.google.com/drive/folders/1pKn-RifvJGWiOx0ZCRLtCXM5GT5lAluu" target="_blank">
+  https://drive.google.com/drive/folders/1pKn-RifvJGWiOx0ZCRLtCXM5GT5lAluu</a></p>
   <p>&nbsp;</p>
-  <p>■Linux の場合</p>
-	<p><a href="https://github.com/qfgaohao/pytorch-ssd#retrain-on-open-images-dataset" target="_blank">"Retrain on Open Images Dataset"</a> 
-	の説明では最初に以下の通り記載されています。これを実行します。</p>
-	  
-	<pre style="background-color: #000000; color: #CCCCCC; overflow-x: auto;">$ wget -P models https://storage.googleapis.com/models-hao/gun_model_2.21.pth
-$ wget -P models https://storage.googleapis.com/models-hao/open-images-model-labels.txt
-$ python run_ssd_example.py mb1-ssd models/gun_model_2.21.pth models/open-images-model-labels.txt ~/Downloads/big.JPG</pre>
 
-  <p>※ 記載の手順で進めても "big.JPG" ファイルはありませんでした。上記コマンドのテストに GUN 
-    の評価画像ファイルを必要としますので、ご自身で評価画像を入手するか、もしくは後述の「5. Download 
-    data」を実施後にこの画像ファイルを使って実験する、などする必要があります。</p>
+  <div class="status_information">
+    <div>
+    </div>
+    <div>
+      <p><strong>NOTE</strong></p>
+      <p>2023/3/11 の 
+      <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">
+      pytorch-ssd</a> 更新によりモデルファイルの取得方法が変更になりました。</p>
+    </div>
+  </div>
+  <p>&nbsp;</p>
 
-	<p>&nbsp;</p>
-  <p>■Windows の場合</p>
-	<p>Windows環境では wget を標準で使用できません。代わりに <strong>bitsadmin.exe</strong> 
-	というコマンドを使用することで下記のような感じで同じ内容を実行することができます。<br>
-	<span class="auto-style3">c:\{作業フォルダ}</span> の部分をご自身の環境に合わせて修正して実行してください。</p>
-	
-  <pre style="background-color: #000000; color: #CCCCCC; overflow-x: auto;">$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/gun_model_2.21.pth <span class="auto-style3">c:\{作業フォルダ}</span>\models\gun_model_2.21.pth
-$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/open-images-model-labels.txt <span class="auto-style3">c:\{作業フォルダ}</span>\models\open-images-model-labels.txt
-$ python run_ssd_example.py mb1-ssd models/gun_model_2.21.pth models/open-images-model-labels.txt <span class="auto-style3">{テストするJPEGファイル}</span></pre>
-
-	<p>&nbsp;</p>
+  <p>
+  <a href="https://github.com/qfgaohao/pytorch-ssd#retrain-on-open-images-dataset" target="_blank">
+  "Retrain on Open Images Dataset"</a> の説明では最初に以下の通り記載されています。これを実行します。</p>
+  <pre style="background-color: #000000; color: #CCCCCC; overflow-x: auto;">$ python run_ssd_example.py mb1-ssd models/gun_model_2.21.pth models/open-images-model-labels.txt ~/Downloads/big.JPG</pre>
+  <p>※ "big.JPG" ファイルは提供されてないようです。上記コマンドのテストに GUN 
+  の評価画像ファイルを必要としますので、ご自身で評価画像を入手するか、もしくは後述の「5. Download 
+  data」を実施後にこの画像ファイルを使って実験する、などする必要があります。</p>
+  <p>&nbsp;</p>
 	<p>5. Download data</p>
 	<p>インターネットから学習データ一式を取得します。</p>
   <p>&nbsp;</p>
@@ -2240,6 +2243,12 @@ bird</pre>
 <section>
 	<h2 style="margin-bottom:5px">変更履歴</h2>
 	<table>
+	  <tr>
+	    <td class="td_history_date">2023/4/12</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">サイト <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">pytorch-ssd</a> の更新に伴う記事更新,</td>
+      <td class="td_history">木下英俊</td>
+	  </tr>
 	  <tr>
 	    <td class="td_history_date">2023/3/1</td>
 	    <td class="td_history_separator">-</td>

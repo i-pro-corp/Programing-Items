@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="ozawa kazuya (小澤和哉)">
+  <meta name="description" content="System Integration for i-PRO AI Inspection Software.">
+  <meta name="keywords" content="i-PRO">
+
+  <!-- キャッシュ無効化 -->
+  <meta http-equiv="Cache-Control" content="no-cache">
+
+  <!-- タイトル -->
+  <title>SALTYSTER SpeeDBee Hive連携 | i-PRO - Programming Items</title>
+
+  <!-- ファビコン -->
+  <link rel="shortcut icon" href="../favicon.ico">
+
+  <!-- CSS -->
+  <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../design.css" type="text/css">
+
+  <!-- Start for 'google-code-prettify' -->
+  <link href="../prettify/styles/desert.css" rel="stylesheet" type="text/css">
+  <script src="../prettify/prettify.js" type="text/javascript"></script>
+  <!-- End for 'google-code-prettify' -->
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5DFRG3H0KB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-5DFRG3H0KB');
+  </script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+</head>
+
+<body onload="prettyPrint();">
+
+  <h1>SALTYSTER SpeeDBee Hive連携</h1>
+
+  <p> &nbsp;</p>
+  <div class="status_information">
+    <div>
+    </div>
+    <div>
+      <p>本ページは i-PRO株式会社 の有志メンバーにより記載されたものです。<br>本ページの情報は <a href="#ライセンス">ライセンス</a> に記載の条件で提供されます。</p>
+    </div>
+  </div>
+
+  <p>&nbsp;</p>
+
+  <div class="mokuji">
+    <nav>
+      <h2>目次</h2>
+      <p><a href="#1._確認した環境">1. 確認した環境</a></p>
+      <p><a href="#2._システムのセットアップ">2. システムのセットアップ</a></p>
+      <p><a href="#3._検査結果データの取得">3. 検査結果データの取得</a></p>
+      <p><a href="#4._検査結果データの共有">4. 検査結果データの共有</a></p>
+      <p><a href="#5._SpeeDB Hiveへのデータ取り込み">5. SpeeDB Hiveへのデータ取り込み</a></p>
+      <p><a href="#6._SpeeDB Hiveの設定">6. SpeeDB Hiveの設定</a></p>
+      <p><a href="#7._動作確認">7. 動作確認</a></p>
+      <br>
+      <p><a href="#ソースコード所在">ソースコード所在</a></p>
+      <p><a href="#ライセンス">ライセンス</a></p>
+      <p><a href="#参考">参考</a></p>
+    </nav>
+  </div>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <section>
+    <p> 本ページでは、i-PRO の AI アプリ
+      「<strong><a href="https://moduca.i-pro.com/space/MCP/800952599/i-PRO+AI%E5%A4%96%E8%A6%B3%E6%A4%9C%E6%9F%BB"
+          target="_blank">MS-EXFANS01A (AI検査アプリケーション) </a> </strong>」
+      と株式会社ソルティスターのIOTミドルウェア
+      「<strong><a href="https://www.saltyster.com/" target="_blank">SpeeDBee Hive</a> </strong>」とを連携させる方法についてご紹介します。
+    </p>
+    <p>* SpeeDBeeは株式会社ソルティスターの登録商標です。</p>
+  </section>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <section>
+    <p class="auto-style2"><strong>関連商品 紹介：</strong></p>
+    <ul>
+      <li><a href="https://moduca.i-pro.com" target="_blank">
+          モジュールカメラ｜ポータルサイト (i-pro.com)</a></li>
+      <li><a href="https://moduca.i-pro.com/space/MCT/768743132/各種マニュアル" target="_blank">
+          各種マニュアル - Module Camera Technical Information - モジュールカメラ｜ポータルサイト (i-pro.com)</a></li>
+    </ul>
+
+    <p>
+      <a href="./images/moduca-lense-trialkit.png" target="_blank">
+        <img alt="レンズトライアルキット" class="border_with_drop-shadow" src="./images/moduca-lense-trialkit.png"
+          width="320"></a>
+    </p>
+    <ul>
+      <li><a href="https://moduca.i-pro.com/space/MCP/800952599/i-PRO+AI%E5%A4%96%E8%A6%B3%E6%A4%9C%E6%9F%BB"
+          target="_blank">
+          モジュールカメラ｜AI検査ソフト (i-pro.com)</a>
+        <p>* レンズトライアルキットはAI検査ソフトの正式対応カメラではありませんが、動作はするようです。</p>
+      </li>
+    </ul>
+    <ul>
+      <li><a href="https://www.saltyster.com/" target="_blank">
+          株式会社ソルティスター｜SpeeDBee Hive (saltyster.com)</a>
+        <p>* SpeeDBee Hive は Linux / Windows 環境下で稼働し、多種多様なデータを取り込んで、
+          統計・AIなどの分析、デバイス・機器の制御、可視化による遠隔でのデータ監視を実現する実用的IoTミドルウェアです。
+        </p>
+      </li>
+    </ul>
+  </section>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <section>
+    <h2><a name="1._確認した環境">1. 確認した環境</a></h2>
+    <p>&nbsp;</p>
+
+    <h4>[品番、バージョン]</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="td_separate" colspan="3"></td>
+        </tr>
+
+        <tr>
+          <td>レンズトライアルキット :</td>
+          <td>MK-DVLTRNP01, </td>
+          <td>2.00</td>
+        </tr>
+
+        <tr>
+          <td>AI検査アプリケーション :</td>
+          <td>MS-EXFANS01A, </td>
+          <td>1.00</td>
+        </tr>
+
+        <tr>
+          <td>AI検査マネジメントソフトウェア :</td>
+          <td>-, </td>
+          <td>1.00 </td>
+        </tr>
+
+        <tr>
+          <td>SpeeDBeeHive :</td>
+          <td>-, </td>
+          <td>v3.16.2試用版(Windows)</td>
+        </tr>
+
+
+        <tr>
+          <td class="td_separate" colspan="3"></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <section>
+    <h2> <a id="2._システムのセットアップ">2. システムのセットアップ</a></h2>
+    <p>AI検査アプリケーション/AI検査マネジメントソフトウェア、SpeeDBee Hiveのインストール・セットアップを、それぞれのマニュアルを参照の上実施してください。<br>
+      それぞれのシステムが単独で動作するようになっている前提で、以降の説明は記載されています。
+    </p>
+  </section>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <section>
+    <h2> <a id="3._検査結果データの取得">3. 検査結果データの取得</a></h2>
+    <p>検査結果は、AI検査マネジメントソフトが出力するjsonファイルから取得します。</p>
+    <p>データ構造については、「
+      <a href="./aiinspect_result.html">AI検査ソフト｜検査結果を取得する (i-pro.com)</a>
+      」を参照してください。
+    </p>
+  </section>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <section>
+    <h2> <a id="4._検査結果データの共有">4. 検査結果データの共有</a></h2>
+    <p>AI検査マネジメントソフトの動作環境はRaspberry Pi OSの64bitのみですが、SpeeDB HiveではサポートされていないOSとなりますので、検査結果を別PCから参照できるようにする必要があります。<br>
+      ここでは、sambaでフォルダ共有をおこないます。</p>
+
+    <p>&nbsp;</p>
+
+    <p>(1) Sambaのインストール</p>
+    <p>Sambaがインストールされていない場合は、以下コマンドでインストールをおこないます。</p>
+    <pre style="width: 500px; color: #FFFFFF; background-color: #000000">
+      $ sudo apt install samba samba-common-bin</pre>
+
+    <p>&nbsp;</p>
+
+    <p>(2) Sambaの設定ファイルの編集</p>
+    <p>Sambaの設定ファイルを編集して、共有フォルダの設定を追加します。設定ファイルは通常/etc/samba/smb.confにあります。</p>
+    <pre style="width: 500px; color: #FFFFFF; background-color: #000000">
+      $ sudo vi /etc/samba/smb.conf</pre>
+    <p>以下の内容をファイルの最後に追加します。共有フォルダの名前、パス、アクセス権限を自分の環境に合わせて変更してください。</p>
+    <pre class="prettyprint linenums">
+      [Shared]
+      path = /media/pi/DATA_DRIVE
+      read only = yes
+      browsable = yes
+      public = yes
+      guest ok = yes
+      create mask = 0555
+      directory mask = 0555</pre>
+    <p>* この例では、/media/pi/DATA_DRIVE/data がAI検査マネジメントソフトのデータ出力先になっています。</p>
+
+    <p>&nbsp;</p>
+
+    <p>(3) Sambaの再起動</p>
+    <p>設定を反映するためにSambaを再起動します。</p>
+    <pre style="width: 500px; color: #FFFFFF; background-color: #000000">
+      $ sudo systemctl restart smbd</pre>
+
+    <p>&nbsp;</p>
+
+    <p>(4) ファイアウォールの設定（必要に応じて）</p>
+    <p>OSのファイアウォールを使用している場合は、Sambaのポートを許可する必要があります。</p>
+    <pre style="width: 500px; color: #FFFFFF; background-color: #000000">
+        $ sudo ufw allow samba</pre>
+
+    <p>&nbsp;</p>
+
+    <p>(5) 共有フォルダの割り当て</p>
+    <p>SpeeDB Hiveはサービスとして実行される為に、ドライブの割り当てをしてもそのドライブを参照できません。</p>
+    <p>そのため、共有フォルダはWindowsのシンボリックリンクの機能を使用して参照します。</p>
+    <p>以下は、AI検査マネジメントソフトが動作するRaspberry PiのIPアドレスが 192.168.0.20 の場合のコマンドです。</p>
+    <p>シンボリックリンク先は、環境に合わせて適宜変更してください。</p>
+    <pre style="width: 600px; color: #FFFFFF; background-color: #000000">
+      C:\Users\XXXX> mklink /D C:\aiinspect_shared \\192.168.0.20\Shared</pre>
+
+  </section>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <section>
+    <h2> <a id="5._SpeeDB Hiveへのデータ取り込み">5. SpeeDB Hiveへのデータ取り込み</a></h2>
+    <p>SpeeDBee Hiveには、データの収集を行うモジュールをユーザーが独自作成・システムに追加できる「カスタムコレクタ」という仕組みがあります。</p>
+    <p>カスタムコレクタはC言語/Pythonで作成可能ですが、今回はjsonファイルの読み込み等ライブラリがそろっていて手軽にプログラミングが出来るPythonを使用します。</p>
+
+    <p>&nbsp;</p>
+
+    <p>(1) プログラムの引数</p>
+    <p>検査結果の参照先フォルダ、DB登録状況保存先フォルダ（後述）の場所をプログラムの引数で渡すようにします。</p>
+    <p>ただしカスタムコレクタへの引数は1つだけ指定可能なので、半角のスペース区切りで連結したものを指定します。</p>
+    <ul>
+      <li>
+        <p>引数1 : 検査結果参照先フォルダ。Sambaで共有したフォルダを指定します。</p>
+      </li>
+      <li>
+        <p>引数2 : DB登録状況保存先フォルダ。指定したフォルダにaiinspectというフォルダを作成し、その中に機種毎にどこまでDBに登録したかを記録します。</p>
+      </li>
+    </ul>
+    <pre class="prettyprint linenums lang-py">
+      # 引数
+      dirs = param.split(" ")
+      self.rootPath = dirs[0]
+      self.infoPath = dirs[1]</pre>
+
+    <p>&nbsp;</p>
+
+    <p>(2) データベースの定義</p>
+    <p>検査結果として登録するデータを、カメラ名・検査日時・機種名・総合結果・検査ポイントごとの検査結果、の5つとします。</p>
+    <p>項目は、全て文字列で定義します。</p>
+    <ul>
+      <li>
+        <p>カメラ名 : フォルダ名をそのまま使用します。(cam)</p>
+      </li>
+      <li>
+        <p>検査日時 : jsonファイルのcamDateをそのまま使用します。(date) UTC->ローカル時間への変換はおこないません。</p>
+      </li>
+      <li>
+        <p>機種名 : フォルダ名をそのまま使用します。(lot)</p>
+      </li>
+      <li>
+        <p>総合結果 : jsonファイルのoverallResultの値を使用します。(overallresult) OKを0, NGを1に変換します。</p>
+      </li>
+      <li>
+        <p>検査ポイント毎の検査結果 : jsonファイルのjudgeの値を使用します。(result) OKを0, NGを1に変換します。出てくる順番に文字列を連結して1つの項目に登録します。(例: 0010)</p>
+      </li>
+    </ul>
+    <pre class="prettyprint linenums lang-py">
+      # DB定義
+      # カメラ名
+      self.clm0 = self.makeOutputColumn("cam",  HiveColumn.TypeString)
+      # 検査日付
+      self.clm1 = self.makeOutputColumn("date",  HiveColumn.TypeString)
+      # ロット番号
+      self.clm2 = self.makeOutputColumn("lot",  HiveColumn.TypeString)
+      # 総合判定
+      self.clm3 = self.makeOutputColumn("overallresult",  HiveColumn.TypeString)
+      # エリア毎の判定結果
+      self.clm4 = self.makeOutputColumn("result",  HiveColumn.TypeString)</pre>
+
+    <p>&nbsp;</p>
+
+    <p>(3) 連携のタイミング</p>
+    <p>カスタムコレクタをタイマーで定期的に起動し、検査結果が格納されるフォルダをチェックするようにします。</p>
+    <p>タイマーの起動間隔は変数で定義し、デフォルトは10秒としています。</p>
+    <pre class="prettyprint linenums lang-py">
+      # データチェック間隔(秒)
+      _intervalSec = 10
+
+      ～
+
+      ##########
+      #   メイン処理
+      #
+      #   Note:
+      #       定期タイマー起動
+      ##########
+      def mainloop(self):
+          # 設定した秒数毎にタイマーを起動する
+          self.intervalCall(int(_intervalSec * 1000 * 1000), self.proc)</pre>
+
+    <p>&nbsp;</p>
+
+    <p>(3) DB登録状況の保存</p>
+    <p>同じ検査結果を2重でDBに登録しないように、登録状況をファイルに保存しておきます。</p>
+    <ul>
+      <li>
+        <p>引数の2番目に指定されたDB登録状況保存先フォルダに、aiinspectというフォルダを作成します。</p>
+      </li>
+      <li>
+        <p>フォルダ内に、機種ごとに登録状況を保存するファイルを作成します。ファイル名は、aiinspect_info_XX.txtとします(XX : 00 - の連番)</p>
+      </li>
+      <li>
+        <p>DBへの登録は、登録する順番が都度同じになるように、フォルダ名・ファイル名を昇順でソートしてから実施します。</p>
+      </li>
+      <li>
+        <p>ファイルには、各カメラ毎に度どの日付フォルダのどのjsonファイルの内容までを登録したのかを出力します。</p>
+      </li>
+      <li>
+        <p>ファイルの最初のn行(n : カメラ数。AI検査マネジメントソフトウェアで扱えるカメラ数は1ですが、将来的な拡張を考慮してn=10で実装しています)は最後に処理した日付フォルダ名、
+          それ以降は最後に処理したjsonファイル名を出力します。
+        </p>
+      </li>
+      <li>
+        <p>未処理の状態（初期状態）は、空行です。</p>
+      </li>
+      <li>
+        <p>DBへの登録時は、上記ファイルを読み込んで、登録済みののものはスキップするようにします。また、DBに登録したらファイルの内容を更新します。</p>
+      </li>
+      <li>
+        <p>機種やカメラを追加して昇順結果の順番が変わった時は、ファイルの内容を手動で更新するか、ファイルを削除して最初から登録することが必要となります。</p>
+      </li>
+    </ul>
+    <p>ファイルの構造イメージは、以下になります。</p>
+    <p>
+      <a href="./images/infofile.jpg" target="_blank">
+        <img alt="ファイル構造" class="border_with_drop-shadow" src="./images/infofile.jpg" width="1024"></a>
+    </p>
+    <p>&nbsp;</p>
+
+    <p>(4) DBへのデータ登録方法</p>
+    <p>複数の項目を同じデータグループとして登録するには、insert()の引数に同じタイムスタンプを指定する必要があります。</p>
+    <pre class="prettyprint linenums lang-py">
+      # DBに生成したデータを登録
+      nowTime = self.getTimestamp()
+      self.clm0.insert(camDir, nowTime)
+      self.clm1.insert(jsonH["camDate"]["DATE"], nowTime)
+      self.clm2.insert(modelDir, nowTime)
+      self.clm3.insert(overallresult, nowTime)
+      self.clm4.insert(result, nowTime)</pre>
+    <p>詳細は、SpeeDB Hiveのユーザーガイド、Pythonカスタムコレクタの章を参照してください。</p>
+
+  </section>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <section>
+    <h2> <a id="6._SpeeDB Hiveの設定">6. SpeeDB Hiveの設定</a></h2>
+    <p>カスタムコレクタをSpeeDB Hiveに登録し、連携用の設定をおこないます。</p>
+    <p> サンプルプログラムを <a
+        href="https://github.com/i-pro-corp/ipro_aiinspect/blob/4c1cbdc5d9048c65a205b5077542b756c4687fe1/saltyster/ipro_aiinspect.py"
+        target="_blank">ipro_aiinspect/saltyster/ipro_aiinspect.py</a> として公開しています。</p>
+
+    <p>&nbsp;</p>
+
+    <p>(1) サービスの再起動</p>
+    <p>SpeeDB Hiveの評価版は連続稼働が1時間という制限事項がありますので、動作確認前に再起動を実施しておきます。</p>
+    <p>Windowsの場合は、Windowsメニューの「Windows管理ツール - サービス」でspeedbhiveを再起動します。</p>
+    <p>
+      <a href="./images/speedbhive_setting_05.jpg" target="_blank">
+        <img alt="SpeeDB Hive 設定 05" class="border_with_drop-shadow" src="./images/speedbhive_setting_05.jpg"></a>
+    </p>
+
+    <p>&nbsp;</p>
+
+    <p>(2) カスタムコレクタの登録</p>
+    <p>SpeeDB Hiveの管理画面「システム - コレクタ関連設定 - カスタム(Python)」からサンプルプログラムを登録します。</p>
+    <p>
+      <a href="./images/speedbhive_setting_01.jpg" target="_blank">
+        <img alt="SpeeDB Hive 設定 01" class="border_with_drop-shadow" src="./images/speedbhive_setting_01.jpg"
+          width="800"></a>
+    </p>
+    <p>追加ボタンでファイルを指定して登録すると、カスタムコレクタの一覧に表示されます。</p>
+    <p>
+      <a href="./images/speedbhive_setting_02.jpg" target="_blank">
+        <img alt="SpeeDB Hive 設定 02" class="border_with_drop-shadow" src="./images/speedbhive_setting_02.jpg"
+          width="800"></a>
+    </p>
+
+    <p>&nbsp;</p>
+
+    <p>(3) カスタムコレクタの設定</p>
+    <p>SpeeDB Hiveの管理画面「コレクタ - カスタム」からサンプルプログラムの設定を登録します。＋ボタンを押下すると、設定画面が表示されます。</p>
+    <p>設定が完了したら、保存ボタンを押下します。</p>
+    <p>
+      <a href="./images/speedbhive_setting_03.jpg" target="_blank">
+        <img alt="SpeeDB Hive 設定 03" class="border_with_drop-shadow" src="./images/speedbhive_setting_03.jpg"
+          width="800"></a>
+    </p>
+    <ul>
+      <li>
+        <p>カスタム名 : 任意の名前を入力します。</p>
+      </li>
+      <li>
+        <p>タイプ : python を選択します。</p>
+      </li>
+      <li>
+        <p>ライブラリ : (1)で登録したサンプルプログラムを選択します。</p>
+      </li>
+      <li>
+        <p>パラメータ : スペース区切りで、2つの値を設定します。</p>
+        <p>1つめ : 「4. 検査結果データの共有」でマウントしたデータフォルダのパス名を入力します。</p>
+        <p>2つめ : 「5. SpeeDB Hiveへのデータ取り込み - (3) DB登録状況の保存」で説明した、登録状況を保存するファイルの出力先フォルダのパス名を入力します。</p>
+      </li>
+    </ul>
+    <p>保存完了後、初期化ボタンを押下してDBのカラム一覧が表示されたら設定は完了です。</p>
+    <p>
+      <a href="./images/speedbhive_setting_04.jpg" target="_blank">
+        <img alt="SpeeDB Hive 設定 04" class="border_with_drop-shadow" src="./images/speedbhive_setting_04.jpg"></a>
+    </p>
+  </section>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <section>
+    <h2> <a id="7._動作確認">7. 動作確認</a></h2>
+    <p>実際にカスタムコレクタを動作せて、検査結果がDBに登録できるかを確認します。</p>
+
+    <p>&nbsp;</p>
+
+    <p>(1) サービスの再起動</p>
+    <p>SpeeDB Hiveの評価版は連続稼働が1時間という制限事項がありますので、動作確認前に再起動を実施しておきます。</p>
+    <p>Windowsの場合は、Windowsメニューの「Windows管理ツール - サービス」でspeedbhiveを再起動します。</p>
+    <p>
+      <a href="./images/speedbhive_setting_05.jpg" target="_blank">
+        <img alt="SpeeDB Hive 設定 05" class="border_with_drop-shadow" src="./images/speedbhive_setting_05.jpg"></a>
+    </p>
+
+    <p>&nbsp;</p>
+
+    <p>(2) データ分布モニターの表示</p>
+    <p>SpeeDB Hiveの管理画面「システム - データ分布モニタ」を選択します。</p>
+    <p>コレクタのリストで登録したサンプルプログラムを選択し、適用ボタンを押下します。</p>
+    <p>
+      <a href="./images/speedbhive_setting_06.jpg" target="_blank">
+        <img alt="SpeeDB Hive 設定 06" class="border_with_drop-shadow" src="./images/speedbhive_setting_06.jpg"
+          width="800"></a>
+    </p>
+
+    <p>(3) 検査の実施</p>
+    <p>AI検査マネジメントソフトウェアで、検査を実行します。</p>
+    <p>
+      <a href="./images/aiinspect.jpg" target="_blank">
+        <img alt="AI検査マネジメントソフト" class="border_with_drop-shadow" src="./images/aiinspect.jpg"
+          width="800"></a>
+    </p>
+    <p>検査が完了してしばらくして、データ分布モニター上に登録されたデータが●で表示されたら動作確認完了です。</p>
+    <p>
+      <a href="./images/speedbhive_setting_07.jpg" target="_blank">
+        <img alt="SpeeDB Hive 設定 07" class="border_with_drop-shadow" src="./images/speedbhive_setting_07.jpg"> </a>
+    </p>
+
+    <p>&nbsp;</p>
+
+  </section>
+
+  <p>&nbsp;</p>
+
+  <section>
+    <h2><a name="ソースコード所在">ソースコード所在</a></h2>
+    <p>サンプルプログラムのソースコードは、下記 github より取得できます。</p>
+    <p>下記 github のソースコードと本ページの内容は差異がある場合があります。</p>
+    <p><a href="https://github.com/i-pro-corp/ipro_aiinspect" target="_blank">i-pro-corp/ipro_aiinspect (github.com)</a></p>
+    <p>&nbsp;</p>
+  </section>
+
+  <p>&nbsp;</p>
+
+  <section>
+    <h2><a id="ライセンス">ライセンス</a></h2>
+    <p>本ページの情報は、特記無い限り下記ライセンスで提供されます。</p>
+    <div class="license">
+      <br>Copyright 2023 i-PRO Co., Ltd.<br><br>Licensed under the Apache License, Version
+      2.0 (the "License");<br>you may not use this file except in compliance with
+      the License.<br>You may obtain a copy of the License at <br><br>&nbsp;&nbsp;&nbsp;
+      <a href="http://www.apache.org/licenses/LICENSE-2.0"
+        target="_blank">http://www.apache.org/licenses/LICENSE-2.0</a><br><br>
+      Unless required by
+      applicable law or agreed to in writing, software <br>distributed under the
+      License is distributed on an "AS IS" BASIS, <br>WITHOUT WARRANTIES OR
+      CONDITIONS OF ANY KIND, either express or implied. <br>See the License for
+      the specific language governing permissions and<br>limitations under the
+      License. <br> <br>
+    </div>
+    <p>&nbsp;</p>
+  </section>
+
+  <p>&nbsp;</p>
+
+  <section>
+    <h2><a id="参考">参考</a></h2>
+  </section>
+
+  <p>&nbsp;</p>
+  <hr>
+  <p>&nbsp;</p>
+
+  <section>
+    <h2 style="margin-bottom:5px">変更履歴</h2>
+    <table>
+      <tr>
+        <td class="td_history_date">2023/4/18</td>
+        <td class="td_history_separator">-</td>
+        <td class="td_history">新規作成,</td>
+        <td class="td_history">小澤和哉</td>
+      </tr>
+    </table>
+  </section>
+
+  <p>&nbsp;</p>
+  <p><a href="../index.html" target="_parent">i-PRO - Programming Items トップページ</a></p>
+  <p><a href="../privacy_policy.html">プライバシーポリシー</a></p>
+  <p>&nbsp;</p>
+
+  <footer>
+    <p><small>&copy; 2023 i-PRO Co., Ltd.</small></p>
+  </footer>
+
+</body>
+
+</html>

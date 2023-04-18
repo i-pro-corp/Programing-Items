@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="ozawa kazuya (小澤和哉)">
+  <meta name="description" content="Introducing programming for i-PRO AI Inspection Software.">
+  <meta name="keywords" content="i-PRO">
+
+  <!-- キャッシュ無効化 -->
+  <meta http-equiv="Cache-Control" content="no-cache">
+
+  <!-- タイトル -->
+  <title>検査結果を取得する | i-PRO - Programming Items</title>
+
+  <!-- ファビコン -->
+  <link rel="shortcut icon" href="../favicon.ico">
+
+  <!-- CSS -->
+  <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../design.css" type="text/css">
+
+  <!-- Start for 'google-code-prettify' -->
+  <link href="../prettify/styles/desert.css" rel="stylesheet" type="text/css">
+  <script src="../prettify/prettify.js" type="text/javascript"></script>
+  <!-- End for 'google-code-prettify' -->
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5DFRG3H0KB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-5DFRG3H0KB');
+  </script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+</head>
+
+<body onload="prettyPrint();">
+
+  <h1>検査結果を取得する</h1>
+
+  <p> &nbsp;</p>
+  <div class="status_information">
+    <div>
+    </div>
+    <div>
+      <p>本ページは i-PRO株式会社 の有志メンバーにより記載されたものです。<br>本ページの情報は <a href="#ライセンス">ライセンス</a> に記載の条件で提供されます。</p>
+    </div>
+  </div>
+
+  <p>&nbsp;</p>
+
+  <div class="mokuji">
+    <nav>
+      <h2>目次</h2>
+      <p><a href="#1._確認した環境">1. 確認した環境</a></p>
+      <p><a href="#2._検査結果データの格納場所">2. 検査結果データの格納場所</a></p>
+      <p><a href="#3._検査結果データのフォーマット">3. 検査結果データのフォーマット</a></p>
+      <br>
+      <p><a href="#ライセンス">ライセンス</a></p>
+      <p><a href="#参考">参考</a></p>
+    </nav>
+  </div>
+  
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  
+  <section>
+    <p> 本ページでは、i-PRO の AI アプリ
+    「<strong><a href="https://moduca.i-pro.com/space/MCP/800952599/i-PRO+AI%E5%A4%96%E8%A6%B3%E6%A4%9C%E6%9F%BB" target="_blank">MS-EXFANS01A (AI検査アプリケーション) </a> </strong>」
+    が出力する検査結果データの構造についてご紹介します。</p>
+    <p> この内容を応用することで、他のシステムとの連携が可能になります。</p>
+  </section>
+    
+  <p>&nbsp;</p>
+  <hr>
+  <p>&nbsp;</p>
+  
+  <section>
+    <p class="auto-style2"><strong>関連商品 紹介：</strong></p>
+    <ul>
+      <li><a href="https://moduca.i-pro.com" target="_blank">
+        モジュールカメラ｜ポータルサイト (i-pro.com)</a></li>
+      <li><a href="https://moduca.i-pro.com/space/MCT/768743132/各種マニュアル" target="_blank">
+        各種マニュアル - Module Camera Technical Information - モジュールカメラ｜ポータルサイト (i-pro.com)</a></li>
+    </ul>
+    
+    <p> 
+    <a href="./images/moduca-lense-trialkit.png" target="_blank">
+    <img alt="レンズトライアルキット" class="border_with_drop-shadow" src="./images/moduca-lense-trialkit.png" width="320"></a>
+
+    <ul>
+      <li><a href="https://moduca.i-pro.com/space/MCP/800952599/i-PRO+AI%E5%A4%96%E8%A6%B3%E6%A4%9C%E6%9F%BB" target="_blank">
+        モジュールカメラ｜AI検査ソフト (i-pro.com)</a></li>
+    </ul>
+    <p>* レンズトライアルキットはAI検査ソフトの正式対応カメラではありませんが、動作はするようです。</p>
+   
+  </section>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  
+  <section>
+    <h2><a name="1._確認した環境">1. 確認した環境</a></h2>
+    <p>&nbsp;</p>
+
+    <h4>[品番、バージョン]</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="td_separate" colspan="3"></td>
+        </tr>
+
+        <tr>
+          <td>レンズトライアルキット :</td>
+          <td>MK-DVLTRNP01, </td>
+          <td>2.00</td>
+        </tr>
+
+        <tr>
+          <td>AI検査アプリケーション :</td>
+          <td>MS-EXFANS01A, </td>
+          <td>1.00</td>
+        </tr>
+
+        <tr>
+          <td>AI検査マネジメントソフトウェア :</td>
+          <td>-, </td>
+          <td>1.00 </td>
+        </tr>
+
+        <tr>
+          <td class="td_separate" colspan="3"></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <section>
+    <h2> <a id="2._検査結果データの格納場所">2. 検査結果データの格納場所</a></h2>
+    <p>AI検査アプリケーション(MS-EXFANS01A)及びAI検査マネジメントソフトウェアの外部I/F仕様は公開されていません。<br>
+      しかし、Raspberry Pi上で動作するAI検査マネジメントソフトウェアのユーザーマニュアルにはストレージのフォルダ構成が記載されていますのでその中身を確認してみます。
+    </p>
+
+    <p>&nbsp;</p>
+
+    <p>(1) ユーザーマニュアル記載内容</p>
+    <p>ユーザーマニュアル 運用編 「5.2 ストレージのフォルダ構成」が該当箇所になります</p>
+    <p>
+      <img alt="フォルダ構成" class="border_with_drop-shadow" src="images/storage_folder.jpg">
+    </p>
+    <p>機種フォルダを起点として、「カメラフォルダ/result/yyyymmdd/judge」に検査判定結果が格納されているようです。
+    </p>
+
+    <p>&nbsp;</p>
+
+
+    <p>(2) 検査判定結果格納フォルダ</p>
+    <p>検査を何回か実行した後にフォルダを確認してみました。検査ポイントは2つ設定しています。</p>
+    <p>
+      <img alt="jsonファイル" class="border_with_drop-shadow" src="images/jsonlist.jpg">
+    </p>
+    <p>jsonファイルに検査結果が出力されているようです。</p>
+
+  </section>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+
+  <section>
+    <h2> <a id="3._検査結果データのフォーマット">3. 検査結果データのフォーマット</a></h2>
+    <p>jsonファイルの内容を確認して、検査結果がどのように記録されているかを調査します。</p>
+
+    <p>&nbsp;</p>
+
+    <p>jsonファイルをエディタで開いてみます。</p>
+    <pre class="prettyprint linenums lang-json">
+      {
+        "camInfo": {
+          "MAC": "11:22:33:44:55:66"
+        },
+        "camDate": {
+          "DATE": "2023-03-08T16:13:16.65Z",
+          "TZ": 63,
+          "DST": 0
+        },
+        "algoInfo": {
+          "bestshotID": "11:22:33:44:55:66",
+          "fewshotID": "11:22:33:44:55:66"
+        },
+        "setting": {
+          "inImage": {
+            "width": 1920,
+            "height": 1080
+          },
+          "procImage": {
+            "width": 448,
+            "height": 448
+          },
+          "outImage": {
+            "width": 1920,
+            "height": 1080
+          },
+          "framerate": 30,
+          "threshold": 0.05
+        },
+        "capturedImage": "bs20230308T16131665Z_3.png",
+        "heatmapImage": "hm20230308T16131665Z.png",
+        "featureVector": [
+          "fv20230308T16131665Z_0.bin",
+          "fv20230308T16131665Z_1.bin",
+          "fv20230308T16131665Z_2.bin"
+        ],
+        "overallResult": "OK",
+        "maxScore": 0,
+        "minScore": 0,
+        "bsShiftX": 0,
+        "bsShiftY": 0,
+        "bsRadian": 0,
+        "taktTime": 6193,
+        "detect": [
+          {
+            "area": 1,
+            "personID": "",
+            "X": 299,
+            "Y": 231,
+            "W": 680,
+            "H": 370,
+            "judge": "OK",
+            "score": "0.0980296",
+            "valid": "1",
+            "type": "rectangle"
+          },
+          {
+            "area": 2,
+            "personID": "",
+            "X": 1119,
+            "Y": 241,
+            "W": 575,
+            "H": 345,
+            "judge": "OK",
+            "score": "0.0475913",
+            "valid": "1",
+            "type": "rectangle"
+          }
+        ]
+      }
+    </pre>
+    <p>以下オブジェクトの値を取得すれば、システム連携が実現できそうです。</p>
+    <p>camDate : 検査実行日時。UTCの値が入っています。タイムゾーンはi-PRO独自定義の値ですが、受け側でローカル時刻に変換することで運用上の支障はないかと思われます。</p>
+    <p>overallResult : 総合結果。検査ポイントがすべて検査OKの場合にOK、1つでもNGがあるとNGになります。</p>
+    <p>detect:judge : 検査結果。各検査ポイント毎に、OK・NGが出力されています。</p>
+    <p>&nbsp;</p>
+    <p>それ以外の、機種名・カメラ名はフォルダから取得が可能です。</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+  </section>
+
+  <p>
+    <br>
+  </p>
+
+  <section>
+    <h2><a id="ライセンス">ライセンス</a></h2>
+    <p>本ページの情報は、特記無い限り下記ライセンスで提供されます。</p>
+    <div class="license">
+      <br>Copyright 2023 i-PRO Co., Ltd.<br><br>Licensed under the Apache License, Version
+      2.0 (the "License");<br>you may not use this file except in compliance with
+      the License.<br>You may obtain a copy of the License at <br><br>&nbsp;&nbsp;&nbsp;
+      <a href="http://www.apache.org/licenses/LICENSE-2.0"
+        target="_blank">http://www.apache.org/licenses/LICENSE-2.0</a><br><br>
+      Unless required by
+      applicable law or agreed to in writing, software <br>distributed under the
+      License is distributed on an "AS IS" BASIS, <br>WITHOUT WARRANTIES OR
+      CONDITIONS OF ANY KIND, either express or implied. <br>See the License for
+      the specific language governing permissions and<br>limitations under the
+      License. <br> <br>
+    </div>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+  </section>
+
+
+  <br>
+
+  <section>
+    <h2><a id="参考">参考</a></h2>
+  </section>
+
+  <p>&nbsp;</p>
+  <hr>
+  <p>&nbsp;</p>
+
+  <section>
+    <h2 style="margin-bottom:5px">変更履歴</h2>
+    <table>
+      <tr>
+        <td class="td_history_date">2023/4/18</td>
+        <td class="td_history_separator">-</td>
+        <td class="td_history">新規作成,</td>
+        <td class="td_history">小澤和哉</td>
+      </tr>
+    </table>
+  </section>
+
+  <p>&nbsp;</p>
+  <p><a href="../index.html" target="_parent">i-PRO - Programming Items トップページ</a></p>
+  <p><a href="../privacy_policy.html">プライバシーポリシー</a></p>
+  <p>&nbsp;</p>
+
+  <footer>
+    <p><small>&copy; 2023 i-PRO Co., Ltd.</small></p>
+  </footer>
+
+</body>
+
+</html>
