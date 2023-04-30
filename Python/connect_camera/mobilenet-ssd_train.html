@@ -849,14 +849,14 @@ print(f"Found {len(probs)} objects. The output image is {path}")</pre>
 	  AI学習は乱数を使っている部分もあるので、私と同じ手順を行っても同じ結果になりません。私自身が同じことを複数回行っても異なる結果になったりします。あくまで参考値ということで。</p>
 	  <p>&nbsp;</p>
         
-    <table class="border-collapse" border="1" width="500">
+    <table class="border-collapse" border="1">
       <caption>[Table.] 引数毎の 学習時間、Validation Loss 比較</caption>
       <thead class="standard_table">
         <tr>
-          <th style="white-space: nowrap">Epoch num.</th>
-          <th width="25%" style="white-space: nowrap">Normal<br>(追加引数無し)</th>
-          <th width="25%" style="white-space: nowrap">--freeze_net</th>
-          <th width="25%" style="white-space: nowrap">--freeze_base_net</th>
+          <th>Epoch num.</th>
+          <th>Normal<br>(追加引数無し)</th>
+          <th>--freeze_net</th>
+          <th>--freeze_base_net</th>
         </tr>
       </thead>
       <tbody>
@@ -979,19 +979,19 @@ print(f"Found {len(probs)} objects. The output image is {path}")</pre>
 	  <p>下記表へ Epoch で99までの学習の様子を記載します。１回のみの結果なので、複数回実施するとまた違う結果になるかもしれません。</p>
 	  <p>&nbsp;</p>
         
-    <table class="border-collapse" border="1" width="500">
+    <table class="border-collapse" border="1">
       <caption>[Table.] 引数毎の 学習時間、Validation Loss 比較</caption>
       <thead class="standard_table">
         <tr>
-          <th style="white-space: nowrap" rowspan="2">Epoch num.</th>
-          <th width="25%" style="white-space: nowrap" class="auto-style7" colspan="2">Cosine</th>
-          <th width="50%" style="white-space: nowrap" colspan="2">Multi-step (50, 80)</th>
+          <th rowspan="2">Epoch num.</th>
+          <th colspan="2">Cosine</th>
+          <th colspan="2">Multi-step (50, 80)</th>
         </tr>
         <tr>
-          <th style="white-space: nowrap">Validation Loss</th>
-          <th style="white-space: nowrap">Average Loss</th>
-          <th style="white-space: nowrap">Validation Loss</th>
-          <th style="white-space: nowrap">Average Loss</th>
+          <th>Validation Loss</th>
+          <th>Average Loss</th>
+          <th>Validation Loss</th>
+          <th>Average Loss</th>
         </tr>
       </thead>
       <tbody>
