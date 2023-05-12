@@ -83,9 +83,14 @@
     <p>&nbsp;&nbsp; <a href="#3-2._MobileNetV2-SSD-Lite_を動かす（i-PRO_カメラ）">3-2. MobileNetV2-SSD-Lite を動かす（i-PRO カメラ）</a></p>
     <p>&nbsp;&nbsp; <a href="#参考：_GPU動作させる場合のソースコード修正について">参考： GPU動作させる場合のソースコード修正について</a></p>
   	<p><a href="#4._MobileNetV3-SSD-Lite">4. MobileNetV3-SSD-Lite</a></p>
-  	<p>&nbsp;&nbsp; <a href="#4-1._MobileNetV3-SSD-Lite_を動かす（JPEGファイル）">4-1. MobileNetV3-SSD-Lite を動かす（JPEGファイル）</a></p>
-  	<p>&nbsp;&nbsp; <a href="#4-2._MobileNetV3-SSD-Lite_を動かす（PC_内蔵カメラ）">4-2. MobileNetV3-SSD-Lite を動かす（PC 内蔵カメラ）</a></p>
-  	<p>&nbsp;&nbsp; <a href="#4-3._MobileNetV3-SSD-Lite_を動かす（i-PRO_内蔵カメラ）">4-3. MobileNetV3-SSD-Lite を動かす（i-PRO カメラ）</a></p>
+    <p>&nbsp;&nbsp; <a href="#4-1._ssdlite320_mobilenet_v3_large">4-1. ssdlite320 mibilenet v3 large</a>&nbsp;</p>
+  	<p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#4-1-1._MobileNetV3-SSD-Lite_を動かす（JPEGファイル）">4-1-1. MobileNetV3-SSD-Lite を動かす（JPEGファイル）</a></p>
+  	<p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#4-1-2._MobileNetV3-SSD-Lite_を動かす（PC_内蔵カメラ）">4-1-2. MobileNetV3-SSD-Lite を動かす（PC 内蔵カメラ）</a></p>
+  	<p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#4-1-3._MobileNetV3-SSD-Lite_を動かす（i-PRO_内蔵カメラ）">4-1-3. MobileNetV3-SSD-Lite を動かす（i-PRO カメラ）</a></p>
+    <p>&nbsp;&nbsp; <a href="#4-2._MobileNetV3-large-SSD-Lite">4-2. MobileNetV3-large-SSD-Lite</a></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#4-2-1._MobileNetV3-large-SSD-Lite_学習データを作る">4-2-1. MobileNetV3-large-SSD-Lite 学習データを作る</a></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#4-2-2._MobileNetV3-large-SSD-Lite_を動かす（PC_内蔵カメラ）">4-2-2. MobileNetV3-large-SSD-Lite を動かす（PC 内蔵カメラ）</a></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#4-2-3._MobileNetV3-large-SSD-Lite_を動かす（i-PRO_カメラ）">4-2-3. MobileNetV3-large-SSD-Lite を動かす（i-PRO カメラ）</a></p>
     <p>&nbsp;</p>
 	  <p>=== 5章は別ページ「<a href="mobilenet-ssd_train.html">物体検知 － MobileNet-SSD (学習編)</a>」で記載 ===</p>
 	  <p>5. 学習</p>
@@ -330,7 +335,7 @@ V1 の原著論文</a></p>
       <tr>
         <td>&nbsp;</td>
         <td>PyTorch,</td>
-        <td>1.11.0</td>
+        <td>1.11.0+cpu</td>
       </tr>
 
       <tr>
@@ -510,7 +515,7 @@ V1 の原著論文</a></p>
     <tr>
       <td>&nbsp;</td>
       <td>PyTorch,</td>
-      <td>1.11.0</td>
+      <td>1.11.0+cpu</td>
     </tr>
 
     <tr>
@@ -732,7 +737,7 @@ V2の1階層が対応する、という感じで読むと概ね同じような�
       <tr>
         <td>&nbsp;</td>
         <td>PyTorch,</td>
-        <td>1.11.0</td>
+        <td>1.11.0+cpu</td>
       </tr>
 
       <tr>
@@ -841,7 +846,7 @@ V2の1階層が対応する、という感じで読むと概ね同じような�
       <tr>
         <td>&nbsp;</td>
         <td>PyTorch,</td>
-        <td>1.11.0</td>
+        <td>1.11.0+cpu</td>
       </tr>
 
       <tr>
@@ -996,12 +1001,23 @@ rtsp://admin:Admin12345@192.168.0.10/MediaInput/stream_1</span></p>
 <p>&nbsp;</p>
 
 <section>
-	<h2> <a name="4-1._MobileNetV3-SSD-Lite_を動かす（JPEGファイル）">4-1. MobileNetV3-SSD-Lite を動かす（JPEGファイル）</a></h2>
+<h2><a name="4-1._ssdlite320_mobilenet_v3_large">4-1. ssdlite320_mobilenet_v3_large</a></h2>
+<p>MobileNetV3-SSD-Lite は PyTorch に組み込まれていました。"ssdlite320_mobilenet_v3_large" 
+というモジュールです。同様に学習済みモデルも Pytorch 環境のみで取得可能です。</p>
+<p>本章では Pytorch および "ssdlite320_mobilenet_v3_large" を使って MobileNetV3-SSD-Lite 
+を動かしてみたいと思います。</p>
+<p>（"ssdlite320_mobilenet_v3_large" のインプットサイズはファイル名記載の通り 320x320 
+にアレンジされているように見えます。詳細は割愛します。）</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<section>
+	<h2> <a name="4-1-1._MobileNetV3-SSD-Lite_を動かす（JPEGファイル）">4-1-1. MobileNetV3-SSD-Lite を動かす（JPEGファイル）</a></h2>
 	<h4>[概要]</h4>
 
 	<p>MobileNetV3-SSD-Lite は PyTorch に組み込まれていました。"ssdlite320_mobilenet_v3_large" 
 	というモジュールです。同様に学習済みモデルも Pytorch 環境のみで取得可能です。</p>
-    <p>本章では Pytorch および "ssdlite320_mobilenet_v3_large" を使って 
+    <p>本節では Pytorch および "ssdlite320_mobilenet_v3_large" を使って 
 	MobileNetV3-SSD-Lite を動かしてみたいと思います。</p>
 	<p>（"ssdlite320_mobilenet_v3_large" のインプットサイズはファイル名記載の通り 320x320 
 	にアレンジされているように見えます。詳細は割愛します。）</p>
@@ -1128,7 +1144,7 @@ rtsp://admin:Admin12345@192.168.0.10/MediaInput/stream_1</span></p>
     <tr>
       <td>&nbsp;</td>
       <td>PyTorch,</td>
-      <td>1.12.1</td>
+      <td>1.12.1+cpu</td>
     </tr>
 
     <tr>
@@ -1265,7 +1281,7 @@ Where are my downloaded models saved?</a></p>
 <p>&nbsp;</p>
 
 <section>
-	<h2> <a name="4-2._MobileNetV3-SSD-Lite_を動かす（PC_内蔵カメラ）">4-2. MobileNetV3-SSD-Lite を動かす（PC 内蔵カメラ）</a></h2>
+	<h2> <a name="4-1-2._MobileNetV3-SSD-Lite_を動かす（PC_内蔵カメラ）">4-1-2. MobileNetV3-SSD-Lite を動かす（PC 内蔵カメラ）</a></h2>
 	<h4>[概要]</h4>
 	<p>4-1 で作成した JPEG 
 	画像を対象に物体検知するプログラムを元に、ここではPC内蔵カメラの映像をライブで物体検知するプログラムを作成してみます。</p>
@@ -1292,7 +1308,7 @@ Where are my downloaded models saved?</a></p>
     <tr>
       <td>&nbsp;</td>
       <td>PyTorch,</td>
-      <td>1.12.1</td>
+      <td>1.12.1+cpu</td>
     </tr>
 
     <tr>
@@ -1479,9 +1495,9 @@ cv2.destroyAllWindows()
 <p>&nbsp;</p>
 
 <section>
-	<h2> <a name="4-3._MobileNetV3-SSD-Lite_を動かす（i-PRO_内蔵カメラ）">4-3. MobileNetV3-SSD-Lite を動かす（i-PRO カメラ）</a></h2>
+	<h2> <a name="4-1-3._MobileNetV3-SSD-Lite_を動かす（i-PRO_内蔵カメラ）">4-1-3. MobileNetV3-SSD-Lite を動かす（i-PRO カメラ）</a></h2>
 	<h4>[概要]</h4>
-	<p>4-2 で作成したプログラムを元に i-PRO カメラと接続してカメラ映像をライブで物体検知するプログラムを作成してみます。</p>
+	<p>4-1-2 で作成したプログラムを元に i-PRO カメラと接続してカメラ映像をライブで物体検知するプログラムを作成してみます。</p>
 	<p>cv2.VideoCapture の引数を "0" から RTSP表記 へ変更するだけです。</p>
 	<p style="background-repeat: no-repeat; box-sizing: inherit; margin: 6px 0px; padding: 0px; color: rgb(0, 0, 0); font-family: sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">
 	&nbsp;</p>
@@ -1505,7 +1521,7 @@ cv2.destroyAllWindows()
     <tr>
       <td>&nbsp;</td>
       <td>PyTorch,</td>
-      <td>1.12.1</td>
+      <td>1.12.1+cpu</td>
     </tr>
 
     <tr>
@@ -1745,6 +1761,371 @@ cv2.destroyAllWindows()</pre>
 	<p>&nbsp;</p>
   
 </section>
+</section>
+
+<p>&nbsp;</p>
+
+<section>
+  <h2><a name="4-2._MobileNetV3-large-SSD-Lite">4-2. MobileNetV3-large-SSD-Lite</a></h2>
+  <p>MobilenetV3 は 
+  <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">pytorch-ssd</a> 
+  に含まれていますが、学習済みモデルを提供していませんでした。残念。</p>
+  <p>
+  折角なので、私自身により学習を実施してみました。皆さんが期待するほどの認識性能に達していないかもしれませんが、本ページから私が作成した学習済みデータをダウンロードできるようにしました。このデータを使って 
+  MobileNet-SSD-V3 による推論を実行してみたいと思います。合わせてこの学習データを作成した手順についても参考記載します。</p>
+  <p>※ これで V1,V2,V3 を同等条件で動作比較できそうです。</p>
+  <p>&nbsp;</p>
+
+  <section>
+    <h3><a name="4-2-1._MobileNetV3-large-SSD-Lite_学習データを作る">4-2-1. 
+    MobileNetV3-large-SSD-Lite 学習データを作る</a></h3>
+    <h4>[概要]</h4>
+    <p>"MobileNetV3-large-ssd-lite" の学習データを "VOC dataset" により作成してみます。</p>
+    <p>学習データ作成なので、本ページの当初ポリシーから外れますが、ここでは GPU を使用させていただきます。</p>
+    <p>&nbsp;</p>
+    <h4>[評価環境]</h4>
+    <table>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+      <tr>
+        <td>言語 :</td>
+        <td>Python,</td>
+        <td>3.10.7</td>
+      </tr>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>PyTorch,</td>
+        <td>1.12.1+cu116</td>
+      </tr>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+      <tr>
+        <td>OS :</td>
+        <td>Windows 11 home,</td>
+        <td>22H2</td>
+      </tr>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+      <tr>
+        <td>GPU：</td>
+        <td>NVIDIA GeForce GTX 1650,</td>
+        <td>GPUメモリ 4GB</td>
+      </tr>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+    </table>
+    <p>&nbsp;</p>
+    <h4>[手順]</h4>
+    <p>1. <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">
+    pytorch-ssd</a> から git clone してソースコード一式を入手します。（前章と同じです。実施済みなら不要です。）</p>
+    <p>任意のフォルダで端末（コマンドプロンプト等）を起動して下記コマンドをインプットします。</p>
+    <pre style="color: #FFFFFF; background-color: #000000">$ git clone https://github.com/qfgaohao/pytorch-ssd.git</pre>
+    <p>&nbsp;</p>
+    <p>2. "git clone" したフォルダへ移動します。</p>
+    <pre style="color: #FFFFFF; background-color: #000000">$ cd pytorch-ssd</pre>
+    <p>&nbsp;</p>
+    <p>3. PASCAL VOC2007/2012 のデータセットをダウンロード、展開します。</p>
+    <p>■Linux の場合</p>
+    <pre style="color: #FFFFFF; background-color: #000000">$ cd data
+$ wget http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar
+$ wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtrainval_06-Nov-2007.tar
+$ wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtest_06-Nov-2007.tar
+$ tar -xvf VOCtrainval_11-May-2012.tar&nbsp;
+$ tar -xvf VOCtrainval_06-Nov-2007.tar&nbsp;
+$ tar -xvf VOCtest_06-Nov-2007.tar&nbsp;</pre>
+    <p>&nbsp;</p>
+    <p>■Windows の場合</p>
+    <p>&nbsp;Windows に標準では wget コマンドは無いため上記を実行してもエラーになります。ここでは、wget の代わりに bitsadmin 
+    コマンドで代用する方法を紹介します。</p>
+    <p>&nbsp;</p>
+    <p class="auto-style2"><strong>bitsadmin.exe</strong> の書き方：</p>
+    <blockquote>
+      <strong>bitsadmin.exe</strong> /transfer ＜ジョブ名＞ ＜URL＞ ＜保存先ファイル名（フルパス）＞ 
+    </blockquote>
+    <p>上記内容を bitsadmin.exe で置き換えると以下のようになるので、Windows 環境の方はこちらで実施します。<br>
+    <span class="auto-style3">c:\{作業フォルダ}</span> の部分をご自身の環境に合わせて修正して実行してください。</p>
+    <pre style="color: #FFFFFF; background-color: #000000">$ cd data
+$ bitsadmin /TRANSFER htmldl http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar <span class="auto-style3">c:\{作業フォルダ}</span>\data\VOCtrainval_11-May-2012.tar
+$ bitsadmin /TRANSFER htmldl http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtrainval_06-Nov-2007.tar <span class="auto-style3">c:\{作業フォルダ}</span>\data\VOCtrainval_06-Nov-2007.tar
+$ bitsadmin /TRANSFER htmldl http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtest_06-Nov-2007.tar <span class="auto-style3">c:\{作業フォルダ}</span>\data\VOCtest_06-Nov-2007.tar
+$ tar -xvf VOCtrainval_11-May-2012.tar&nbsp;
+$ tar -xvf VOCtrainval_06-Nov-2007.tar&nbsp;
+$ tar -xvf VOCtest_06-Nov-2007.tar&nbsp;</pre>
+    <p>&nbsp;</p>
+    <p>以上を実行すると、"data" フォルダの中に "VOCdevkit" というフォルダが作成されて、その中に "VOC2007" と 
+    "VOC2012" の２つのフォルダと大量のデータが作成されます。</p>
+    <p>&nbsp;</p>
+    <p>4. データセットを再配置します。以下の順に実施します。</p>
+    <p>(1) "data" フォルダ中に "VOC0712" フォルダを作成し、この中に "VOC2007" と "VOC2012" 
+    を全てコピーします。</p>
+    <p>(2) "VOC0712" フォルダ中に "test" フォルダを作成し、このなかに "VOC2007" をコピーします。</p>
+    <p>&nbsp;</p>
+    <p>5. 学習を実行します。私の場合は下記コマンドを実行しました。</p>
+    <pre style="color: #FFFFFF; background-color: #000000">$ cd ..
+$ python train_ssd.py  --dataset_type voc  --datasets ./data/VOC0712/VOC2007 ./data/VOC0712/VOC2012 --validation_dataset ./data/VOC0712/test/VOC2007 --net mb3-large-ssd-lite  --scheduler cosine --lr 0.01 --t_max 200 --validation_epoch 5 --num_epochs 200 --batch_size 16
+</pre>
+    <p>&nbsp;</p>
+    <ul>
+      <li>"README.md" 中の "<a href="https://github.com/qfgaohao/pytorch-ssd#training" target="_blank">Training</a>" 
+      の内容を元に微修正しました。</li>
+      <li>"--net" を "mb3-large-ssd-lite" に設定しました。</li>
+      <li>"--base_net" として使用できるモデルが無かったため無指定です。</li>
+      <li>"--batch_size" を "16" に設定しました。使用したGPUのRAMが4GBと小さめであるため、16 
+      より大きいサイズを指定するとメモリ不足でエラーになりました。8GB など大きなメモリを持つGPUを所有している場合は "24" や "32" 
+      など大きな値を設定することでより良好に学習を進めることができるかもしれません。</li>
+    </ul>
+    <p>&nbsp;</p>
+    <p>6. (参考) 中断してしまった学習を継続する方法</p>
+    <p>何かしらの理由でPCの電源をOffする必要があった、など学習を中断してしまった場合、下記コマンドを参考に前回学習結果を 
+    "--pretraind_ssd" 
+    として指定することである程度続きから学習を再開することができそうです。ただし完全な継続にはなりません。ある程度の学習回数後に概ね前回の状態に戻る感じです。私の感覚では 
+    Epoch で20回ぐらいかかりました。それでも全部やり直しすることと比較すればとても有効な手段だと思います。</p>
+    <pre style="color: #FFFFFF; background-color: #000000">$ python train_ssd.py  --dataset_type voc  --datasets ./data/VOC0712/VOC2007 ./data/VOC0712/VOC2012 --validation_dataset ./data/VOC0712/test/VOC2007 --net mb3-large-ssd-lite  <span class="auto-style3"><strong>--pretrained_ssd  models/mb3-large-ssd-lite-Epoch-NNN-Loss-N.NNNNNNNN.pth</strong></span>  --scheduler cosine  <span class="auto-style3"><strong>--lr 0.001</strong></span>  --t_max 200 --validation_epoch 5 --num_epochs 200 --batch_size 16</pre>
+    <p>&nbsp;</p>
+    <ul>
+      <li>"--pretrained_ssd" に設定する 
+      "mb3-large-ssd-lite-Epoch-NNN-Loss-N.NNNNNNNN.pth" 
+      はあなたが前回中断した学習途中で生成した学習済みデータのファイル名を記載します。Loss の値が最も小さいファイルを選択してください。</li>
+      <li>"--lr" の値も前回の進捗に合わせて小さい値へ変更することが望ましいです。例えば、前回 200 Epoch 
+      中の100回ぐらいで中断した場合、きっと学習速度は半分ぐらいに減速されているでしょうから、初期値 0.01 の半分ぐらいの値として "--lr 
+      0.005" などを設定します。</li>
+    </ul>
+    <p>&nbsp;</p>
+    <p>あとは学習が期待通りに進むのを期待して待ちます。</p>
+    <p>私が作成した学習済みデータを "<a href="mobilenet-ssd/mb3-large-ssd-lite-mp-0_652.pth">こちら</a>" 
+    から取得可能です。<br>この学習済みデータの認識性能は以下の通りです。"eval_ssd.py" により測定した結果です。</p>
+    <p>&nbsp;</p>
+    <p>Model: mb3-large-ssd-lite-mp-0_652.pth</p>
+    <pre>Average Precision Per-class:
+aeroplane: 0.6858618154005621
+bicycle: 0.7953144174658359
+bird: 0.5944325029442169
+boat: 0.5254286014580958
+bottle: 0.29775074049868244
+bus: 0.7695870498857185
+car: 0.7172673114401424
+cat: 0.8129718499191528
+chair: 0.4989150543653392
+cow: 0.5713323043655254
+diningtable: 0.696122825413885
+dog: 0.7490342862830122
+horse: 0.8064323730818508
+motorbike: 0.7576028544694091
+person: 0.6886720836774618
+pottedplant: 0.3843043827262724
+sheep: 0.5665584224827491
+sofa: 0.7792946515148939
+train: 0.7889272422973491
+tvmonitor: 0.5494204663075016
+
+Average Precision Across All Classes:0.6517615617998829</pre>
+    <p>&nbsp;</p>
+  </section>
+
+  <p>&nbsp;</p>
+
+  <section>
+    <h3><a name="4-2-2._MobileNetV3-large-SSD-Lite_を動かす（PC_内蔵カメラ）">4-2-2. 
+    MobileNetV3-large-SSD-Lite を動かす（PC 内蔵カメラ）</a></h3>
+    <h4>[概要]</h4>
+    <p>MobileNetV3-large-SSD-lite を PyTorch の環境で動かしてみます。</p>
+    <p>PC 内蔵カメラの映像を接続してリアルタイムで物体検知してみます。</p>
+    <p>&nbsp;</p>
+    <h4>[評価環境]</h4>
+    <table>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+      <tr>
+        <td>言語 :</td>
+        <td>Python,</td>
+        <td>3.10.7</td>
+      </tr>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>PyTorch,</td>
+        <td>1.13.1+cpu</td>
+      </tr>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+      <tr>
+        <td>OS :</td>
+        <td>Windows 11 home,</td>
+        <td>21H2</td>
+      </tr>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+    </table>
+    <p>&nbsp;</p>
+
+    <h4>[手順]</h4>
+    <p>1. <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">
+    pytorch-ssd</a> から git clone してソースコード一式を入手します。</p>
+    <p>任意のフォルダで端末（コマンドプロンプト等）を起動して下記コマンドをインプットします。</p>
+    <pre style="color: #FFFFFF; background-color: #000000">$ git clone https://github.com/qfgaohao/pytorch-ssd.git</pre>
+    <p>&nbsp;</p>
+    <p>2. "git clone" したフォルダへ移動します。</p>
+    <pre style="color: #FFFFFF; background-color: #000000">$ cd pytorch-ssd</pre>
+    <p>&nbsp;</p>
+    <p>3. 学習済みデータなどを取得します。</p>
+    <p>(1) "<a href="mobilenet-ssd/mb3-large-ssd-lite-mp-0_652.pth">こちら</a>" 
+    から学習済みデータ "<a href="mobilenet-ssd/mb3-large-ssd-lite-mp-0_652.pth">mb3-large-ssd-lite-mp-0_652.pth</a>" 
+    を取得して models フォルダに保存します。</p>
+    <p>(2) 下記 Google Drive から "voc-model-labels.txt" ファイルを取得して models 
+    フォルダに保存します。</p>
+    <p>
+    <a href="https://drive.google.com/drive/folders/1pKn-RifvJGWiOx0ZCRLtCXM5GT5lAluu" target="_blank">
+    https://drive.google.com/drive/folders/1pKn-RifvJGWiOx0ZCRLtCXM5GT5lAluu</a></p>
+    <p>&nbsp;</p>
+    <p>4. 下記コマンドを実行することで推論を実行します。</p>
+    <pre style="color: #FFFFFF; background-color: #000000">$ python run_ssd_live_demo.py mb3-large-ssd-lite models/mb3-large-ssd-lite-mp-0_652.pth models/voc-model-labels.txt</pre>
+    <p>&nbsp;</p>
+    <p>学習済みモデルは VOC dataset を使って学習しているので、このプログラムは下記 20クラス を検知します。</p>
+    <pre>1: aeroplane
+2: bicycle
+3: bird
+4: boat
+5: bottle
+6: bus
+7: car
+8: cat
+9: chair
+10: cow
+11: diningtable
+12: dog
+13: horse
+14: motorbike
+15: person
+16: pottedplant
+17: sheep
+18: sofa
+19: train
+20: tvmonitor</pre>
+    <p>&nbsp;</p>
+    <p>5. プログラムを動かした様子を以下に示します。</p>
+    <p>カメラはPC内蔵のカメラです。PyTorch は前述の通り CPU 版ですがかなり快適に動作できています。</p>
+    <p>&nbsp;</p>
+    <p>[動画] プログラムを動作させた様子（PC 内蔵カメラ）</p>
+    <video controls muted autoplay="y" loop="y" width="800">
+      <source src="mobilenet-ssd/mobilenetv3-large-ssd-lite-pccam.mp4" type="video/mp4">
+      動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+    </video>
+    <p>&nbsp;</p>
+  </section>
+
+  <p>&nbsp;</p>
+
+  <section>
+    <h3><a name="4-2-3._MobileNetV3-large-SSD-Lite_を動かす（i-PRO_カメラ）">4-2-3. 
+    MobileNetV3-large-SSD-Lite を動かす（i-PRO カメラ）</a></h3>
+    <h4>[概要]</h4>
+    <p>MobileNetV3-large-SSD-lite を PyTorch の環境で動かしてみます。</p>
+    <p>i-PRO カメラとPCを LAN 接続してリアルタイムで物体検知してみます。</p>
+    <p>&nbsp;</p>
+    <h4>[評価環境]</h4>
+    <table>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+      <tr>
+        <td>言語 :</td>
+        <td>Python,</td>
+        <td>3.10.7</td>
+      </tr>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>PyTorch,</td>
+        <td>1.13.1+cpu</td>
+      </tr>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+      <tr>
+        <td>OS :</td>
+        <td>Windows 11 home,</td>
+        <td>21H2</td>
+      </tr>
+      <tr>
+        <td class="td_separate" colspan="3"></td>
+      </tr>
+    </table>
+    <p>&nbsp;</p>
+    
+    <h4>[手順]</h4>
+    <p>1. <a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank">
+    pytorch-ssd</a> から git clone してソースコード一式を入手します。</p>
+    <p>任意のフォルダで端末（コマンドプロンプト等）を起動して下記コマンドをインプットします。</p>
+    <pre style="color: #FFFFFF; background-color: #000000">$ git clone https://github.com/qfgaohao/pytorch-ssd.git</pre>
+    <p>&nbsp;</p>
+    <p>2. "git clone" したフォルダへ移動します。</p>
+    <pre style="color: #FFFFFF; background-color: #000000">$ cd pytorch-ssd</pre>
+    <p>&nbsp;</p>
+    <p>3. 学習済みデータなどを取得します。</p>
+    <p>(1) "<a href="mobilenet-ssd/mb3-large-ssd-lite-mp-0_652.pth">こちら</a>" 
+    から学習済みデータ "<a href="mobilenet-ssd/mb3-large-ssd-lite-mp-0_652.pth">mb3-large-ssd-lite-mp-0_652.pth</a>" 
+    を取得して models フォルダに保存します。</p>
+    <p>(2) 下記 Google Drive から "voc-model-labels.txt" ファイルを取得して models 
+    フォルダに保存します。</p>
+    <p>
+    <a href="https://drive.google.com/drive/folders/1pKn-RifvJGWiOx0ZCRLtCXM5GT5lAluu" target="_blank">
+    https://drive.google.com/drive/folders/1pKn-RifvJGWiOx0ZCRLtCXM5GT5lAluu</a></p>
+    <p>&nbsp;</p>
+    <p>4. 下記コマンドを実行することで推論を実行します。ここでは４番目の引数として RTSP 表記で i-PRO カメラの接続を記載します。</p>
+    <p><span class="auto-style3">{user-id}</span>, <span class="auto-style3">
+    {password}</span>, <span class="auto-style3">{ip-address}</span> 
+    の部分をご自身が使われる i-PRO カメラの設定に合わせて修正して実行してください。</p>
+    <p>その他 RTSP に関しては記事「<a href="connect_with_rtsp.html">RTSP で画像を取得する</a>」を参照ください。</p>
+    <pre style="color: #FFFFFF; background-color: #000000">$ python run_ssd_live_demo.py mb3-large-ssd-lite models/mb3-large-ssd-lite-mp-0_652.pth models/voc-model-labels.txt <span class="auto-style4">rtsp://</span><span class="auto-style5">{user-id}</span>:<span class="auto-style5">{password}</span>@<span class="auto-style5">{ip-address}</span><span class="auto-style4">/MediaInput/stream_1</span></pre>
+    <p>(例) <span class="cpp-source">python run_ssd_live_demo.py 
+    mb3-large-ssd-lite models/mb3-large-ssd-lite-mp-0_652.pth 
+    models/voc-model-labels.txt 
+    rtsp://admin:Admin12345@192.168.0.10/MediaInput/stream_1</span></p>
+    <p>&nbsp;</p>
+    <p>5. プログラムを動かした様子を以下に示します。</p>
+    <p>PyTorch は前述の通り CPU 版ですがかなり快適に動作できています。i-PRO カメラの設定を 10fps 
+    にしています。私のノートPC環境では 30fps 動作させると映像が少しずつ遅延していきました。AI処理なしに映像表示させると 30fps 
+    表示できているので、AI処理に伴うCPU負荷に原因するものと分析します。GPU無しの環境、CPU 版での動作で Full-HD 画像を 10fps 
+    でAI処理できているのですから、私個人の見解ですが、 MobileNet は十分に軽量で高性能な AI だと考えます。</p>
+    <p>&nbsp;</p>
+    <p>[動画] プログラムを動作させた様子（i-PRO カメラ）</p>
+    <video controls muted autoplay="y" loop="y" width="800">
+      <source src="mobilenet-ssd/mobilenetv3-large-ssd-lite-ipromini_1.mp4" type="video/mp4">
+      動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+    </video>  
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>以上です。というわけで、プログラムを１行も書くことなく i-PRO カメラとPCを接続して MobileNetV3-large-SSD-lite 
+    も実行することができました。</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <div class="status_information">
+      <div>
+      </div>
+      <div>
+        <p><strong>NOTE</strong></p>
+        <p>この節では V1, V2 と同じ動作条件で比較することを目的に VOC dataset により学習を行った V3 
+        学習データを作成し、動作させてみました。私の環境では V1、V2 と比較して V3 が最も動作が軽い印象です。認識するクラス数に比例して AI 
+        処理負荷も重たくなる、ということだと推察します。ご自身で独自のAI学習データを作成する際は、必要なクラスのみでAI学習データを作成するようにすると良さそうです。</p>
+      </div>
+    </div>
+  </section>
+</section>
+<p>&nbsp;</p>
 
 <p>&nbsp;</p>
 <hr>
@@ -1851,6 +2232,12 @@ cv2.destroyAllWindows()</pre>
 <section>
 	<h2 style="margin-bottom:5px">変更履歴</h2>
 	<table>
+	  <tr>
+	    <td class="td_history_date">2023/5/12</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">「<a href="#4-2._MobileNetV3-large-SSD-Lite">4-2._MobileNetV3-large-SSD-Lite</a>」を追加,</td>
+      <td class="td_history">木下英俊</td>
+	  </tr>
 	  <tr>
 	    <td class="td_history_date">2023/4/12</td>
 	    <td class="td_history_separator">-</td>
