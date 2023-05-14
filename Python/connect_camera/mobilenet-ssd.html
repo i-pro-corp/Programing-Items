@@ -1881,7 +1881,20 @@ $ python train_ssd.py  --dataset_type voc  --datasets ./data/VOC0712/VOC2007 ./d
       より大きいサイズを指定するとメモリ不足でエラーになりました。8GB など大きなメモリを持つGPUを所有している場合は "24" や "32" 
       など大きな値を設定することでより良好に学習を進めることができるかもしれません。</li>
     </ul>
+    
     <p>&nbsp;</p>
+    
+    <div class="status_warning">
+      <div></div>
+      <div>
+        <p><strong>注意</strong></p>
+        <p>Windows 環境でこの学習を行う場合、「<a href="mobilenet-ssd_train.html#5-1-2._学習">5-1-2. 学習</a>」に記載の内容に従って 
+        "train_ssd.py" および "vision/ssd/data_preprocessing.py" を修正する必要があります。</p>
+      </div>
+    </div>
+    
+    <p>&nbsp;</p>
+    
     <p>6. (参考) 中断してしまった学習を継続する方法</p>
     <p>何かしらの理由でPCの電源をOffする必要があった、など学習を中断してしまった場合、下記コマンドを参考に前回学習結果を 
     "--pretraind_ssd" 
