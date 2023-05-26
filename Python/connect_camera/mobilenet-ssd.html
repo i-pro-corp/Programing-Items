@@ -36,6 +36,21 @@
   </script>  
   <!-- Global site tag (gtag.js) - Google Analytics -->
 
+  <!-- window.onload() 処理 -->
+  <script>
+    window.addEventListener('load', function() {
+      getUrl = location.href;
+      if (window.parent === window) {
+      	console.log('単独起動');
+
+        location.href = '../../index.html?contentsUrl='+getUrl;
+      } 
+      else {
+	      console.log('indel.html から起動');
+      }
+    })
+  </script>
+
   <style type="text/css">
     .auto-style1 {
       background-color: #505000;
@@ -1017,7 +1032,7 @@ rtsp://admin:Admin12345@192.168.0.10/MediaInput/stream_1</span></p>
 
 	<p>MobileNetV3-SSD-Lite は PyTorch に組み込まれていました。"ssdlite320_mobilenet_v3_large" 
 	というモジュールです。同様に学習済みモデルも Pytorch 環境のみで取得可能です。</p>
-    <p>本節では Pytorch および "ssdlite320_mobilenet_v3_large" を使って 
+  <p>本節では Pytorch および "ssdlite320_mobilenet_v3_large" を使って 
 	MobileNetV3-SSD-Lite を動かしてみたいと思います。</p>
 	<p>（"ssdlite320_mobilenet_v3_large" のインプットサイズはファイル名記載の通り 320x320 
 	にアレンジされているように見えます。詳細は割愛します。）</p>
@@ -1233,10 +1248,10 @@ im.show()</pre>
 	たったこれだけのソースコードで物体検知を実現できます。学習済みモデルのダウンロードを含みますので、必ずインターネットへ接続できる環境で実行してください。</p>
 	<p>&nbsp;</p>
 	<p>動作結果はこちらです。</p>
-	<p>	評価画像として、&nbsp;<a href="https://pixabay.com" target="_blank">https://pixabay.com</a>&nbsp;提供の画像を使用させていただきました。商用利用無料、帰属表示必要なし、の画像です。</p>
+	<p>	評価画像として、 <a href="https://pixabay.com" target="_blank">https://pixabay.com</a>&nbsp;提供の画像を使用させていただきました。商用利用無料、帰属表示必要なし、の画像です。</p>
   <p><a href="https://pixabay.com/ja/photos/マルタ語-犬-子犬-小型犬-1123016/" target="_blank">
     https://pixabay.com/ja/photos/マルタ語-犬-子犬-小型犬-1123016/</a></p>
-  <p>
+	<p>
     <strong>[注意]</strong>
     上記プログラムを実行する際は、ご自身で画像を準備またはダウンロードして事前に "assets" フォルダに "dog1.jpg" 
     の名称で保存してください。</p>

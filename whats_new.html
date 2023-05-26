@@ -35,6 +35,21 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP&display=swap" rel="stylesheet">
 
+  <!-- window.onload() 処理 -->
+  <script>
+    window.addEventListener('load', function() {
+      getUrl = location.href;
+      if (window.parent === window) {
+      	console.log('単独起動');
+
+        location.href = 'index.html?contentsUrl='+getUrl;
+      } 
+      else {
+	      console.log('indel.html から起動');
+      }
+    })
+  </script>
+
   <style type="text/css">
     .auto-style1 {
       border-width: 0px;

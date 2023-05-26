@@ -36,13 +36,28 @@
   </script>  
   <!-- Global site tag (gtag.js) - Google Analytics -->
 
+  <!-- window.onload() 処理 -->
+  <script>
+    window.addEventListener('load', function() {
+      getUrl = location.href;
+      if (window.parent === window) {
+      	console.log('単独起動');
+
+        location.href = '../../index.html?contentsUrl='+getUrl;
+      } 
+      else {
+	      console.log('indel.html から起動');
+      }
+    })
+  </script>
+
   <style type="text/css">
-  .auto-style2 {
-    background-color: #505000;
-  }
-  .auto-style3 {
-   text-decoration: underline;
-  }
+    .auto-style2 {
+      background-color: #505000;
+    }
+    .auto-style3 {
+    text-decoration: underline;
+    }
   </style>
 
 </head>

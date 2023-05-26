@@ -31,6 +31,30 @@
   </script>  
   <!-- Global site tag (gtag.js) - Google Analytics -->
   
+  <!-- window.onload() 処理 -->
+  <script>
+    window.addEventListener('load', function() {
+      // URLを取得
+      const url = new URL(window.location.href);
+
+      // URLSearchParamsオブジェクトを取得
+      const params = url.searchParams;
+
+      console.log(params);
+
+      // パラメータから「username」を取得
+      const contentsUrl = params.get("contentsUrl");
+
+      if (contentsUrl != null){
+        console.log("contentsUrl = " + contentsUrl);
+        document.contents.location.href = contentsUrl;
+      }
+      else{
+        console.log("contentsUrl = null");
+      }
+    })
+  </script>
+  
   <script>
     // モバイル表示時のメニューパネルを閉じる処理
     function checkedOff(){

@@ -36,6 +36,22 @@
   </script>  
   <!-- Global site tag (gtag.js) - Google Analytics -->
 
+  <!-- window.onload() 処理 -->
+  <script>
+    window.addEventListener('load', function() {
+      getUrl = location.href;
+      if (window.parent === window) {
+      	console.log('単独起動');
+
+        // 【注意】index.html への相対パスを正しく修正すること！！
+        location.href = 'index.html?contentsUrl='+getUrl;
+      } 
+      else {
+	      console.log('indel.html から起動');
+      }
+    })
+  </script>
+
 </head>
 
 <body onload="prettyPrint();">
