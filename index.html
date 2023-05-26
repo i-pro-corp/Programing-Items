@@ -47,7 +47,10 @@
 
       if (contentsUrl != null){
         console.log("contentsUrl = " + contentsUrl);
-        document.contents.location.href = contentsUrl;
+        var pattern = 'https://i-pro-corp.github.io/Programing-Items/'
+        if (contentsUrl.indexOf(pattern) === 0){
+          document.contents.location.href = contentsUrl;
+        }
       }
       else{
         console.log("contentsUrl = null");
