@@ -354,23 +354,7 @@
 	<p>&nbsp;</p>
 	<p>7. 学習済みモデルを保存</p>
 	<p>本ページを上から順に進めてきた人たちは既に models フォルダに学習済みモデルデータを保存済みと思います。まだの方は、<a href="mobilenet-ssd.html#2-1._MobileNetV1-SSD_を動かす（PC 内蔵カメラ）">こちら</a>に記載の内容に従って 
-	"mobilenet-v1-ssd-mp-0_675.pth" をダウンロードしておきます。下記へ省略記載します。</p>
-  <p>&nbsp;</p>
-	<p>■Linux の場合</p>
-  <pre style="color: #FFFFFF; background-color: #000000">$ wget -P models https://storage.googleapis.com/models-hao/mobilenet-v1-ssd-mp-0_675.pth </pre>
-  <p>&nbsp;</p>
-	<p>■Windows の場合</p>
-  <p>&nbsp;Windows に標準では wget コマンドは無いため上記を実行してもエラーになるので、代わりに bitsadmin 
-  コマンドで代用するという方法を記載します。</p>
-  <p>&nbsp;</p>
-  <p class="auto-style2"><strong>bitsadmin.exe</strong> の書き方：</p>
-  
-  <blockquote>
-    <strong>bitsadmin.exe</strong> /transfer ＜ジョブ名＞ ＜URL＞ ＜保存先ファイル名（フルパス）＞
-  </blockquote>
-    
-  <p><span class="auto-style3">c:\{作業フォルダ}</span> の部分をご自身の環境に合わせて修正して実行してください。</p>
-  <pre style="color: #FFFFFF; background-color: #000000">$ bitsadmin /TRANSFER htmldl https://storage.googleapis.com/models-hao/mobilenet-v1-ssd-mp-0_675.pth <span class="auto-style3">c:\{作業フォルダ}</span>\models\mobilenet-v1-ssd-mp-0_675.pth</pre>
+	"mobilenet-v1-ssd-mp-0_675.pth" をダウンロードしてください。</p>
   <p>&nbsp;</p>
   <p>&nbsp;</p>
 
@@ -1274,10 +1258,16 @@ print(f"Found {len(probs)} objects. The output image is {path}")</pre>
   </div>
 
   <p>&nbsp;</p>
+
+	<p>4. 学習済みモデルを保存</p>
+	<p>本ページを上から順に進めてきた人たちは既に models フォルダに学習済みモデルデータを保存済みと思います。まだの方は、<a href="mobilenet-ssd.html#2-1._MobileNetV1-SSD_を動かす（PC 内蔵カメラ）">こちら</a>に記載の内容に従って 
+	"mobilenet-v1-ssd-mp-0_675.pth" をダウンロードしてください。</p>
+  
+  <p>&nbsp;</p>
   <p>&nbsp;</p>
 
   <h4><a name="5-2-2._アノテーション">5-2-2. アノテーション</a></h4>
-  <p>4. LabelImg をインストール</p>
+  <p>5. LabelImg をインストール</p>
   <p>アノテーションツール LabelImg をインストールします。pip, setuptools を更新した後、pip で labelimg をインストールします。</p>
   
   <pre style="background-color: #000000; color: #CCCCCC; width: 800px;overflow-x: auto;">$ python -m pip install --upgrade pip setuptools 
@@ -1285,7 +1275,7 @@ $ pip3 install labelImg
 </pre>
   
   <p>&nbsp;</p>
-  <p>5. LabelImg を起動、設定</p>
+  <p>6. LabelImg を起動、設定</p>
   <p>LabelImg の起動方法は下記いずれかで行います。</p>
   <pre style="background-color: #000000; color: #CCCCCC; width: 800px;overflow-x: auto;">$ labelImg [IMAGE_PATH] [PRE-DEFINED CLASS FILE]</pre>
   <p>または</p>
@@ -1320,7 +1310,7 @@ $ pip3 install labelImg
   LabelImg を起動します。</p>
   <pre style="width: 800px; color: #FFFFFF; background-color: #000000">$ labelimg .\data\voc\JPEGImages .\data\voc\labels.txt</pre>
   <p>&nbsp;</p>
-  <p>6. LabelImg 設定</p>
+  <p>7. LabelImg 設定</p>
   <p>起動直後の画面です。[PRE-DEFINED CLASS FILE]を適切に設定していれば当該フォルダ中の最初の画像を表示しているはずです。</p>
   <p>下記２つを設定します。</p>
   <p>(1) Change Save Dir： アノテーション結果（xml ファイル）を保存するフォルダを設定します。</p>
@@ -1329,7 +1319,7 @@ $ pip3 install labelImg
   <img alt="LabelImg 初期設定" src="mobilenet-ssd_train/img9.jpg" width="800" class="auto-style6"></a>&nbsp;</p>
   <p>&nbsp;</p>
   <p>&nbsp;</p>
-  <p>7. LabelImg を使ってアノテーション実施</p>
+  <p>8. LabelImg を使ってアノテーション実施</p>
   <p>LabelImg を使ってアノテーションを実施します。こちらは動画で紹介したいと思います。</p>
     <video controls muted autoplay="y" loop="y" width="800">
       <source src="mobilenet-ssd_train/LabelImg_tutorial.mp4" type="video/mp4">
@@ -1411,7 +1401,7 @@ TypeError: arguments did not match any overloaded call:
   5-2-3. "trainval.txt"、"test.txt" を用意</a></h4>
   <p>&nbsp;</p>
     
-  <p>8. "ImageSets\Main\trainval.txt"、"ImageSets\Main\test.txt" を用意します</p>
+  <p>9. "ImageSets\Main\trainval.txt"、"ImageSets\Main\test.txt" を用意します</p>
   <p>ここでは全画像データから 70% を学習用（"trainval.txt"）に、30% を評価用（"test.txt"）に使用します。各ファイル（"trainval.txt", 
   "test.txt"）に拡張子を除いたファイル名一覧を記載します。</p>
   <p>学習は "trainval.txt" 
@@ -1770,7 +1760,7 @@ bird-7016926_1920
   <p>&nbsp;</p>
 
   <h4><a name="5-2-4._学習">5-2-4. 学習</a></h4>
-  <p>9. 学習を実施</p>
+  <p>10. 学習を実施</p>
     
   <div class="status_warning">
     <div></div>
@@ -1984,7 +1974,7 @@ bird</pre>
 
   <h4><a name="5-2-5._学習結果と静止画を使って推論">5-2-5. 学習結果と静止画を使って推論</a></h4>
   <p>&nbsp;</p>
-  <p>10. 学習したデータとテスト画像を使用して認識</p>
+  <p>11. 学習したデータとテスト画像を使用して認識</p>
   <p>私の学習済みデータ（"mb1-ssd-Epoch-99-Loss-2.0738580177227655.pth"）とサンプル画像（"birds-7469509_1920.jpg"）を使った 
   コマンド実施例 を以下に記載します。あなたが実際に使用するファイル名およびパスへ修正してください。</p>
   
