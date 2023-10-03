@@ -1,0 +1,526 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="崎戸梨恵 木下英俊">
+  <meta name="description" content="Introducing programming for i-PRO cameras.">
+  <meta name="keywords" content="i-PRO">
+  
+  <!-- キャッシュ無効化 -->
+  <meta http-equiv="Cache-Control" content="no-cache">
+	
+  <!-- タイトル -->
+  <title>画像分類「YUV&amp;DNN application」 | i-PRO - Programming Items</title>
+
+  <!-- ファビコン -->
+  <link rel="shortcut icon" href="../../favicon.ico">
+	
+  <!-- CSS -->
+  <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="../../design.css" type="text/css">
+  
+	<!-- Start for 'google-code-prettify' -->
+	<link href="../../prettify/styles/desert.css" rel="stylesheet" type="text/css">
+	<script src="../../prettify/prettify.js" type="text/javascript"></script>
+	<!-- End for 'google-code-prettify' -->	
+	
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5DFRG3H0KB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-5DFRG3H0KB');
+  </script>  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+  <!-- window.onload() 処理 -->
+  <script>
+    window.addEventListener('load', function() {
+      getUrl = location.href;
+      if (window.parent === window) {
+      	console.log('単独起動');
+
+        location.href = '../../index.html?contentsUrl='+getUrl;
+      } 
+      else {
+	      console.log('indel.html から起動');
+      }
+    })
+  </script>
+
+  <style type="text/css">
+    .auto-style1 {
+      text-align: center;
+    }
+  </style>
+
+</head>
+
+<body onload="prettyPrint();">
+	
+<h1>画像分類「YUV&amp;DNN application」</h1>
+
+<p> &nbsp;</p>
+<div class="status_information">
+  <div>
+  </div>
+  <div>
+    <p>本ページは i-PRO株式会社 の有志メンバーにより記載されたものです。<br>本ページの情報は <a href="#ライセンス">ライセンス</a> に記載の条件で提供されます。</p>
+  </div>
+</div>
+<p> &nbsp;</p>
+
+<div class="mokuji">
+  <nav>
+    <h2>目次</h2>
+    <p><a href="#1._画像分類「YUV&amp;DNN_application」紹介">1. 画像分類「YUV&amp;DNN application」紹介</a></p>
+    <p><a href="#2._アプリ_ダウンロード（無償）">2. アプリ ダウンロード（無償）</a></p>
+    <p><a href="#3._インストール">3. インストール</a></p>
+    <p><a href="#4._起動および設定">4. 起動および設定</a></p>
+    <p><a href="#5._アンインストール">5. アンインストール</a></p>
+    <p><a href="#6._AIカメラSDKダウンロード、FAQ">6. AIカメラSDKダウンロード、FAQ</a></p>
+    <br>
+    <p><a href="#参考">参考</a></p>
+  </nav>
+</div>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<section>
+	<h2> <a name="1._画像分類「YUV&amp;DNN_application」紹介">1. 画像分類「YUV&amp;DNN application」紹介</a></h2>
+	<h4>[概要]</h4>
+	<p>本ページでは、"AIカメラSDK" に添付のサンプルアプリから「<strong>YUV&amp;DNN application</strong>」を紹介します。</p>
+  <p>「<strong>YUV&amp;DNN application</strong>」は i-PRO カメラが写した犬の種類を120種類から分類して画面上に結果を表示するアプリケーションです。画像分類と呼ばれるAI技術を使用しています。</p>
+  <p>&nbsp;</p>
+  <p>画像分類「<strong>YUV&amp;DNN application</strong>」を動作させた例を動画で紹介します。</p>
+  <p>画面上にスコアの高い順で５つの犬種とスコアを表示します。犬種の右側にある数字がスコアです。スコアの値範囲は 0.0～1.0 で、1.0 
+  に近いほど高いスコアを意味します。</p>
+  <p><a href="https://pixabay.com/ja/videos/" target="_blank">Pixabay</a> 
+  から入手させていただいたビデオをTV画面に表示して i-PRO カメラで接写することで実施しています。</p>
+  <p>評価動画は 商用利用無料、帰属表示必要なし、の動画です。ライセンス詳細は "<a href="https://pixabay.com/ja/service/terms/" target="_blank">Pixabay License</a>" を参照ください。</p>
+
+  <ul>
+    <li>
+      <a href="https://pixabay.com/ja/videos/犬-ペット-ヨークシャー-テリア-127627/" target="_blank">
+      犬 ペット ヨークシャー テリア - Free video on Pixabay - Pixabay</a></li>
+    <li>
+      <a href="https://pixabay.com/ja/videos/動物-ドーベルマン-犬-45973/" target="_blank">
+      動物 ドーベルマン 犬 - Free video on Pixabay - Pixabay</a></li>
+    <li>
+      <a href="https://pixabay.com/ja/videos/犬-パグ-睡眠-動物-ペット-45587/" target="_blank">
+      犬 パグ 睡眠 - Free video on Pixabay - Pixabay</a></li>
+    <li>
+      <a href="https://pixabay.com/ja/videos/ハスキー-そり犬-犬-目-45144/" target="_blank">
+      ハスキー そり犬 犬 - Free video on Pixabay - Pixabay</a></li>
+  </ul>
+
+  <p>&nbsp;</p>
+  <p>[動作例]</p>
+  
+  <video controls muted autoplay="y" loop="y" width="800">
+    <source src="yuv_dnn_application/yuv_dnn_app_demo-video.mp4" type="video/mp4">
+    動画を再生するには &lt;video&gt; タグをサポートしたブラウザが必要です。
+  </video>
+  
+  <p>&nbsp;</p>
+  <p>上記ビデオの正しい犬種は順に "ヨークシャーテリア" &gt; "ドーベルマン" &gt; "パグ" &gt; "シベリアンハスキー" 
+  です。そこそこ正しく認識できている、と思っていますがいかがでしょうか。</p>
+  <p>上記評価は <a href="https://pixabay.com/ja/videos/" target="_blank">Pixabay</a> 
+  から取得させていただいたビデオをディスプレイに表示し、i-PRO カメラでこれを接写することで実施しています。</p>
+  <p>
+  <img alt="実験系" class="border" src="yuv_dnn_application/Experimental_configuration.drawio.png" style="height: 384px" width="507"></p>
+  <p>&nbsp;</p>
+  <p>本アプリは下記120種類の犬を分類します。</p>
+  <pre style="width: 400px">"Chihuahua",
+"Japanese_spaniel",
+"Maltese_dog",
+"Pekinese",
+"Shih-Tzu",
+"Blenheim_spaniel",
+"papillon",
+"Toy_terrier",
+"Rhodesian_ridgeback",
+"Afghan_hound",
+"Basset",
+"Beagle",
+"Bloodhound",
+"Bluetick",
+"Black-and-tan_coonhound",
+"Walker_hound",
+"English_foxhound",
+"Redbone",
+"Borzoi",
+"Irish_wolfhound",
+"Italian_greyhound",
+"Whippet",
+"Ibizan_hound",
+"Norwegian_elkhound",
+"Otterhound",
+"Saluki",
+"Scottish_deerhound",
+"Weimaraner",
+"Staffordshire_bullterrier",
+"American_Staffordshire_terrier",
+"Bedlington_terrier",
+"Border_terrier",
+"Kerry_blue_terrier",
+"Irish_terrier",
+"Norfolk_terrier",
+"Norwich_terrier",
+"Yorkshire_terrier",
+"Wire-haired_fox_terrier",
+"Lakeland_terrier",
+"Sealyham_terrier",
+"Airedale",
+"Cairn",
+"Australian_terrier",
+"Dandie_Dinmont",
+"Boston_bull",
+"Miniature_schnauzer",
+"Giant_schnauzer",
+"Standard_schnauzer",
+"Scotch_terrier",
+"Tibetan_terrier",
+"Silky_terrier",
+"Soft-coated_wheaten_terrier",
+"West_Highland_white_terrier",
+"Lhasa",
+"Flat-coated_retriever",
+"Curly-coated_retriever",
+"Golden_retriever",
+"Labrador_retriever",
+"Chesapeake_Bay_retriever",
+"German_short-haired_pointer",
+"Vizsla",
+"English_setter",
+"Irish_setter",
+"Gordon_setter",
+"Brittany_spaniel",
+"Clumber",
+"English_springer",
+"Welsh_springer_spaniel",
+"Cocker_spaniel",
+"Sussex_spaniel",
+"Irish_water_spaniel",
+"Kuvasz",
+"Schipperke",
+"Groenendael",
+"Malinois",
+"Briard",
+"Kelpie",
+"Komondor",
+"Old_English_sheepdog",
+"Shetland_sheepdog",
+"Collie",
+"Border_collie",
+"Bouvier_des_Flandres",
+"Rottweiler",
+"German_shepherd",
+"Doberman",
+"Miniature_pinscher",
+"Greater_Swiss_Mountain_dog",
+"Bernese_mountain_dog",
+"Appenzeller",
+"EntleBucher",
+"Boxer",
+"Bull_mastiff",
+"Tibetan_mastiff",
+"French_bulldog",
+"Great_Dane",
+"Saint_Bernard",
+"Eskimo_dog",
+"Malamute",
+"Siberian_husky",
+"Affenpinscher",
+"Basenji",
+"Pug",
+"Leonberg",
+"Newfoundland",
+"Great_Pyrenees",
+"Samoyed",
+"Pomeranian",
+"Chow",
+"Keeshond",
+"Brabancon_griffon",
+"Pembroke",
+"Cardigan",
+"Toy_poodle",
+"Miniature_poodle",
+"Standard_poodle",
+"Mexican_hairless",
+"Dingo",
+"Dhole",
+"African_hunting_dog"</pre>
+  <p>&nbsp;</p>
+</section>
+	
+<p>&nbsp;</p>
+
+<section>
+	<h2> <a name="2._アプリ_ダウンロード（無償）">2. アプリ ダウンロード（無償）</a></h2>
+	<h4>[概要]</h4>
+	<p> アプリ「<strong>YUV&amp;DNN application</strong>」を下記［Download］ボタンをクリックすることで入手できます。無償、無期限にてご使用いただけます。</p>
+  <p>&nbsp;</p>
+  <button style="border: 0; line-height: 2.5; padding: 0 20px; font-size: 1rem; text-align: center; color: #fff; text-shadow: 1px 1px 1px #000;
+    border-radius: 10px; background-color: rgba(220, 0, 0, 1); background-image: linear-gradient(to top left, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2) 30%, rgba(0, 0, 0, 0));
+    box-shadow: inset 2px 2px 3px rgba(255, 255, 255, 0.6), inset -2px -2px 3px rgba(0, 0, 0, 0.6);" type="button" onclick="location.href='yuv_dnn_application/yuv_dnn_app_V1_0_ambaCV2X.zip'">
+    Download
+  </button>
+  <p>※ ライセンス条件など詳細はダウンロードファイル添付の資料をご確認ください。</p>
+  <p>&nbsp;</p>
+	
+	<h4>[環境]</h4>
+  <p>下記 i-PRO カメラで動作確認を行いました。</p>
+  <p>動作未確認ですが、AI機能拡張アプリに対応する他の i-PRO カメラでも動作するはずです。</p>
+
+  <table class="border-collapse" border="1">
+    <thead class="standard_table">
+      <tr>
+        <th>使用カメラ</th>
+        <th>ファームウェア バージョン</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <p>i-PRO mini 有線LANモデル (品番：WV-S7130UX)</p>
+          <p>i-PRO mini 無線LANモデル (品番：WV-S7130WUX)</p>
+          <p class="auto-style1">
+            <img alt="i-PRO mini" src="images/i-PRO_mini.jpg" width="280"></p>
+        </td>
+        <td>Ver2.36</td>
+      </tr>
+
+      <tr>
+        <td>
+          <p>モジュールカメラ AIスターターキット<br>(品番：MK-DVASTNP01)</p>
+          <p class="auto-style1">
+            <img alt="AI starter kit" src="images/ai_starter_kit_2.png" width="400"></p>
+        </td>
+        <td>Version 2.00</td>
+      </tr>
+    </tbody>
+  </table>
+    
+	<p>&nbsp;</p>
+  <p>下記SDKに添付のソースコードおよび環境を使ってアプリを作成しています。</p>
+
+  <table class="border-collapse" border="1">
+    <thead class="standard_table">
+      <tr>
+        <th>SDK バージョン</th>
+        <th>備考</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>V1.71</td>
+        <td>
+          <p>下記 i-PRO カメラ ファームウェア環境で動作します。</p>
+          <ul>
+            <li>Xシリーズ： V2.04 or later</li>
+            <li>Sシリーズ： V2.30 or later</li>
+          </ul>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>    
+	
+  <p>ファームウェアのバージョンが上記より古い場合、<a href="https://japancs.i-pro.com/space/DLJP" target="_blank">ダウンロード 
+  - i-PRO サポートポータル</a> から最新ファームウェアをダウンロードして更新することをご検討ください。</p>
+  <p>&nbsp;</p>
+	
+</section>
+
+<p>&nbsp;</p>
+
+<section>
+	<h2> <a name="3._インストール">3. インストール</a></h2>
+	<h4>[概要]</h4>
+  <p>i-PRO カメラへ機能拡張アプリをインストールする手順を記載します。</p>
+  <p>下記は "i-PRO mini" による実施例ですが、他の機種も概ね同じ手順です。ただし画面デザインなどは機種およびファームウェアバージョンにより異なる場合があります。</p>
+	<p> &nbsp;</p>
+	
+	<h4> [手順]</h4>
+  <p>［手順１］</p>
+  <p>使用する i-PRO カメラのIPアドレス、登録したユーザーIDとパスワードでブラウザ画面を表示し、［設定］ボタンをクリックします。</p>
+  <p>
+  <img alt="カメラIPアドレスを表示" class="border_with_drop-shadow" src="yuv_dnn_application/img32.jpg" width="800"></p>
+  <p>&nbsp;</p>
+  <p>［手順２］</p>
+  <p>"詳細設定" タブ中にある "機能拡張ソフトウェア" をクリックします。 </p>
+  <p>
+  <img alt="詳細設定 &gt; 機能拡張ソフトウェア" class="border_with_drop-shadow" src="yuv_dnn_application/img34.jpg" width="800"></p>
+  <p>&nbsp;</p>
+  <p>［手順３］</p>
+  <p>"ソフトウェア管理" から [ファイル選択] ボタンをクリックし、インストールするプログラムのファイル（*.ext）を選択します。</p>
+  <p>*.ext ファイルは本ページからダウンロードした zip ファイルを解凍することで入手できます。</p>
+  <p>
+  <img alt="ソフトウェア管理（１）" class="border_with_drop-shadow" src="yuv_dnn_application/img35.jpg" width="800"></p>
+  <p>&nbsp;</p>
+  <p>
+  <img alt="ext ファイル選択" class="border_with_drop-shadow" src="yuv_dnn_application/img37.jpg" width="800"></p>
+  <p>&nbsp;</p>
+  <p>［手順４］</p>
+  <p>インストールするアプリケーションを正しく選択できていることを確認し、［実行］ボタンをクリックします。</p>
+  <p>
+  <img alt="[実行]ボタンをクリック" class="border_with_drop-shadow" src="yuv_dnn_application/img38.jpg" width="800"></p>
+  <p>&nbsp;</p>
+  <p>［手順５］</p>
+  <p>"使用条件契約" 画面を表示するので、内容を確認して問題なければ［同意］をクリックします。</p>
+  <p>
+  <img alt="使用条件契約" class="border_with_drop-shadow" src="yuv_dnn_application/img3B.jpg" width="800"></p>
+  <p>&nbsp;</p>
+  <p>［手順６］</p>
+  <p>アプリケーションのインストールを開始するので、終了まで画面を触らずに待ちます。</p>
+  <p>
+  <img alt="インストール中画面" class="border_with_drop-shadow" src="yuv_dnn_application/img3D.jpg" width="800"></p>
+  <p>&nbsp;</p>
+  <p>インストールを完了すると下図のような画面となり、「<strong>YUV&amp;DNN Application</strong>」 をインストールできていることを確認できます。</p>
+  <p>
+  <img alt="インストール完了後の画面" class="border_with_drop-shadow" src="yuv_dnn_application/img3E.jpg" width="800"></p>
+  <p>
+  &nbsp;</p>
+  <div class="status_information">
+    <div>
+    </div>
+    <div>
+      <p><strong>NOTE</strong></p>
+      <p>
+      アプリケーションインストールを完了したと思われる状況からしばらく待っても上記画面にならない場合、［F5］キーを押下するなど画面を再描画 
+      またはブラウザを再起動してみてください。正常にインストール完了していることを確認できる場合があります。</p>
+    </div>
+  </div>
+  <p>
+  &nbsp;</p>
+	
+</section>
+	
+<p>&nbsp;</p>
+
+<section>
+	<h2> <a name="4._起動および設定">4. 起動および設定</a></h2>
+	<h4>[概要]</h4>
+  <p>「<strong>YUV&amp;DNN Application</strong>」 を起動する方法について説明します。</p>
+  <p>本アプリケーションで必要な設定はありません。</p>
+	<p> &nbsp;</p>
+	
+	<h4> [手順]</h4>
+  <p> ［アプリケーション起動方法］</p>
+  <p>下図画面から下記いずれかをクリックすることで「<strong>YUV&amp;DNN Application</strong>」を起動します。</p>
+  <p>(方法１) 画面左側「<strong>YUV&amp;DNN Application」</strong>メニューをクリック</p>
+  <p>(方法２) 画面中央の<strong>［設定画面へ］</strong>ボタンをクリック</p>
+  <p>
+  <img alt="アプリケーション起動方法" class="border_with_drop-shadow" src="yuv_dnn_application/img3F.jpg" width="800"></p>
+  <p>&nbsp;</p>
+  <p>起動後の画面です。（レンズを遮っているので黒画です）</p>
+  <p>
+  <img alt="起動後の画面" class="border_with_drop-shadow" src="yuv_dnn_application/img41.jpg" width="800"></p>
+  <p>&nbsp;</p>
+  <p>［アプリケーション終了方法］</p>
+  <p>アプリケーションを終了する場合、画面右上の［×］ボタンをクリックしてください。</p>
+  <p>
+  <img alt="アプリ終了方法" class="border_with_drop-shadow" src="yuv_dnn_application/img42.jpg" width="800"></p>
+  <p>&nbsp;</p>
+	
+</section>
+	
+<p>&nbsp;</p>
+	
+<section>
+	<h2> <a name="5._アンインストール">5. アンインストール</a></h2>
+	<h4>[概要]</h4>
+  <p>i-PRO カメラへインストールした機能拡張アプリをアインインストールする手順を記載します。</p>
+  <p>i-PRO カメラへインストールできる機能拡張アプリの数は通常2～3となっています。新しいアプリをインストールするために登録済みアプリをアンインストールする必要があるときにこの手順でアンインストールを行います。</p>
+	<p> &nbsp;</p>
+	
+	<h4> [手順]</h4>
+  <p>［ソフトウェア管理］画面からアンインストールするアプリケーションを探し、［アンインストール］ボタンをクリックします。</p>
+  <p>
+  <img alt="アンインストール" class="border_with_drop-shadow" src="yuv_dnn_application/img43.jpg" width="800"></p>
+  <p>&nbsp;</p>
+	
+</section>
+	
+<p>&nbsp;</p>
+<hr>	
+<p>&nbsp;</p>
+	
+<section>
+  <h2> <a name="6._AIカメラSDKダウンロード、FAQ">6. AIカメラSDKダウンロード、FAQ</a></h2>
+  <p> AIカメラSDKダウンロード、FAQなど技術情報の閲覧方法、について記載します。</p>
+  <p> SDK は本ページで紹介したアプリケーションのソースコードを含みます。アプリケーションにあなた独自の改造を行って使用することが可能です。詳細は各アプリケーション添付のライセンス情報などをご確認ください。</p>
+  <p> &nbsp;</p>
+    <div class="status_information">
+      <div>
+      </div>
+      <div>
+        <p>ご使用のカメラ環境により SDK および FAQ 情報が異なります。</p>
+        <p>ご使用のカメラ環境を下記から選択し、説明ページへお進みください。</p>
+      </div>
+    </div>
+  <ul>
+    <li><a href="developer_portal_ipro_camera.html">i-PRO カメラ</a>
+    <p><a href="developer_portal_ipro_camera.html">
+    <img alt="FAQサイト" class="border" src="developer_portal_ipro_camera/img8.jpg" width="400"></a>
+    </p>
+    </li>
+    <li><a href="developer_portal_moduca.html">モジュールカメラ moduca </a><br>
+    <a href="developer_portal_moduca.html">
+    <img alt="モジュールカメラ  moduca ポータルサイト" class="border" src="developer_portal_moduca/img3D.jpg" width="400"></a></li>
+  </ul>
+  <p> &nbsp;</p>
+	
+</section>
+	
+<p>&nbsp;</p>
+
+<section>
+	<h2><a name="参考">参考</a></h2>
+	<ul>
+		<li>i-PRO Component Web Catalog / i-PRO コンポーネント Webカタログ<br>
+      <a href="https://cwc.i-pro.com/" target="_blank">
+        https://cwc.i-pro.com/</a></li>
+    <li>モジュールカメラ｜ポータルサイト (i-pro.com)<br>
+      <a href="https://moduca.i-pro.com/" target="_blank">
+        https://moduca.i-pro.com/</a></li>
+    <li>ダウンロード - i-PRO サポートポータル<br>
+      <a href="https://japancs.i-pro.com/space/DLJP" target="_blank">
+        https://japancs.i-pro.com/space/DLJP</a></li>
+	</ul>
+</section>
+
+<p>&nbsp;</p>
+
+<hr>
+
+<p>&nbsp;</p>
+
+<section>
+	<h2 style="margin-bottom:5px">変更履歴</h2>
+	<table>
+	  <tr>
+	    <td class="td_history_date">2023/10/4</td>
+	    <td class="td_history_separator">-</td>
+	    <td class="td_history">新規作成,</td>
+			<td class="td_history">崎戸梨恵 木下英俊</td>
+		</tr>
+	</table>
+</section>
+
+<p>&nbsp;</p>
+<p><a href="../../index.html" target="_parent">i-PRO - Programming Items トップページ</a></p>
+<p><a href="../../privacy_policy.html">プライバシーポリシー</a></p>
+<p>&nbsp;</p>
+
+<footer>
+	<p><small>&copy; 2023  i-PRO Co., Ltd.</small></p>
+</footer>
+
+</body>
+</html>
