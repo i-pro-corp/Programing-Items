@@ -9,123 +9,138 @@
 
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>1.00</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/whats_new.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/Python/install_python.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/Python/install_pytorch.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/Python/connect_camera/connect_with_rtsp.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:12+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/Python/connect_camera/connect_with_jpeg.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:12+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/Python/connect_camera/connect_with_mjpeg.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:12+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/Python/connect_camera/connect_to_wv-xae200w.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:12+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/Python/connect_camera/receive_onvifmeta_event.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/Python/connect_camera/image_classification_vgg.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:12+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/Python/connect_camera/mobilenet-ssd.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:12+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/Python/connect_camera/mobilenet-ssd_train.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:12+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/cpp_linux/connect_camera/connect_with_rtsp.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/cpp_linux/connect_camera/connect_with_jpeg.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/cpp_linux/connect_camera/connect_with_mjpeg.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/cpp_vs/install_opencv.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/cpp_vs/connect_camera/connect_with_rtsp.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/cpp_vs/connect_camera/connect_with_jpeg.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/cpp_vs/connect_camera/connect_with_mjpeg.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/openvino/try_openvino_ubuntu.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/aws/panorama/panorama-ai1.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/make_ai_extension_software/load_to_the_ai_camera_engineer.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/aiinspect/aiinspect_result.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://i-pro-corp.github.io/Programing-Items/aiinspect/integrate_with_speedbeehive.html</loc>
-  <lastmod>2023-04-18T04:31:45+00:00</lastmod>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
   <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://i-pro-corp.github.io/Programing-Items/make_ai_extension_software/free_applicatioin/yuv_dnn_application.html</loc>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://i-pro-corp.github.io/Programing-Items/make_ai_extension_software/free_applicatioin/developer_portal_ipro_camera.html</loc>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://i-pro-corp.github.io/Programing-Items/make_ai_extension_software/free_applicatioin/developer_portal_moduca.html</loc>
+  <lastmod>2023-10-03T02:05:13+00:00</lastmod>
+  <priority>0.51</priority>
 </url>
 
 
