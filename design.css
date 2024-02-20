@@ -177,18 +177,22 @@ MessageBox っぽいやつ
 
 div.status_information{
   background-color: #DEEBFF;
+  border: thin solid cornflowerblue;
 }
 
 div.status_warning{
-  background-color: #FFFAE6;  
+  background-color: #FFFAE6;
+  border: thin solid gold;
 }
 
 div.status_invalid{
   background-color: #FFEBE6;
+  border: thin solid indianred;
 }
 
 div.status_ok{
   background-color: #E3FCEF;
+  border: thin solid green;
 }
 
 div.status_information div:first-child{
